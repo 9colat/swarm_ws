@@ -131,6 +131,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/nicoleg/swarm_ws/build/gtest/cmake_install.cmake")
+  include("/home/nicoleg/swarm_ws/build/hardware_driver/cmake_install.cmake")
 
 endif()
 
