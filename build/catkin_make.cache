@@ -1,2 +1,2 @@
-hardware_driver:lino_msgs:lino_pid:linorobot
--DCATKIN_DEVEL_PREFIX=/home/nicoleg/swarm_ws/devel -DCMAKE_INSTALL_PREFIX=/home/nicoleg/swarm_ws/install -G Unix Makefiles
+hardware_driver:rplidar_ros
+-DCATKIN_DEVEL_PREFIX=/home/casper/swarm_ws/devel -DCMAKE_INSTALL_PREFIX=/home/casper/swarm_ws/install -G Unix Makefiles

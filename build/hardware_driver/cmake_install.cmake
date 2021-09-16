@@ -1,8 +1,8 @@
-# Install script for directory: /home/nicoleg/swarm_ws/src/hardware_driver
+# Install script for directory: /home/casper/swarm_ws/src/hardware_driver
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/nicoleg/swarm_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/casper/swarm_ws/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,17 +38,17 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/nicoleg/swarm_ws/build/hardware_driver/catkin_generated/installspace/hardware_driver.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/casper/swarm_ws/build/hardware_driver/catkin_generated/installspace/hardware_driver.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/hardware_driver/cmake" TYPE FILE FILES
-    "/home/nicoleg/swarm_ws/build/hardware_driver/catkin_generated/installspace/hardware_driverConfig.cmake"
-    "/home/nicoleg/swarm_ws/build/hardware_driver/catkin_generated/installspace/hardware_driverConfig-version.cmake"
+    "/home/casper/swarm_ws/build/hardware_driver/catkin_generated/installspace/hardware_driverConfig.cmake"
+    "/home/casper/swarm_ws/build/hardware_driver/catkin_generated/installspace/hardware_driverConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/hardware_driver" TYPE FILE FILES "/home/nicoleg/swarm_ws/src/hardware_driver/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/hardware_driver" TYPE FILE FILES "/home/casper/swarm_ws/src/hardware_driver/package.xml")
 endif()
 

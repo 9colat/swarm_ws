@@ -1,4 +1,4 @@
-prefix=/home/nicoleg/swarm_ws/devel
+prefix=/home/casper/swarm_ws/devel
 
 Name: hardware_driver
 Description: Description of hardware_driver
