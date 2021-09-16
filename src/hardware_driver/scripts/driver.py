@@ -10,6 +10,7 @@ def listener():
 
 
 #          the node that the system is looking at
+
 #                        |
 #                        v
     rospy.Subscriber("chatter", String, callback)
