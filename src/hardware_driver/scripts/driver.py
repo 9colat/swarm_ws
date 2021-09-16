@@ -13,7 +13,7 @@ def listener():
 #                        |
 #                        v
     rospy.Subscriber("chatter", String, callback)
-    
+
     rospy.spin()
 
 if __name__ == '__main__':
