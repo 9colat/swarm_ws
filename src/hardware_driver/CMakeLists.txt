@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  geometry_msgs
+
 )
 
 ## System dependencies are found with CMake's conventions
@@ -204,3 +206,5 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+#add_executable(hardware_driver scripts/driver.py)
+#target_link_libraries(hardware_driver ${catkin_LIBRARIES})
