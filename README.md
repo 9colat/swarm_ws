@@ -16,4 +16,4 @@ rosrun hardware_driver driver.py
 
 >if this does not work then go to the swarm_ws/src/hardware_driver/scripts and run the following comande, the reason that this is needed is because the system does not concider the script executable:
 
-chmod 777 driver.py 
+chmod 777 driver.py
