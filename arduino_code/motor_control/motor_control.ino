@@ -34,27 +34,30 @@ float delta_time_right;             // initialzing the the differents in time th
 float old_time_right = millis();    // setting the initial time of the system for the right motor
 float delta_time_left;              // initialzing the the differents in time that is used to calculate the angular velocity
 float old_time_left = millis();     // setting the initial time of the system for the left motor
-long speed_array[10];               // initialzing the array that holds the newest angular velocity values 
+long speed_array_right[10];         // initialzing the array that holds the newest angular velocity values 
+long speed_array_left[10];          // initialzing the array that holds the newest angular velocity values 
 float current_omega_rigth;          // initialzing the current angular velocity for the right motor
 float current_omega_left;           // initialzing the current angular velocity for the left motor
 int float_to_long_factor = 1000;
+float robot_radius = 1;             // needs to be updated and use the right unit (proberbly meters)
+float wheel_radius =1;              // needs to be updated and use the right unit (proberbly meters)
 
 
 ros::NodeHandle nh;                 // here the node handler is set with the name nh
 std_msgs::Int16 mode_confurm;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
 ros::Publisher mode_pub("mode_repeat", &mode_confurm);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 
-void array_push(float data){
-  for (int x = sizeof(speed_array); x > 0; x = x - 1){
-    speed_array[x] = speed_array[x-1];
+void array_push(long the_input_array[], float data){
+  for (int x = sizeof(the_input_array); x > 0; x = x - 1){
+    the_input_array[x] = the_input_array[x-1];
   }
-  speed_array[0] = data*float_to_long_factor;
+  the_input_array[0] = data*float_to_long_factor;
   }
 
-float array_sum(){
+float array_sum(long the_input_array[]){
   float result = 0;
-  for (int x = 0; x < sizeof(speed_array); x++){
-    result = result + (speed_array[x]/float_to_long_factor);
+  for (int x = 0; x < sizeof(the_input_array); x++){
+    result = result + (the_input_array[x]/float_to_long_factor);
   }
   return result;
   }
@@ -142,25 +145,25 @@ void encoder_count_chage_right(){
     if (direction_indicator_right == 1){
       encoder_counter_right++;
       current_omega_rigth = count_to_rad/delta_time_right;
-      array_push(current_omega_rigth);
+      array_push(speed_array_right, current_omega_rigth);
 
     }
     if (direction_indicator_right == 0){
     //Serial.println("Third logic");
       encoder_counter_right = encoder_counter_right - 1;
       current_omega_rigth = -count_to_rad/delta_time_right;
-      array_push(current_omega_rigth);
+      array_push(speed_array_right, current_omega_rigth);
     }
   }
   if ((encoder_counter_right == counts_per_revolution && direction_indicator_right == 0 )||(encoder_counter_right == -counts_per_revolution && direction_indicator_right == 1)){
     encoder_counter_right = 0;
     if(direction_indicator_right == 1){
       current_omega_rigth = count_to_rad/delta_time_right;
-      array_push(current_omega_rigth);
+      array_push(speed_array_right, current_omega_rigth);
     }
     if(direction_indicator_right == 0){
       current_omega_rigth = -count_to_rad/delta_time_right;
-      array_push(current_omega_rigth);
+      array_push(speed_array_right, current_omega_rigth);
     }
   }
   }
@@ -172,25 +175,25 @@ void encoder_count_chage_left(){
     if (direction_indicator_left == 1){
       encoder_counter_left++;
       current_omega_left = count_to_rad/delta_time_left;
-      array_push(current_omega_left);
+      array_push(speed_array_left, current_omega_left);
       //digitalWrite(led_indicator, HIGH);
       //status_of_led = !status_of_led;
     }
     if (direction_indicator_left == 1){
       encoder_counter_left = encoder_counter_left - 1;
       current_omega_left = -count_to_rad/delta_time_left;
-      array_push(current_omega_left);
+      array_push(speed_array_left, current_omega_left);
     }
   }
   if ((encoder_counter_left == counts_per_revolution && direction_indicator_left == 0 )||(encoder_counter_left == -counts_per_revolution && direction_indicator_left == 1)){
     encoder_counter_left = 0;
     if (direction_indicator_left == 1){
       current_omega_left = count_to_rad/delta_time_left;
-      array_push(current_omega_left);
+      array_push(speed_array_left, current_omega_left);
     }
     if (direction_indicator_left == 0){
       current_omega_left = -count_to_rad/delta_time_left;
-      array_push(current_omega_left);
+      
     }
   }
   }
