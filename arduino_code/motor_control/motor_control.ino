@@ -29,19 +29,18 @@ float pwm_procent_left = 0;         // the PWM procentage, initialed to 0 for th
 int pwm_value_right;                // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
 int pwm_value_left;                 // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
 float heading_angle;                // a filler value as of sep. 21 it has no uses other then it being set in the subcriber ""
-int mode_mode;
-float delta_time_right;
-float old_time_right = millis();
-float delta_time_left;
-float old_time_left = millis();
-long speed_array[10];
-float current_omega_rigth;
-float current_omega_left;
+int mode_mode;                      // initialzing the mode of the system
+float delta_time_right;             // initialzing the the differents in time that is used to calculate the rotatinal velocity
+float old_time_right = millis();    // setting the initial time of the system for the right motor
+float delta_time_left;              // initialzing the the differents in time that is used to calculate the rotatinal velocity
+float old_time_left = millis();     // setting the initial time of the system for the left motor
+long speed_array[10];               // initialzing the array that holds the newest angliar velocity values 
+float current_omega_rigth;          // initialzing the current angliar velocity for the right motor
+float current_omega_left;           // initialzing the current angliar velocity for the left motor
 
-ros::NodeHandle nh;
-std_msgs::Int16 mode_confurm;
-ros::Publisher mode_pub("mode_repeat", &mode_confurm);
-
+ros::NodeHandle nh;                 // here the node handler is initilazed 
+std_msgs::Int16 mode_confurm;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
+ros::Publisher mode_pub("mode_repeat", &mode_confurm);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 
 void array_push(float data){
   for (int x = sizeof(speed_array); x > 0; x = x - 1){
