@@ -2,7 +2,7 @@
 import rospy
 from std_msgs.msg import Int16
 from geometry_msgs.msg import Vector3
-e
+
 def talker():
     pub = rospy.Publisher('pwm_sig', Vector3, queue_size=10)
     pub1 = rospy.Publisher('mode_sig', Int16, queue_size=10)
