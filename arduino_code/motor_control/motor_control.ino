@@ -1,5 +1,6 @@
 #include <ros.h>
 #include <std_msgs/Int16.h>
+#include <std_msgs/Float32.h>
 #include <geometry_msgs/Vector3.h>
 
 
@@ -15,17 +16,17 @@ const byte left_motor_ina = 30;     // setting the pin for the left motors a dir
 const byte left_encoder_a = 24;     // setting the pin for the left motors first encoder signal pin
 const byte left_encoder_b = 25;     // setting the pin for the left motors secondt encoder signal pin
 //-----variabels-----//
-int counts_per_revolution = 1920;   // the number of counts per full wheel revulotion
+int counts_per_revolution = 1920.0;   // the number of counts per full wheel revulotion
 const float pi = 3.141593;          // this is pi, or an aproximation, what did you expeced?
-double encoder_counter_right = 0;   // this is the encoder counter for the right wheel
-double encoder_counter_left = 0;    // this is the encoder counter for the left wheel
+double encoder_counter_right = 0.0;   // this is the encoder counter for the right wheel
+double encoder_counter_left = 0.0;    // this is the encoder counter for the left wheel
 int status_of_led = HIGH;           // this can be removed later
-int direction_indicator_right = 1;  //this is a direction indicator, that can be either 0 or 1. if the variable is 0 that means that the moters are going backwards, and 1 means forwards.
-int direction_indicator_left = 1;   //this is a direction indicator, that can be either 0 or 1. if the variable is 0 that means that the moters are going backwards, and 1 means forwards.
-double count_to_deg = (360)/counts_per_revolution;  //convertion constants for degrees
-double count_to_rad = (2*pi)/counts_per_revolution; //convertion constants for radians
-float pwm_procent_right = 0;        // the PWM procentage, initialed to 0 for the right motor
-float pwm_procent_left = 0;         // the PWM procentage, initialed to 0 for the left motor
+int direction_indicator_right;  //this is a direction indicator, that can be either 0 or 1. if the variable is 0 that means that the moters are going backwards, and 1 means forwards.
+int direction_indicator_left;   //this is a direction indicator, that can be either 0 or 1. if the variable is 0 that means that the moters are going backwards, and 1 means forwards.
+float count_to_deg = (360.0)/counts_per_revolution;  //convertion constants for degrees
+double count_to_rad = (2.0*pi)/counts_per_revolution; //convertion constants for radians
+float pwm_procent_right = 0.0;        // the PWM procentage, initialed to 0 for the right motor
+float pwm_procent_left = 0.0;         // the PWM procentage, initialed to 0 for the left motor
 int pwm_value_right;                // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
 int pwm_value_left;                 // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
 float heading_angle;                // a filler value as of sep. 21 it has no uses other then it being set in the subcriber ""
@@ -36,16 +37,23 @@ float delta_time_left;              // initialzing the the differents in time th
 float old_time_left = millis();     // setting the initial time of the system for the left motor
 long speed_array_right[10];         // initialzing the array that holds the newest angular velocity values 
 long speed_array_left[10];          // initialzing the array that holds the newest angular velocity values 
-float current_omega_rigth;          // initialzing the current angular velocity for the right motor
+float current_omega_right;          // initialzing the current angular velocity for the right motor
 float current_omega_left;           // initialzing the current angular velocity for the left motor
 int float_to_long_factor = 1000;
-float robot_radius = 1;             // needs to be updated and use the right unit (proberbly meters)
-float wheel_radius =1;              // needs to be updated and use the right unit (proberbly meters)
+float robot_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
+float wheel_radius =1.0;              // needs to be updated and use the right unit (proberbly meters)
 
 
 ros::NodeHandle nh;                 // here the node handler is set with the name nh
 std_msgs::Int16 mode_confurm;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
 ros::Publisher mode_pub("mode_repeat", &mode_confurm);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
+std_msgs::Float32 angle_of_wheel;
+ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
+
+geometry_msgs::Vector3 imu_output = geometry_msgs::Vector3();
+ros::Publisher IMU_data("imu_data", &imu_output);
+
+
 
 void array_push(long the_input_array[], float data){
   for (int x = sizeof(the_input_array); x > 0; x = x - 1){
@@ -54,11 +62,12 @@ void array_push(long the_input_array[], float data){
   the_input_array[0] = data*float_to_long_factor;
   }
 
-float array_sum(long the_input_array[]){
+float averaging_array(long the_input_array[]){
   float result = 0;
   for (int x = 0; x < sizeof(the_input_array); x++){
     result = result + (the_input_array[x]/float_to_long_factor);
   }
+  result = result/sizeof(the_input_array);
   return result;
   }
 
@@ -105,18 +114,23 @@ void setup() {
   nh.subscribe(sub);
   nh.subscribe(sub1);
   nh.advertise(mode_pub);
+  nh.advertise(ankle_pub);
+  nh.advertise(IMU_data);
 }
 
 void loop() {
-//  Serial.print("my mode is: ");
-//  Serial.println(mode_mode);
-//  Serial.print("Counter is: ");
-//  Serial.print(encoder_counter_right);
-//  Serial.print(" and that equals: ");
-//  Serial.print(encoder_to_unit(encoder_counter_right,1));
-//  Serial.println(" deg");
-  mode_confurm.data = mode_mode;
+  float test = 360.0/1920.0;
+  //int(count_to_deg*1000);
+  mode_confurm.data = test;
   mode_pub.publish(&mode_confurm);
+//  float test = encoder_to_unit(encoder_counter_right,1);
+  angle_of_wheel.data = count_to_deg;
+  ankle_pub.publish(&angle_of_wheel);
+
+  imu_output.x = count_to_deg;
+  imu_output.y = 1;
+  imu_output.z = mode_mode;
+  IMU_data.publish(&imu_output);
   nh.spinOnce();
 }
 
@@ -144,27 +158,31 @@ void encoder_count_chage_right(){
   if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution){
     if (direction_indicator_right == 1){
       encoder_counter_right++;
-      current_omega_rigth = count_to_rad/delta_time_right;
-      array_push(speed_array_right, current_omega_rigth);
+      current_omega_right = count_to_rad/delta_time_right;
+      array_push(speed_array_right, current_omega_right);
 
     }
     if (direction_indicator_right == 0){
     //Serial.println("Third logic");
       encoder_counter_right = encoder_counter_right - 1;
-      current_omega_rigth = -count_to_rad/delta_time_right;
-      array_push(speed_array_right, current_omega_rigth);
+      current_omega_right = -count_to_rad/delta_time_right;
+      array_push(speed_array_right, current_omega_right);
     }
   }
-  if ((encoder_counter_right == counts_per_revolution && direction_indicator_right == 0 )||(encoder_counter_right == -counts_per_revolution && direction_indicator_right == 1)){
-    encoder_counter_right = 0;
-    if(direction_indicator_right == 1){
-      current_omega_rigth = count_to_rad/delta_time_right;
-      array_push(speed_array_right, current_omega_rigth);
+  if (encoder_counter_right == counts_per_revolution){
+    if (direction_indicator_right == 1){
+      encoder_counter_right = 0;
+      current_omega_right = count_to_rad/delta_time_right;
+      array_push(speed_array_right, current_omega_right);
     }
-    if(direction_indicator_right == 0){
-      current_omega_rigth = -count_to_rad/delta_time_right;
-      array_push(speed_array_right, current_omega_rigth);
+  }
+  if(encoder_counter_right == -counts_per_revolution){
+    if (direction_indicator_right == 0){
+      encoder_counter_right = 0;
+      current_omega_right = -count_to_rad/delta_time_right;
     }
+      
+    
   }
   }
 
@@ -185,16 +203,20 @@ void encoder_count_chage_left(){
       array_push(speed_array_left, current_omega_left);
     }
   }
-  if ((encoder_counter_left == counts_per_revolution && direction_indicator_left == 0 )||(encoder_counter_left == -counts_per_revolution && direction_indicator_left == 1)){
-    encoder_counter_left = 0;
+  if (encoder_counter_left == counts_per_revolution){
     if (direction_indicator_left == 1){
+      encoder_counter_left = 0;
       current_omega_left = count_to_rad/delta_time_left;
       array_push(speed_array_left, current_omega_left);
     }
+  }
+  if(encoder_counter_left == -counts_per_revolution){
     if (direction_indicator_left == 0){
+      encoder_counter_left = 0;
       current_omega_left = -count_to_rad/delta_time_left;
-      
     }
+      
+    
   }
   }
 
@@ -202,25 +224,33 @@ void direction_seclection(int mode){
   if (mode == 0){// 0 means that the robot is going forward
     digitalWrite(right_motor_ina, HIGH);
     digitalWrite(right_motor_inb, LOW);
-    digitalWrite(left_motor_ina, HIGH);
-    digitalWrite(left_motor_inb, LOW);
+    digitalWrite(left_motor_ina, LOW);
+    digitalWrite(left_motor_inb, HIGH);
+    direction_indicator_right = 1;
+    direction_indicator_left = 1;
   }
   if (mode == 1){// 1 means that the robot is reversing
     digitalWrite(right_motor_ina, LOW);
     digitalWrite(right_motor_inb, HIGH);
-    digitalWrite(left_motor_ina, LOW);
-    digitalWrite(left_motor_inb, HIGH);
+    digitalWrite(left_motor_ina, HIGH);
+    digitalWrite(left_motor_inb, LOW);
+    direction_indicator_right = 0;
+    direction_indicator_left = 0;
   }
   if (mode == 2){// 2 means that the robot is turning left
     digitalWrite(right_motor_ina, HIGH);
     digitalWrite(right_motor_inb, LOW);
-    digitalWrite(left_motor_ina, LOW);
-    digitalWrite(left_motor_inb, HIGH);
+    digitalWrite(left_motor_ina, HIGH);
+    digitalWrite(left_motor_inb, LOW);
+    direction_indicator_right = 1;
+    direction_indicator_left = 0;
   }
   if (mode == 3){// 3 means that the robot is turning right
     digitalWrite(right_motor_ina, LOW);
     digitalWrite(right_motor_inb, HIGH);
-    digitalWrite(left_motor_ina, HIGH);
-    digitalWrite(left_motor_inb, LOW);
+    digitalWrite(left_motor_ina, LOW);
+    digitalWrite(left_motor_inb, HIGH);
+    direction_indicator_right = 0;
+    direction_indicator_left = 1;
   }
 }  
