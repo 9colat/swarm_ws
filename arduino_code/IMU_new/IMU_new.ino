@@ -43,7 +43,6 @@ void setup() {
 
 void loop() {
 
-  if (mySensor.accelUpdate() == 0) {
     aX = mySensor.accelX();
     aY = mySensor.accelY();
     aZ = mySensor.accelZ();
@@ -52,18 +51,16 @@ void loop() {
     Serial.print("\taccelY: " + String(aY));
     Serial.print("\taccelZ: " + String(aZ));
     Serial.print("\taccelSqrt: " + String(aSqrt));
-  }
+  
 
-  if (mySensor.gyroUpdate() == 0) {
     gX = mySensor.gyroX();
     gY = mySensor.gyroY();
     gZ = mySensor.gyroZ();
     Serial.print("\tgyroX: " + String(gX));
     Serial.print("\tgyroY: " + String(gY));
     Serial.print("\tgyroZ: " + String(gZ));
-  }
+  
 
-  if (mySensor.magUpdate() == 0) {
     mX = mySensor.magX();
     mY = mySensor.magY();
     mZ = mySensor.magZ();
@@ -72,7 +69,7 @@ void loop() {
     Serial.print("\tmaxY: " + String(mY));
     Serial.print("\tmagZ: " + String(mZ));
     Serial.print("\thorizontalDirection: " + String(mDirection));
-  }
+  
 
   Serial.println(""); // Add an empty line
   gyro_data.x=gX;

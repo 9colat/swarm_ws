@@ -4,21 +4,31 @@
 #include <std_msgs/Int16.h>
 #include <geometry_msgs/Vector3.h>
 
+Adafruit_BMP280 bme; // I2C
+MPU9250_asukiaaa mySensor;
+float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
+aX=1;
 
 ros::NodeHandle nh;
 //std_msgs::Int16 gyro_data;
 geometry_msgs::Vector3 gyro_data;
-ros::Publisher IMU_pub("mode_repeat", &gyro_data);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
+ros::Publisher IMU_pub("IMU_data", &gyro_data);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Start up");
   nh.initNode();
   nh.advertise(IMU_pub);
 }
 
 void loop() {
-  gyro_data.x = 1;
+  gX = mySensor.gyroX();
+  gY = mySensor.gyroY();
+  gZ = mySensor.gyroZ();
+  gyro_data.x=gX;
+  gyro_data.y=gY;
+  gyro_data.z=gZ;
+
+
   IMU_pub.publish(&gyro_data);
   nh.spinOnce();
 }
