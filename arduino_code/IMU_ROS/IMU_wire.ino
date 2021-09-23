@@ -44,7 +44,7 @@ void loop()
   Gyro_Y=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
   Gyro_Z=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
   String AX = String(Accel_X);
-  String AY = String(Accel_Y);b
+  String AY = String(Accel_Y);
   String AZ = String(Accel_Z);
   String GX = String(Gyro_X);
   String GY = String(Gyro_Y);
