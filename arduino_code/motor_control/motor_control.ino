@@ -39,6 +39,8 @@ long speed_array_right[10];         // initialzing the array that holds the newe
 long speed_array_left[10];          // initialzing the array that holds the newest angular velocity values 
 float current_omega_right;          // initialzing the current angular velocity for the right motor
 float current_omega_left;           // initialzing the current angular velocity for the left motor
+float average_omega_right;
+float average_omega_left;
 int float_to_long_factor = 1000;
 float robot_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
 float wheel_radius =1.0;              // needs to be updated and use the right unit (proberbly meters)
@@ -119,22 +121,22 @@ void setup() {
 }
 
 void loop() {
-  float test = 360.0/1920.0;
-  //int(count_to_deg*1000);
-  mode_confurm.data = test;
-  mode_pub.publish(&mode_confurm);
+//  mode_confurm.data = test;
+//  mode_pub.publish(&mode_confurm);
 //  float test = encoder_to_unit(encoder_counter_right,1);
-  angle_of_wheel.data = count_to_deg;
+//  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
+
+//  angle_of_wheel.data = current_omega_right;
   ankle_pub.publish(&angle_of_wheel);
 
   imu_output.x = count_to_deg;
-  imu_output.y = 1;
-  imu_output.z = mode_mode;
+  imu_output.y = average_omega_right;
+  imu_output.z = current_omega_right;
   IMU_data.publish(&imu_output);
   nh.spinOnce();
 }
 
-
+ 
 double encoder_to_unit(int encoder_count,int unit_output){//if unit_output is 1 the unit is deg, if its 2 its rad
   double output_number;
   float temp_number;
@@ -179,11 +181,12 @@ void encoder_count_chage_right(){
   if(encoder_counter_right == -counts_per_revolution){
     if (direction_indicator_right == 0){
       encoder_counter_right = 0;
-      current_omega_right = -count_to_rad/delta_time_right;
+      current_omega_right = -count_to_rad*1.0/delta_time_right;
     }
       
     
   }
+  average_omega_right = averaging_array(speed_array_right);
   }
 
 void encoder_count_chage_left(){
@@ -194,6 +197,7 @@ void encoder_count_chage_left(){
       encoder_counter_left++;
       current_omega_left = count_to_rad/delta_time_left;
       array_push(speed_array_left, current_omega_left);
+      
       //digitalWrite(led_indicator, HIGH);
       //status_of_led = !status_of_led;
     }
@@ -201,6 +205,7 @@ void encoder_count_chage_left(){
       encoder_counter_left = encoder_counter_left - 1;
       current_omega_left = -count_to_rad/delta_time_left;
       array_push(speed_array_left, current_omega_left);
+      
     }
   }
   if (encoder_counter_left == counts_per_revolution){
@@ -218,6 +223,7 @@ void encoder_count_chage_left(){
       
     
   }
+  average_omega_left = averaging_array(speed_array_left);
   }
 
 void direction_seclection(int mode){
