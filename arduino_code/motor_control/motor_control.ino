@@ -41,7 +41,7 @@ float current_omega_right;          // initialzing the current angular velocity 
 float current_omega_left;           // initialzing the current angular velocity for the left motor
 float average_omega_right;
 float average_omega_left;
-int float_to_long_factor = 1000;
+float float_to_long_factor = 1000.0;
 float robot_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
 float wheel_radius =1.0;              // needs to be updated and use the right unit (proberbly meters)
 
@@ -129,9 +129,9 @@ void loop() {
 //  angle_of_wheel.data = current_omega_right;
   ankle_pub.publish(&angle_of_wheel);
 
-  imu_output.x = count_to_deg;
+  imu_output.x = millis();
   imu_output.y = average_omega_right;
-  imu_output.z = current_omega_right;
+  imu_output.z = delta_time_right;
   IMU_data.publish(&imu_output);
   nh.spinOnce();
 }
