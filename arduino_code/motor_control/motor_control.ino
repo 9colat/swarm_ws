@@ -1,6 +1,7 @@
 #include <ros.h>
 #include <std_msgs/Int16.h>
 #include <std_msgs/Float32.h>
+#include <std_msgs/Float64.h>
 #include <geometry_msgs/Vector3.h>
 
 
@@ -31,10 +32,10 @@ int pwm_value_right;                // initialzing the PWM value aka. turning th
 int pwm_value_left;                 // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
 float heading_angle;                // a filler value as of sep. 21 it has no uses other then it being set in the subcriber ""
 int mode_mode;                      // initialzing the mode of the system
-float delta_time_right;             // initialzing the the differents in time that is used to calculate the angular velocity
-float old_time_right = millis();    // setting the initial time of the system for the right motor
-float delta_time_left;              // initialzing the the differents in time that is used to calculate the angular velocity
-float old_time_left = millis();     // setting the initial time of the system for the left motor
+double delta_time_right = 0.0;             // initialzing the the differents in time that is used to calculate the angular velocity
+double old_time_right = 0.0;    // setting the initial time of the system for the right motor
+double delta_time_left = 0.0;              // initialzing the the differents in time that is used to calculate the angular velocity
+double old_time_left = 0.0;     // setting the initial time of the system for the left motor
 long speed_array_right[10];         // initialzing the array that holds the newest angular velocity values 
 long speed_array_left[10];          // initialzing the array that holds the newest angular velocity values 
 float current_omega_right;          // initialzing the current angular velocity for the right motor
@@ -51,6 +52,9 @@ std_msgs::Int16 mode_confurm;       // the variable is initilazed as a Int16, th
 ros::Publisher mode_pub("mode_repeat", &mode_confurm);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 std_msgs::Float32 angle_of_wheel;
 ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
+std_msgs::Float64 wheel_speed;
+ros::Publisher speed_pub("wheel_speed", &wheel_speed);
+
 
 geometry_msgs::Vector3 imu_output = geometry_msgs::Vector3();
 ros::Publisher IMU_data("imu_data", &imu_output);
@@ -117,6 +121,7 @@ void setup() {
   nh.subscribe(sub1);
   nh.advertise(mode_pub);
   nh.advertise(ankle_pub);
+  nh.advertise(speed_pub);
   nh.advertise(IMU_data);
 }
 
@@ -126,10 +131,10 @@ void loop() {
 //  float test = encoder_to_unit(encoder_counter_right,1);
 //  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
 
-//  angle_of_wheel.data = current_omega_right;
-  ankle_pub.publish(&angle_of_wheel);
+  wheel_speed.data = average_omega_right;
+  speed_pub.publish(&wheel_speed);
 
-  imu_output.x = millis();
+  imu_output.x = double(micros())/1000000;
   imu_output.y = average_omega_right;
   imu_output.z = delta_time_right;
   IMU_data.publish(&imu_output);
@@ -155,8 +160,8 @@ double encoder_to_unit(int encoder_count,int unit_output){//if unit_output is 1 
 
 
 void encoder_count_chage_right(){
-  delta_time_right = millis() - old_time_right;
-  old_time_right = millis();
+  delta_time_right =  double(micros()) / 1000000 - old_time_right;
+  old_time_right = double(micros()) / 1000000;
   if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution){
     if (direction_indicator_right == 1){
       encoder_counter_right++;
@@ -190,8 +195,8 @@ void encoder_count_chage_right(){
   }
 
 void encoder_count_chage_left(){
-  delta_time_left = millis() - old_time_left;
-  old_time_left = millis();
+  delta_time_left = double(micros()) / 1000000 - old_time_left;
+  old_time_left = double(micros()) / 1000000;
   if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution){
     if (direction_indicator_left == 1){
       encoder_counter_left++;
