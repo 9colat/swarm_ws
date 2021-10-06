@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import rospy
+import sys
 from std_msgs.msg import Int16
 from geometry_msgs.msg import Vector3
 
@@ -10,6 +11,8 @@ def talker():
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         temp_dir_mode = input("please enter the direction mode you want 0: strait mode, 1: turning mode:")
+        if temp_dir_mode == "kill" or temp_dir_mode == "quit" or temp_dir_mode == "end" or temp_dir_mode == "stop" or temp_dir_mode == "q":
+            sys.exit("kill compleat")
         temp_pwm_r = input("Enter right pwm here:")
         temp_pwm_l = input("Enter left pwm here:")
         temp_heading = input("Enter the heading angle here:")

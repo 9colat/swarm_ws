@@ -36,13 +36,13 @@ double delta_time_right = 0.0;             // initialzing the the differents in 
 double old_time_right = 0.0;    // setting the initial time of the system for the right motor
 double delta_time_left = 0.0;              // initialzing the the differents in time that is used to calculate the angular velocity
 double old_time_left = 0.0;     // setting the initial time of the system for the left motor
-long speed_array_right[10];         // initialzing the array that holds the newest angular velocity values 
-long speed_array_left[10];          // initialzing the array that holds the newest angular velocity values 
+long speed_array_right[500];         // initialzing the array that holds the newest angular velocity values
+long speed_array_left[500];          // initialzing the array that holds the newest angular velocity values
 float current_omega_right;          // initialzing the current angular velocity for the right motor
 float current_omega_left;           // initialzing the current angular velocity for the left motor
 float average_omega_right;
 float average_omega_left;
-float float_to_long_factor = 1000.0;
+float float_to_long_factor = 10000.0;
 float robot_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
 float wheel_radius =1.0;              // needs to be updated and use the right unit (proberbly meters)
 
@@ -130,18 +130,20 @@ void loop() {
 //  mode_pub.publish(&mode_confurm);
 //  float test = encoder_to_unit(encoder_counter_right,1);
 //  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
+  mode_confurm.data = speed_array_left[1];
+  mode_pub.publish(&mode_confurm);
 
   wheel_speed.data = average_omega_right;
   speed_pub.publish(&wheel_speed);
 
-  imu_output.x = double(micros())/1000000;
-  imu_output.y = average_omega_right;
-  imu_output.z = delta_time_right;
+  imu_output.x = average_omega_right;
+  imu_output.y = average_omega_left;
+  imu_output.z = current_omega_left;
   IMU_data.publish(&imu_output);
   nh.spinOnce();
 }
 
- 
+
 double encoder_to_unit(int encoder_count,int unit_output){//if unit_output is 1 the unit is deg, if its 2 its rad
   double output_number;
   float temp_number;
@@ -170,7 +172,6 @@ void encoder_count_chage_right(){
 
     }
     if (direction_indicator_right == 0){
-    //Serial.println("Third logic");
       encoder_counter_right = encoder_counter_right - 1;
       current_omega_right = -count_to_rad/delta_time_right;
       array_push(speed_array_right, current_omega_right);
@@ -187,9 +188,10 @@ void encoder_count_chage_right(){
     if (direction_indicator_right == 0){
       encoder_counter_right = 0;
       current_omega_right = -count_to_rad*1.0/delta_time_right;
+      array_push(speed_array_right, current_omega_right);
     }
-      
-    
+
+
   }
   average_omega_right = averaging_array(speed_array_right);
   }
@@ -202,15 +204,12 @@ void encoder_count_chage_left(){
       encoder_counter_left++;
       current_omega_left = count_to_rad/delta_time_left;
       array_push(speed_array_left, current_omega_left);
-      
-      //digitalWrite(led_indicator, HIGH);
-      //status_of_led = !status_of_led;
     }
-    if (direction_indicator_left == 1){
+    if (direction_indicator_left == 0){
       encoder_counter_left = encoder_counter_left - 1;
       current_omega_left = -count_to_rad/delta_time_left;
       array_push(speed_array_left, current_omega_left);
-      
+
     }
   }
   if (encoder_counter_left == counts_per_revolution){
@@ -223,11 +222,13 @@ void encoder_count_chage_left(){
   if(encoder_counter_left == -counts_per_revolution){
     if (direction_indicator_left == 0){
       encoder_counter_left = 0;
-      current_omega_left = -count_to_rad/delta_time_left;
+      current_omega_left = -count_to_rad*1.0/delta_time_left;
+      array_push(speed_array_left, current_omega_left);
     }
-      
-    
+
+
   }
+
   average_omega_left = averaging_array(speed_array_left);
   }
 
@@ -264,4 +265,4 @@ void direction_seclection(int mode){
     direction_indicator_right = 0;
     direction_indicator_left = 1;
   }
-}  
+}
