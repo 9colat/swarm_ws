@@ -26,6 +26,31 @@ else
     rosdep update
 fi
 
+#setting up the arduino ide and libraries
+sudo apt install ros-noetic-rosserial-arduino
+sudo apt install ros-noetic-rosserial
+
+
+echo "Download and installing arduino ide"
+cd Download
+curl -o arduino-1.8.16-linuxarm.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linuxarm.tar.xz
+tar -xf arduino-1.8.16-linuxarm.tar.xz -C /home/$USER/
+cd
+cd arduino-1.8.16-linuxarm
+./install.sh
+
+cd
+cd Arduino/libraries/
+rosrun rosserial_arduino make_libraries.py .
+
+echo "installing Teensy"
+curl -o 00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
+sudo cp 00-teensy.rules /etc/udev/rules.d/
+curl -o TeensyduinoInstall.linuxarm https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linuxarm
+chmod 755 TeensyduinoInstall.linuxarm
+./TeensyduinoInstall.linuxarm --dir=arduino-1.8.16
+cd arduino-1.8.16/hardware/teensy/avr/cores/teensy4
+make
 
 #here we setup the git reposetory that we have made.
 cd
