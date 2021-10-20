@@ -1,10 +1,9 @@
 #! /bin/bash
 
-#here er install ros
 echo "å"|sudo -S /path/to/command
 
-FILE=/opt/ros/noetic/env.sh
-if [ -f "$FILE" ]; then
+FILE1=/opt/ros/noetic/env.sh
+if [ -f "$FILE1" ]; then
     echo "ros exists on the pc - nice."
 else
     echo "ros does not exist, well here we go again ;)."
@@ -27,21 +26,6 @@ else
 fi
 
 
-#here we setup the git reposetory that we have made.
-cd
-git clone https://github.com/9colat/swarm_ws.git
-cd swarm_ws
-git checkout Pi_v1
-catkin_make
-echo "source $HOME/catkin_ws/devel/setup.bash" >> ~/.bashrc
-source ~/.bashrc
 
-#here we setup the lidar
-ls -l /dev | grep ttyUSB
-sudo chmod 666 /dev/ttyUSB0
-cd
-cd swarm_ws/src
-git clone https://github.com/Slamtec/rplidar_ros.git
-cd ..
-catkin_make
-source devel/setup.bash
+echo "Download arduino"
+curl -o arduino-1.8.16-linuxarm.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linuxarm.tar.xz
