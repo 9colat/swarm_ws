@@ -60,7 +60,7 @@ git clone https://github.com/9colat/swarm_ws.git
 cd swarm_ws
 git checkout Pi_v1
 catkin_make
-echo "source $HOME/catkin_ws/devel/setup.bash" >> ~/.bashrc
+echo "source $HOME/swarm_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 
 #here we setup the lidar
