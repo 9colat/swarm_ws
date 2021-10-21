@@ -35,8 +35,8 @@ curl -o arduino-1.8.16-linuxarm.tar.xz https://downloads.arduino.cc/arduino-1.8.
 tar -xf arduino-1.8.16-linuxarm.tar.xz -C /home/$USER/
 cd
 cd arduino-1.8.16
-./install.sh
-./arduino-linux-setup.sh
+sudo ./install.sh
+./arduino-linux-setup.sh $USER
 
 cd
 cd Arduino/libraries/

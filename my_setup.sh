@@ -29,18 +29,20 @@ fi
 #setting up the arduino ide and libraries
 sudo apt install ros-noetic-rosserial-arduino -y
 sudo apt install ros-noetic-rosserial -y
-
+sudo apt update -y
+sudo apt upgrade -y
 
 echo "Download and installing arduino ide"
 cd Download
 curl -o arduino-1.8.16-linuxarm.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linuxarm.tar.xz
 tar -xf arduino-1.8.16-linuxarm.tar.xz -C /home/$USER/
 cd
-cd arduino-1.8.16-linuxarm
-./install.sh
+cd arduino-1.8.16
+sudo ./install.sh
+./arduino-linux-setup.sh $USER
 
 cd
-cd Arduino/libraries/
+cd arduino-1.8.16/libraries/
 rosrun rosserial_arduino make_libraries.py .
 
 echo "installing Teensy"
