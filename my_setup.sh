@@ -73,6 +73,10 @@ cd ..
 catkin_make
 source devel/setup.bash
 
+sudo cp ~/swarm_ws/disk-space-check.sh /usr/local/bin/disk-space-check.sh
+sudo chmod 744 /usr/local/bin/disk-space-check.sh
+sudo chmod 664 /etc/systemd/system/disk-space-check.service
+
 #cd
 #sudo apt install arduino-mk -y
 #cd swarm_ws/arduino_code/motor_control
