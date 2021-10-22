@@ -22,3 +22,4 @@ ssh ubuntu@ip
 
 add small fix what ever more more
 hej
+jk
