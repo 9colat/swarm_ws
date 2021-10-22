@@ -35,21 +35,25 @@ else
 fi
 
 echo "Download and installing arduino ide"
-cd Download
-curl -o arduino-1.8.16-linux64.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linux64.tar.xz
-tar -xf arduino-1.8.16-linux64.tar.xz-C /home/$USER/
-cd
-cd arduino-1.8.16
-sudo ./install.sh
-./arduino-linux-setup.sh $USER
-
-cd
-cd Arduino/libraries/
+FILE3=/home/$USER/arduino-1.8.16
+FILE35=/home/$USER/arduino-1.8.15
+if [ -f "$FILE3" ] || [ -f "$FILE35" ]; then
+    echo "arduino ide exists on the pc - nice."
+else
+    cd Download
+    curl -o arduino-1.8.16-linux64.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linux64.tar.xz
+    tar -xf arduino-1.8.16-linux64.tar.xz-C /home/$USER/
+    cd
+    cd arduino-1.8.16
+    sudo ./install.sh
+    ./arduino-linux-setup.sh $USER
+    cd
+    cd Arduino/libraries/
 rosrun rosserial_arduino make_libraries.py .
 
 echo "installing Teensy"
-FILE3=/etc/udev/rules.d/00-teensy.rules
-if [ -f "$FILE2" ]; then
+FILE4=/etc/udev/rules.d/00-teensy.rules
+if [ -f "$FILE4" ]; then
     echo "teensy exists on the pc - nice."
 else
     curl -o 00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
