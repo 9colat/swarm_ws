@@ -1,4 +1,4 @@
-# swarm_ws
+# Swarm_ws
 when you want to run the code with the teensy/arduino then you have to run a set of comands in the terminal.
 frist you have to start the ros master:
 
