@@ -61,6 +61,10 @@ else
     curl -o TeensyduinoInstall.linux64 https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linux64
     chmod 755 TeensyduinoInstall.linux64
     ./TeensyduinoInstall.linux64 --dir=arduino-1.8.16
-    cd arduino-1.8.16/hardware/teensy/avr/cores/teensy3.6
+    cd arduino-1.8.16/hardware/teensy/avr/cores/teensy4
     make
+    cd
+    cd arduino-1.8.16/hardware/teensy/avr/cores/teensy3
+    make
+
 fi
