@@ -1,6 +1,9 @@
 #! /bin/bash
 
-echo "å"|sudo -S /path/to/command
+echo "å"|sudo -S /path/to/command #remember to change to your password
+
+sudo apt update -y
+sudo apt upgrade -y
 
 FILE1=/opt/ros/noetic/env.sh
 if [ -f "$FILE1" ]; then
@@ -13,8 +16,6 @@ else
     sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
     sudo apt install curl -y# if you haven't already installed curl
     curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
-    sudo apt update -y
-    sudo apt upgrade -y
     sudo apt install ros-noetic-desktop -y
     source /opt/ros/noetic/setup.bash
     echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
@@ -25,8 +26,8 @@ else
     rosdep update
 fi
 
-sudo apt install ros-noetic-rosserial-arduino
-sudo apt install ros-noetic-rosserial
+sudo apt install ros-noetic-rosserial-arduino -y
+sudo apt install ros-noetic-rosserial -y
 
 
 echo "Download and installing arduino ide"
