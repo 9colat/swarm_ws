@@ -20,4 +20,4 @@ chmod 777 driver.py
 
 ssh ubuntu@ip
 
-add small fix what ever
+add small fix what ever more
