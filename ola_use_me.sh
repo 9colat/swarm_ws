@@ -1,10 +1,10 @@
 #! /bin/bash
 
 echo "ros"|sudo -S /path/to/command #remember to change to your password
-
+echo "updating the system"
 sudo apt update -y
 sudo apt upgrade -y
-
+echo "installing ros if its not there"
 FILE1=/opt/ros/noetic/env.sh
 if [ -f "$FILE1" ]; then
     echo "ros exists on the pc - nice."
@@ -25,10 +25,14 @@ else
     sudo rosdep init
     rosdep update
 fi
-
-sudo apt install ros-noetic-rosserial-arduino -y
-sudo apt install ros-noetic-rosserial -y
-
+echo "installing rosserial_arduino if its not there"
+FILE2=/opt/ros/noetic/include/rosserial_arduino/Test.h
+if [ -f "$FILE2" ]; then
+    echo "rosserial_arduino exists on the pc - nice."
+else
+    sudo apt install ros-noetic-rosserial-arduino -y
+    sudo apt install ros-noetic-rosserial -y
+fi
 
 echo "Download and installing arduino ide"
 cd Download
@@ -44,10 +48,15 @@ cd Arduino/libraries/
 rosrun rosserial_arduino make_libraries.py .
 
 echo "installing Teensy"
-curl -o 00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
-sudo cp 00-teensy.rules /etc/udev/rules.d/
-curl -o TeensyduinoInstall.linux64 https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linux64
-chmod 755 TeensyduinoInstall.linux64
-./TeensyduinoInstall.linux64 --dir=arduino-1.8.16
-cd arduino-1.8.16/hardware/teensy/avr/cores/teensy4
-make
+FILE3=/etc/udev/rules.d/00-teensy.rules
+if [ -f "$FILE2" ]; then
+    echo "teensy exists on the pc - nice."
+else
+    curl -o 00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
+    sudo cp 00-teensy.rules /etc/udev/rules.d/
+    curl -o TeensyduinoInstall.linux64 https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linux64
+    chmod 755 TeensyduinoInstall.linux64
+    ./TeensyduinoInstall.linux64 --dir=arduino-1.8.16
+    cd arduino-1.8.16/hardware/teensy/avr/cores/teensy4
+    make
+fi
