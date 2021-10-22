@@ -34,8 +34,8 @@ sudo apt upgrade -y
 
 echo "Download and installing arduino ide"
 cd Download
-curl -o arduino-1.8.16-linuxarm.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linuxarm.tar.xz
-tar -xf arduino-1.8.16-linuxarm.tar.xz -C /home/$USER/
+curl -o arduino-1.8.16-linuxaarch64.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linuxaarch64.tar.xz
+tar -xf arduino-1.8.16-linuxaarch64.tar.xz -C /home/$USER/
 cd
 cd arduino-1.8.16
 sudo ./install.sh
@@ -48,9 +48,9 @@ rosrun rosserial_arduino make_libraries.py .
 echo "installing Teensy"
 curl -o 00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
 sudo cp 00-teensy.rules /etc/udev/rules.d/
-curl -o TeensyduinoInstall.linuxarm https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linuxarm
-chmod 755 TeensyduinoInstall.linuxarm
-./TeensyduinoInstall.linuxarm --dir=arduino-1.8.16
+curl -o TeensyduinoInstall.linuxaarch64 https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linuxaarch64
+chmod 755 TeensyduinoInstall.linuxaarch64
+./TeensyduinoInstall.linuxaarch64 --dir=arduino-1.8.16
 cd arduino-1.8.16/hardware/teensy/avr/cores/teensy4
 make
 
