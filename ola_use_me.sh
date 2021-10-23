@@ -40,7 +40,7 @@ FILE35=/home/$USER/arduino-1.8.15
 if [ -f "$FILE3" ] || [ -f "$FILE35" ]; then
     echo "arduino ide exists on the pc - nice."
 else
-    cd Download
+    cd Downloads/
     curl -o arduino-1.8.16-linux64.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linux64.tar.xz
     tar -xf arduino-1.8.16-linux64.tar.xz-C /home/$USER/
     cd

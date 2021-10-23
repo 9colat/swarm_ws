@@ -31,7 +31,7 @@ sudo apt install ros-noetic-rosserial -y
 
 
 echo "Download and installing arduino ide"
-cd Download
+cd Downloads/
 curl -o arduino-1.8.16-linuxarm.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linuxarm.tar.xz
 tar -xf arduino-1.8.16-linuxarm.tar.xz -C /home/$USER/
 cd
