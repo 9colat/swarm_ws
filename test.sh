@@ -1,6 +1,6 @@
 #! /bin/bash
 
-echo "ros"|sudo -S /path/to/command #remember to change to your password
+echo "å"|sudo -S /path/to/command #remember to change to your password
 echo "updating the system"
 sudo apt update -y
 sudo apt upgrade -y
