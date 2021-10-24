@@ -68,3 +68,35 @@ else
     make
 
 fi
+
+FILE5=/home/$USER/swarm_ws/src/hardware_driver/scripts/driver.py
+if [ -f "$FILE5" ]; then
+    echo "swarm_ws exists on the pc - nice."
+else
+    cd
+    git clone https://github.com/9colat/swarm_ws.git
+    cd swarm_ws
+    git checkout Pi_v1
+    catkin_make
+    echo "source $HOME/swarm_ws/devel/setup.bash" >> ~/.bashrc
+    source ~/.bashrc
+fi
+
+
+#here we setup the lidar
+FILE6=/home/$USER/swarm_ws/src/rplidar_ros/src/node.cpp
+if [ -f "$FILE6" ]; then
+    echo "rplidar_ros exists on the pc - nice."
+else
+    ls -l /dev | grep ttyUSB
+    sudo chmod 666 /dev/ttyUSB0
+    cd
+    cd swarm_ws/src
+    git clone https://github.com/Slamtec/rplidar_ros.git
+    cd ..
+    catkin_make
+    source devel/setup.bash
+fi
+
+cd
+sudo apt install arduino-mk -y
