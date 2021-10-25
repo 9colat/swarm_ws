@@ -14,7 +14,7 @@ else
     sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security universe"
     sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security multiverse"
     sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-    sudo apt install curl -y# if you haven't already installed curl
+    sudo apt install curl -y
     curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
     sudo apt install ros-noetic-desktop -y
     source /opt/ros/noetic/setup.bash
@@ -35,20 +35,15 @@ else
 fi
 
 echo "Download and installing arduino ide"
-FILE3=/home/$USER/arduino-1.8.16
-FILE35=/home/$USER/arduino-1.8.15
-if [ -f "$FILE3" ] || [ -f "$FILE35" ]; then
-    echo "arduino ide exists on the pc - nice."
-else
-    cd Downloads/
-    curl -o arduino-1.8.16-linux64.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linux64.tar.xz
-    tar -xf arduino-1.8.16-linux64.tar.xz-C /home/$USER/
-    cd
-    cd arduino-1.8.16
-    sudo ./install.sh
-    ./arduino-linux-setup.sh $USER
-    cd
-    cd Arduino/libraries/
+cd Downloads/
+curl -o arduino-1.8.16-linux64.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linux64.tar.xz
+tar -xf arduino-1.8.16-linux64.tar.xz-C /home/$USER/
+cd
+cd arduino-1.8.16
+sudo ./install.sh
+./arduino-linux-setup.sh $USER
+cd
+cd Arduino/libraries/
 rosrun rosserial_arduino make_libraries.py .
 
 echo "installing Teensy"
@@ -98,5 +93,7 @@ else
     source devel/setup.bash
 fi
 
-cd
-sudo apt install arduino-mk -y
+#cd
+#sudo apt install arduino-mk -y
+echo $?
+exit 0
