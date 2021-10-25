@@ -23,4 +23,4 @@ ssh ubuntu@ip
 add small fix what ever more more
 hej
 jk
-kjdslk
+why are you gay?
