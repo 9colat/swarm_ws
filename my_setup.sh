@@ -77,13 +77,14 @@ source devel/setup.bash
 #sudo chmod 744 /usr/local/bin/disk-space-check.sh
 #sudo chmod 664 /etc/systemd/system/disk-space-check.service
 
+//var/spool/cron/crontabs
 cd
 #sudo apt install arduino-mk -y
 #cd /home/nicoleg/arduino-1.8.15/hardware/teensy/avr/cores/teensy3
 
 #installing brew package mangerger
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-echo "echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> /home/$USER/.profile" >> ~/.bashrc
+#echo "echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> /home/$USER/.profile" >> ~/.bashrc
 echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> ~/.bashrc
 
 brew install arduino-cli -y
@@ -91,3 +92,6 @@ sudo apt install teensy-loader-cli -y
 cd
 chmod 777 /swarm_ws/arduino_make_upload.sh
 chmod 777 /swarm_ws/start_up_script.sh
+
+cronjob="@reboot //home/nicoleg/swarm_ws/start_up_script.sh"
+(crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
