@@ -19,9 +19,3 @@ rosrun hardware_driver driver.py
 chmod 777 driver.py
 
 ssh ubuntu@ip
-
-add small fix what ever more more
-hej
-jk
-why are you gay?
-test
