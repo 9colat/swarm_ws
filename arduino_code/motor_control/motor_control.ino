@@ -1,10 +1,20 @@
-#include <ros_lib/ros.h>
+//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/ros.h>
+//#include <Wire.h>
+//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/std_msgs/String.h>
+//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/std_msgs/Int16.h>
+//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/std_msgs/Float32.h>
+//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/std_msgs/Float64.h>
+//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/geometry_msgs/Vector3.h>
+
+#include <Arduino.h>
+#include <ros.h>
 #include <Wire.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Int16.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/Vector3.h>
+
 
 
 //-----pinout setting up-----//
@@ -61,12 +71,6 @@ std_msgs::Float64 wheel_speed;
 ros::Publisher speed_pub("wheel_speed", &wheel_speed);
 
 
-geometry_msgs::Vector3 imu_acc = geometry_msgs::Vector3();
-ros::Publisher IMU_data_acc("imu_acc", &imu_acc);
-geometry_msgs::Vector3 imu_gyro = geometry_msgs::Vector3();
-ros::Publisher IMU_data_gyro("imu_gyro", &imu_gyro);
-
-
 void array_push(long the_input_array[], float data){
   for (int x = sizeof(the_input_array); x > 0; x = x - 1){
     the_input_array[x] = the_input_array[x-1];
@@ -82,117 +86,6 @@ float averaging_array(long the_input_array[]){
   result = result/sizeof(the_input_array);
   return result;
   }
-
-
-
-void message_pwm(geometry_msgs::Vector3& pwm_comand){
-  pwm_procent_right = pwm_comand.x;
-  pwm_value_right = map(pwm_procent_right, 0, 100, 0, 255);
-  pwm_procent_left = pwm_comand.y;
-  pwm_value_left= map(pwm_procent_left, 0, 100, 0, 255);
-  heading_angle = pwm_comand.z;
-  analogWrite(right_motor_pwm, pwm_value_right);
-  analogWrite(left_motor_pwm, pwm_value_left);
-  //nh.loginfo(pwm_procent);
-}
-void message_mode(std_msgs::Int16& mode_comand){
-  mode_mode = mode_comand.data;
-  direction_seclection(mode_mode);
-  //String string_mode = String(mode_mode);
-  nh.loginfo(mode_mode);
-}
-
-ros::Subscriber<geometry_msgs::Vector3> sub("pwm_sig", &message_pwm);
-ros::Subscriber<std_msgs::Int16> sub1("mode_sig", &message_mode);
-
-
-void imu_collection(){
-  Wire.beginTransmission(MPU_addr);
-  Wire.write(0x3B);  // starting with register 0x3B (accel_XOUT_H)
-  Wire.endTransmission(false);
-  Wire.requestFrom(MPU_addr,14,true);  // request a total of 14 registers  String AX = String(mpu6050.getAccX());
-
-  accel_X=Wire.read()<<8|Wire.read();  // 0x3B (accel_XOUT_H) & 0x3C (accel_XOUT_L)
-  accel_Y=Wire.read()<<8|Wire.read();  // 0x3D (accel_YOUT_H) & 0x3E (accel_YOUT_L)
-  accel_Z=Wire.read()<<8|Wire.read();  // 0x3F (accel_ZOUT_H) & 0x40 (accel_ZOUT_L)
-  tmp=Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
-  gyro_X=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-  gyro_Y=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-  gyro_Z=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
-
-  imu_acc.x = accel_X;
-  imu_acc.y = accel_Y;
-  imu_acc.z = accel_Z;
-  IMU_data_acc.publish(&imu_acc);
-  imu_gyro.x = gyro_X;
-  imu_gyro.y = gyro_Y;
-  imu_gyro.z = gyro_Z;
-  IMU_data_gyro.publish(&imu_gyro);
-}
-
-void setup() {
-  Serial.begin(9600);
-  Serial.println("Start up");
-  nh.initNode();
-  pinMode(right_motor_pwm, OUTPUT);
-  pinMode(right_motor_ina, OUTPUT);
-  pinMode(right_motor_inb, OUTPUT);
-  pinMode(right_encoder_a, INPUT_PULLUP);
-  pinMode(right_encoder_b, INPUT_PULLUP);
-  pinMode(left_motor_pwm, OUTPUT);
-  pinMode(left_motor_ina, OUTPUT);
-  pinMode(left_motor_inb, OUTPUT);
-  pinMode(left_encoder_a, INPUT_PULLUP);
-  pinMode(left_encoder_b, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(right_encoder_a), encoder_count_chage_right, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(right_encoder_b), encoder_count_chage_right, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(left_encoder_a), encoder_count_chage_left, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
-  nh.subscribe(sub);
-  nh.subscribe(sub1);
-  nh.advertise(mode_pub);
-  nh.advertise(ankle_pub);
-  nh.advertise(speed_pub);
-  nh.advertise(IMU_data_acc);
-  nh.advertise(IMU_data_gyro);
-
-  Wire.begin();
-  Wire.beginTransmission(MPU_addr);
-  Wire.write(0x6B);  // PWR_MGMT_1 register
-  Wire.write(0);     // set to zero (wakes up the MPU-6050)
-  Wire.endTransmission(true);
-}
-
-void loop() {
-//  mode_confurm.data = test;
-//  mode_pub.publish(&mode_confurm);
-//  float test = encoder_to_unit(encoder_counter_right,1);
-//  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
-  mode_confurm.data = speed_array_left[1];
-  mode_pub.publish(&mode_confurm);
-
-  wheel_speed.data = average_omega_right;
-  speed_pub.publish(&wheel_speed);
-  imu_collection();
-  nh.spinOnce();
-}
-
-
-double encoder_to_unit(int encoder_count,int unit_output){//if unit_output is 1 the unit is deg, if its 2 its rad
-  double output_number;
-  float temp_number;
-  if (unit_output == 1){
-    output_number = encoder_count * count_to_deg;
-    //output_number = temp_number % float(360);
-    //output_number = map(encoder_count,-counts_per_revolution, counts_per_revolution, -360, 360);
-  }
-  if (unit_output == 2){
-    output_number = encoder_count * count_to_rad;
-    //output_number = temp_number % (2*pi);
-    //output_number = map(encoder_count,-counts_per_revolution, counts_per_revolution, -2*pi, 2*pi);
-  }
-  return output_number;
-}
 
 
 void encoder_count_chage_right(){
@@ -266,6 +159,28 @@ void encoder_count_chage_left(){
   average_omega_left = averaging_array(speed_array_left);
   }
 
+
+
+geometry_msgs::Vector3 imu_acc = geometry_msgs::Vector3();
+ros::Publisher IMU_data_acc("imu_acc", &imu_acc);
+geometry_msgs::Vector3 imu_gyro = geometry_msgs::Vector3();
+ros::Publisher IMU_data_gyro("imu_gyro", &imu_gyro);
+
+
+
+
+
+void message_pwm(geometry_msgs::Vector3& pwm_comand){
+  pwm_procent_right = pwm_comand.x;
+  pwm_value_right = map(pwm_procent_right, 0, 100, 0, 255);
+  pwm_procent_left = pwm_comand.y;
+  pwm_value_left= map(pwm_procent_left, 0, 100, 0, 255);
+  heading_angle = pwm_comand.z;
+  analogWrite(right_motor_pwm, pwm_value_right);
+  analogWrite(left_motor_pwm, pwm_value_left);
+  //nh.loginfo(pwm_procent);
+}
+
 void direction_seclection(int mode){
   if (mode == 0){// 0 means that the robot is going forward
     digitalWrite(right_motor_ina, HIGH);
@@ -300,4 +215,106 @@ void direction_seclection(int mode){
     direction_indicator_left = 1;
   }
 
+}
+
+void message_mode(std_msgs::Int16& mode_comand){
+  mode_mode = mode_comand.data;
+  direction_seclection(mode_mode);
+  //String string_mode = String(mode_mode);
+  nh.loginfo(mode_mode);
+}
+
+ros::Subscriber<geometry_msgs::Vector3> sub("pwm_sig", &message_pwm);
+ros::Subscriber<std_msgs::Int16> sub1("mode_sig", &message_mode);
+
+
+void imu_collection(){
+  Wire.beginTransmission(MPU_addr);
+  Wire.write(0x3B);  // starting with register 0x3B (accel_XOUT_H)
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU_addr,14,true);  // request a total of 14 registers  String AX = String(mpu6050.getAccX());
+
+  accel_X=Wire.read()<<8|Wire.read();  // 0x3B (accel_XOUT_H) & 0x3C (accel_XOUT_L)
+  accel_Y=Wire.read()<<8|Wire.read();  // 0x3D (accel_YOUT_H) & 0x3E (accel_YOUT_L)
+  accel_Z=Wire.read()<<8|Wire.read();  // 0x3F (accel_ZOUT_H) & 0x40 (accel_ZOUT_L)
+  tmp=Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
+  gyro_X=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
+  gyro_Y=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
+  gyro_Z=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+
+  imu_acc.x = accel_X;
+  imu_acc.y = accel_Y;
+  imu_acc.z = accel_Z;
+  IMU_data_acc.publish(&imu_acc);
+  imu_gyro.x = gyro_X;
+  imu_gyro.y = gyro_Y;
+  imu_gyro.z = gyro_Z;
+  IMU_data_gyro.publish(&imu_gyro);
+}
+
+
+
+double encoder_to_unit(int encoder_count,int unit_output){//if unit_output is 1 the unit is deg, if its 2 its rad
+  double output_number;
+  float temp_number;
+  if (unit_output == 1){
+    output_number = encoder_count * count_to_deg;
+    //output_number = temp_number % float(360);
+    //output_number = map(encoder_count,-counts_per_revolution, counts_per_revolution, -360, 360);
+  }
+  if (unit_output == 2){
+    output_number = encoder_count * count_to_rad;
+    //output_number = temp_number % (2*pi);
+    //output_number = map(encoder_count,-counts_per_revolution, counts_per_revolution, -2*pi, 2*pi);
+  }
+  return output_number;
+}
+
+
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Start up");
+  nh.initNode();
+  pinMode(right_motor_pwm, OUTPUT);
+  pinMode(right_motor_ina, OUTPUT);
+  pinMode(right_motor_inb, OUTPUT);
+  pinMode(right_encoder_a, INPUT_PULLUP);
+  pinMode(right_encoder_b, INPUT_PULLUP);
+  pinMode(left_motor_pwm, OUTPUT);
+  pinMode(left_motor_ina, OUTPUT);
+  pinMode(left_motor_inb, OUTPUT);
+  pinMode(left_encoder_a, INPUT_PULLUP);
+  pinMode(left_encoder_b, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(right_encoder_a), encoder_count_chage_right, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(right_encoder_b), encoder_count_chage_right, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(left_encoder_a), encoder_count_chage_left, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
+  nh.subscribe(sub);
+  nh.subscribe(sub1);
+  nh.advertise(mode_pub);
+  nh.advertise(ankle_pub);
+  nh.advertise(speed_pub);
+  nh.advertise(IMU_data_acc);
+  nh.advertise(IMU_data_gyro);
+
+  Wire.begin();
+  Wire.beginTransmission(MPU_addr);
+  Wire.write(0x6B);  // PWR_MGMT_1 register
+  Wire.write(0);     // set to zero (wakes up the MPU-6050)
+  Wire.endTransmission(true);
+}
+
+void loop() {
+//  mode_confurm.data = test;
+//  mode_pub.publish(&mode_confurm);
+//  float test = encoder_to_unit(encoder_counter_right,1);
+//  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
+  mode_confurm.data = speed_array_left[1];
+  mode_pub.publish(&mode_confurm);
+
+  wheel_speed.data = average_omega_right;
+  speed_pub.publish(&wheel_speed);
+  imu_collection();
+  nh.spinOnce();
 }

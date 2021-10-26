@@ -34,15 +34,15 @@ sudo apt upgrade -y
 
 echo "Download and installing arduino ide"
 cd Downloads/
-curl -o arduino-1.8.16-linuxaarch64.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linuxaarch64.tar.xz
-tar -xf arduino-1.8.16-linuxaarch64.tar.xz -C /home/$USER/
+curl -o arduino-1.8.15-linuxaarch64.tar.xz https://downloads.arduino.cc/arduino-1.8.16-linuxaarch64.tar.xz
+tar -xf arduino-1.8.15-linuxaarch64.tar.xz -C /home/$USER/
 cd
-cd arduino-1.8.16
+cd arduino-1.8.15
 sudo ./install.sh
 ./arduino-linux-setup.sh $USER
 
 cd
-cd arduino-1.8.16/libraries/
+cd arduino-1.8.15/libraries/
 rosrun rosserial_arduino make_libraries.py .
 
 echo "installing Teensy"
@@ -50,8 +50,8 @@ curl -o 00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
 sudo cp 00-teensy.rules /etc/udev/rules.d/
 curl -o TeensyduinoInstall.linuxaarch64 https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linuxaarch64
 chmod 755 TeensyduinoInstall.linuxaarch64
-./TeensyduinoInstall.linuxaarch64 --dir=arduino-1.8.16
-cd arduino-1.8.16/hardware/teensy/avr/cores/teensy4
+./TeensyduinoInstall.linuxaarch64 --dir=arduino-1.8.15
+cd arduino-1.8.15/hardware/teensy/avr/cores/teensy3
 make
 
 #here we setup the git reposetory that we have made.
@@ -79,6 +79,19 @@ sudo chmod 664 /etc/systemd/system/disk-space-check.service
 
 cd
 sudo apt install arduino-mk -y
+cd /home/nicoleg/arduino-1.8.15/hardware/teensy/avr/cores/teensy3
+
+#installing brew package mangerger
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+echo "echo 'eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> /home/$USER/.profile" >> ~/.bashrc
+echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> ~/.bashrc
+
+brew install arduino-cli -y
+sudo apt install teensy-loader-cli -y
+
+
+
+
 #cd swarm_ws/arduino_code/motor_control
 #make upload
 
