@@ -14,7 +14,7 @@ else
     #sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security universe"
     #sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security multiverse"
     sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-    
+
     sudo apt install curl -y
     curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
     sudo apt install ros-noetic-desktop -y
@@ -56,8 +56,6 @@ else
     curl -o TeensyduinoInstall.linux64 https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linux64
     chmod 755 TeensyduinoInstall.linux64
     ./TeensyduinoInstall.linux64 --dir=arduino-1.8.15
-    cd arduino-1.8.15/hardware/teensy/avr/cores/teensy4
-    make
     cd
     cd arduino-1.8.15/hardware/teensy/avr/cores/teensy3
     make

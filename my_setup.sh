@@ -54,6 +54,7 @@ curl -o TeensyduinoInstall.linuxaarch64 https://www.pjrc.com/teensy/td_155/Teens
 chmod 755 TeensyduinoInstall.linuxaarch64
 ./TeensyduinoInstall.linuxaarch64 --dir=arduino-1.8.15
 cd arduino-1.8.15/hardware/teensy/avr/cores/teensy3
+perl -pi -e 'MCU=MK20DX256/MCU=MK66FX1M0/g' Makefile
 make
 
 #here we setup the git reposetory that we have made.
