@@ -1,2 +1,5 @@
 #! /bin/bash
-sudo perl -pi -e 's/\# deb-src http://security.ubuntu.com/ubuntu focal-security main restricted/deb-src http://security.ubuntu.com/ubuntu focal-security main restricted/g' //etc/apt/sources.list
+echo "hey"
+echo "export PATH=\$PATH:/home/pi/bin" >> ~/.bashrc
+gnome-terminal -x sh -c "./test2.sh; bash"
+echo "whats wrong with your face?"
