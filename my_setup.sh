@@ -89,5 +89,5 @@ cd swarm_ws
 sudo chmod 777 arduino_make_upload.sh
 sudo chmod 777 start_up_script.sh
 
-cronjob="@reboot //home/nicoleg/swarm_ws/start_up_script.sh"
+cronjob="@reboot //home/ubuntu/swarm_ws/start_up_script.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
