@@ -79,7 +79,7 @@ cd
 
 #installing brew package mangerger
 curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
-echo "export PATH=$PATH:/home/pi/bin" >> ~/.bashrc
+echo "export PATH=\$PATH:/home/pi/bin" >> ~/.bashrc
 cd
 cd swarm_ws
 gnome-terminal -x sh -c "./test2.sh; bash"

@@ -14,11 +14,15 @@
 #include <std_msgs/Float32.h>
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/Vector3.h>
+#include <MPU9250_asukiaaa.h>
+#include <Adafruit_BMP280.h>
 
 
+Adafruit_BMP280 bme; // I2C
+MPU9250_asukiaaa mySensor;
 
 //-----pinout setting up-----//
-const int MPU_addr=0x68;  // I2C address of the MPU-6050 and mpu9250
+//const int MPU_addr=0x68;  // I2C address of the MPU-6050 and mpu9250
 const byte right_motor_pwm = 38;    // setting the pin for the right motors PWM
 const byte right_motor_inb = 37;    // setting the pin for the right motors b direction pin
 const byte right_motor_ina = 39;    // setting the pin for the right motors a direction pin
@@ -58,7 +62,8 @@ float average_omega_left;
 float float_to_long_factor = 10000.0;
 float robot_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
 float wheel_radius =1.0;              // needs to be updated and use the right unit (proberbly meters)
-int16_t accel_X,accel_Y,accel_Z,tmp,gyro_X,gyro_Y,gyro_Z;
+float accel_X,accel_Y,tmp,gyro_X,gyro_Y,gyro_Z,mag_X,mag_Y,mag_Z;
+float accel_Z = 0.0;
 long publisher_timer;
 
 
@@ -165,7 +170,8 @@ geometry_msgs::Vector3 imu_acc = geometry_msgs::Vector3();
 ros::Publisher IMU_data_acc("imu_acc", &imu_acc);
 geometry_msgs::Vector3 imu_gyro = geometry_msgs::Vector3();
 ros::Publisher IMU_data_gyro("imu_gyro", &imu_gyro);
-
+geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
+ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 
 
 
@@ -229,18 +235,21 @@ ros::Subscriber<std_msgs::Int16> sub1("mode_sig", &message_mode);
 
 
 void imu_collection(){
-  Wire.beginTransmission(MPU_addr);
-  Wire.write(0x3B);  // starting with register 0x3B (accel_XOUT_H)
-  Wire.endTransmission(false);
-  Wire.requestFrom(MPU_addr,14,true);  // request a total of 14 registers  String AX = String(mpu6050.getAccX());
+  // Wire.beginTransmission(MPU_addr);
+  // Wire.write(0x3B);  // starting with register 0x3B (accel_XOUT_H)
+  // Wire.endTransmission(false);
+  // Wire.requestFrom(MPU_addr,14,true);  // request a total of 14 registers  String AX = String(mpu6050.getAccX());
 
-  accel_X=Wire.read()<<8|Wire.read();  // 0x3B (accel_XOUT_H) & 0x3C (accel_XOUT_L)
-  accel_Y=Wire.read()<<8|Wire.read();  // 0x3D (accel_YOUT_H) & 0x3E (accel_YOUT_L)
-  accel_Z=Wire.read()<<8|Wire.read();  // 0x3F (accel_ZOUT_H) & 0x40 (accel_ZOUT_L)
-  tmp=Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
-  gyro_X=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-  gyro_Y=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-  gyro_Z=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+  accel_X=mySensor.accelX();  // 0x3B (accel_XOUT_H) & 0x3C (accel_XOUT_L)
+  accel_Y=mySensor.accelY();  // 0x3D (accel_YOUT_H) & 0x3E (accel_YOUT_L)
+  accel_Z=mySensor.accelZ();  // 0x3F (accel_ZOUT_H) & 0x40 (accel_ZOUT_L)
+  //tmp=Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
+  gyro_X=mySensor.gyroX();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
+  gyro_Y=mySensor.gyroX();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
+  gyro_Z=mySensor.gyroX();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+  mag_X=mySensor.magX();
+  mag_Y=mySensor.magY();
+  mag_Z=mySensor.magZ();
 
   imu_acc.x = accel_X;
   imu_acc.y = accel_Y;
@@ -250,8 +259,12 @@ void imu_collection(){
   imu_gyro.y = gyro_Y;
   imu_gyro.z = gyro_Z;
   IMU_data_gyro.publish(&imu_gyro);
+  imu_mag.x = mag_X;
+  imu_mag.y = mag_Y;
+  imu_mag.z = mag_Z;
+  IMU_data_mag.publish(&imu_mag);
+  Serial.println(accel_Z);
 }
-
 
 
 double encoder_to_unit(int encoder_count,int unit_output){//if unit_output is 1 the unit is deg, if its 2 its rad
@@ -273,7 +286,7 @@ double encoder_to_unit(int encoder_count,int unit_output){//if unit_output is 1 
 
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Start up");
   nh.initNode();
   pinMode(right_motor_pwm, OUTPUT);
@@ -297,12 +310,23 @@ void setup() {
   nh.advertise(speed_pub);
   nh.advertise(IMU_data_acc);
   nh.advertise(IMU_data_gyro);
+  nh.advertise(IMU_data_mag);
 
-  Wire.begin();
-  Wire.beginTransmission(MPU_addr);
-  Wire.write(0x6B);  // PWR_MGMT_1 register
-  Wire.write(0);     // set to zero (wakes up the MPU-6050)
-  Wire.endTransmission(true);
+
+  #ifdef _ESP32_HAL_I2C_H_ // For ESP32
+    Wire.begin(SDA_PIN, SCL_PIN);
+    mySensor.setWire(&Wire);
+  #endif
+
+    bme.begin();
+    mySensor.beginAccel();
+    mySensor.beginGyro();
+    mySensor.beginMag();
+  // Wire.begin();
+  // Wire.beginTransmission(MPU_addr);
+  // Wire.write(0x6B);  // PWR_MGMT_1 register
+  // Wire.write(0);     // set to zero (wakes up the MPU-6050)
+  // Wire.endTransmission(true);
 }
 
 void loop() {
@@ -316,5 +340,6 @@ void loop() {
   wheel_speed.data = average_omega_right;
   speed_pub.publish(&wheel_speed);
   imu_collection();
+  delay(100);
   nh.spinOnce();
 }
