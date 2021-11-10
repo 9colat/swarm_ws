@@ -7,6 +7,8 @@
 //#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/geometry_msgs/Vector3.h>
 
 #include <Arduino.h>
+#include "I2Cdev.h"
+#include "MPU9250.h"
 #include <ros.h>
 #include <Wire.h>
 #include <std_msgs/String.h>
@@ -18,7 +20,7 @@
 
 
 //-----pinout setting up-----//
-const int MPU_addr=0x68;  // I2C address of the MPU-6050 and mpu9250
+const int MPU_addr = 0x68; // I2C address of the MPU-6050 and mpu9250
 const byte right_motor_pwm = 38;    // setting the pin for the right motors PWM
 const byte right_motor_inb = 37;    // setting the pin for the right motors b direction pin
 const byte right_motor_ina = 39;    // setting the pin for the right motors a direction pin
@@ -37,13 +39,14 @@ double encoder_counter_left = 0.0;    // this is the encoder counter for the lef
 int status_of_led = HIGH;           // this can be removed later
 int direction_indicator_right;  //this is a direction indicator, that can be either 0 or 1. if the variable is 0 that means that the moters are going backwards, and 1 means forwards.
 int direction_indicator_left;   //this is a direction indicator, that can be either 0 or 1. if the variable is 0 that means that the moters are going backwards, and 1 means forwards.
-float count_to_deg = (360.0)/counts_per_revolution;  //convertion constants for degrees
-double count_to_rad = (2.0*pi)/counts_per_revolution; //convertion constants for radians
+float count_to_deg = (360.0) / counts_per_revolution; //convertion constants for degrees
+double count_to_rad = (2.0 * pi) / counts_per_revolution; //convertion constants for radians
 float pwm_procent_right = 0.0;        // the PWM procentage, initialed to 0 for the right motor
 float pwm_procent_left = 0.0;         // the PWM procentage, initialed to 0 for the left motor
 int pwm_value_right;                // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
 int pwm_value_left;                 // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
-float heading_angle;                // a filler value as of sep. 21 it has no uses other then it being set in the subcriber ""
+float measured_angle;  // a heading angle we get from the IMU
+float reference_angle; // a heading angle we want to be at - our goal angle
 int mode_mode;                      // initialzing the mode of the system
 double delta_time_right = 0.0;             // initialzing the the differents in time that is used to calculate the angular velocity
 double old_time_right = 0.0;    // setting the initial time of the system for the right motor
@@ -57,9 +60,12 @@ float average_omega_right;
 float average_omega_left;
 float float_to_long_factor = 10000.0;
 float robot_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
-float wheel_radius =1.0;              // needs to be updated and use the right unit (proberbly meters)
-int16_t accel_X,accel_Y,accel_Z,tmp,gyro_X,gyro_Y,gyro_Z;
+float wheel_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
+int16_t accel_X, accel_Y, accel_Z, tmp, gyro_X, gyro_Y, gyro_Z, mx, my, mz;
 long publisher_timer;
+MPU9250 accelgyro;
+int mag_x_cal = -20; //magnetometer callibration in x direction
+int mag_y_cal = -6; //magnetometer callibration in y direction
 
 
 ros::NodeHandle nh;                 // here the node handler is set with the name nh
@@ -71,85 +77,85 @@ std_msgs::Float64 wheel_speed;
 ros::Publisher speed_pub("wheel_speed", &wheel_speed);
 
 
-void array_push(long the_input_array[], float data){
-  for (int x = sizeof(the_input_array); x > 0; x = x - 1){
-    the_input_array[x] = the_input_array[x-1];
+void array_push(long the_input_array[], float data) {
+  for (int x = sizeof(the_input_array); x > 0; x = x - 1) {
+    the_input_array[x] = the_input_array[x - 1];
   }
-  the_input_array[0] = data*float_to_long_factor;
-  }
+  the_input_array[0] = data * float_to_long_factor;
+}
 
-float averaging_array(long the_input_array[]){
+float averaging_array(long the_input_array[]) {
   float result = 0;
-  for (int x = 0; x < sizeof(the_input_array); x++){
-    result = result + (the_input_array[x]/float_to_long_factor);
+  for (int x = 0; x < sizeof(the_input_array); x++) {
+    result = result + (the_input_array[x] / float_to_long_factor);
   }
-  result = result/sizeof(the_input_array);
+  result = result / sizeof(the_input_array);
   return result;
-  }
+}
 
 
-void encoder_count_chage_right(){
+void encoder_count_chage_right() {
   delta_time_right =  double(micros()) / 1000000 - old_time_right;
   old_time_right = double(micros()) / 1000000;
-  if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution){
-    if (direction_indicator_right == 1){
+  if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution) {
+    if (direction_indicator_right == 1) {
       encoder_counter_right++;
-      current_omega_right = count_to_rad/delta_time_right;
+      current_omega_right = count_to_rad / delta_time_right;
       array_push(speed_array_right, current_omega_right);
 
     }
-    if (direction_indicator_right == 0){
+    if (direction_indicator_right == 0) {
       encoder_counter_right = encoder_counter_right - 1;
-      current_omega_right = -count_to_rad/delta_time_right;
+      current_omega_right = -count_to_rad / delta_time_right;
       array_push(speed_array_right, current_omega_right);
     }
   }
-  if (encoder_counter_right == counts_per_revolution){
-    if (direction_indicator_right == 1){
+  if (encoder_counter_right == counts_per_revolution) {
+    if (direction_indicator_right == 1) {
       encoder_counter_right = 0;
-      current_omega_right = count_to_rad/delta_time_right;
+      current_omega_right = count_to_rad / delta_time_right;
       array_push(speed_array_right, current_omega_right);
     }
   }
-  if(encoder_counter_right == -counts_per_revolution){
-    if (direction_indicator_right == 0){
+  if (encoder_counter_right == -counts_per_revolution) {
+    if (direction_indicator_right == 0) {
       encoder_counter_right = 0;
-      current_omega_right = -count_to_rad*1.0/delta_time_right;
+      current_omega_right = -count_to_rad * 1.0 / delta_time_right;
       array_push(speed_array_right, current_omega_right);
     }
 
 
   }
   average_omega_right = averaging_array(speed_array_right);
-  }
+}
 
-void encoder_count_chage_left(){
+void encoder_count_chage_left() {
   delta_time_left = double(micros()) / 1000000 - old_time_left;
   old_time_left = double(micros()) / 1000000;
-  if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution){
-    if (direction_indicator_left == 1){
+  if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution) {
+    if (direction_indicator_left == 1) {
       encoder_counter_left++;
-      current_omega_left = count_to_rad/delta_time_left;
+      current_omega_left = count_to_rad / delta_time_left;
       array_push(speed_array_left, current_omega_left);
     }
-    if (direction_indicator_left == 0){
+    if (direction_indicator_left == 0) {
       encoder_counter_left = encoder_counter_left - 1;
-      current_omega_left = -count_to_rad/delta_time_left;
+      current_omega_left = -count_to_rad / delta_time_left;
       array_push(speed_array_left, current_omega_left);
 
     }
   }
-  if (encoder_counter_left == counts_per_revolution){
-    if (direction_indicator_left == 1){
+  if (encoder_counter_left == counts_per_revolution) {
+    if (direction_indicator_left == 1) {
       encoder_counter_left = 0;
-      current_omega_left = count_to_rad/delta_time_left;
+      current_omega_left = count_to_rad / delta_time_left;
       array_push(speed_array_left, current_omega_left);
     }
   }
-  if(encoder_counter_left == -counts_per_revolution){
-    if (direction_indicator_left == 0){
+  if (encoder_counter_left == -counts_per_revolution) {
+    if (direction_indicator_left == 0) {
       encoder_counter_left = 0;
-      current_omega_left = -count_to_rad*1.0/delta_time_left;
+      current_omega_left = -count_to_rad * 1.0 / delta_time_left;
       array_push(speed_array_left, current_omega_left);
     }
 
@@ -157,112 +163,112 @@ void encoder_count_chage_left(){
   }
 
   average_omega_left = averaging_array(speed_array_left);
-  }
-
+}
 
 
 geometry_msgs::Vector3 imu_acc = geometry_msgs::Vector3();
 ros::Publisher IMU_data_acc("imu_acc", &imu_acc);
 geometry_msgs::Vector3 imu_gyro = geometry_msgs::Vector3();
 ros::Publisher IMU_data_gyro("imu_gyro", &imu_gyro);
+geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
+ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
+//std_msgs::Float64 measured_angle = std_msgs::Float64();
+//ros::Publisher data_measured_angle("measured_angle", &measured_angle);
+geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
+ros::Publisher datadata_measured_angle("data_measured_angle", &data_measured_angle);
+
+
+void setPWM(int pwm_left, int pwm_right) {
+  //setting the correct direction of the motor
+  digitalWrite(right_motor_ina, pwm_right >= 0);
+  digitalWrite(right_motor_inb, pwm_right < 0);
+  digitalWrite(left_motor_ina, pwm_left >= 0);
+  digitalWrite(left_motor_inb, pwm_left < 0);
+  //setting the value of the motor
+  pwm_right = abs(pwm_right);
+  pwm_left = abs(pwm_left);
+  if (pwm_left > 255) {
+    pwm_left = 255;
+  }
+  if (pwm_right > 255) {
+    pwm_right = 255;
+  }
+  analogWrite(right_motor_pwm, pwm_right);
+  analogWrite(left_motor_pwm, pwm_left);
+}
 
 
 
 
-
-void message_pwm(geometry_msgs::Vector3& pwm_comand){
+void message_pwm(geometry_msgs::Vector3& pwm_comand) {
   pwm_procent_right = pwm_comand.x;
-  pwm_value_right = map(pwm_procent_right, 0, 100, 0, 255);
+  //pwm_value_right = map(pwm_procent_right, 0, 100, 0, 255);
   pwm_procent_left = pwm_comand.y;
-  pwm_value_left= map(pwm_procent_left, 0, 100, 0, 255);
-  heading_angle = pwm_comand.z;
-  analogWrite(right_motor_pwm, pwm_value_right);
-  analogWrite(left_motor_pwm, pwm_value_left);
+  //pwm_value_left = map(pwm_procent_left, 0, 100, 0, 255);
+  reference_angle = pwm_comand.z;
+  //analogWrite(right_motor_pwm, pwm_value_right);
+  //analogWrite(left_motor_pwm, pwm_value_left);
   //nh.loginfo(pwm_procent);
+  //setPWM(pwm_procent_left, pwm_procent_right);
 }
 
-void direction_seclection(int mode){
-  if (mode == 0){// 0 means that the robot is going forward
-    digitalWrite(right_motor_ina, HIGH);
-    digitalWrite(right_motor_inb, LOW);
-    digitalWrite(left_motor_ina, LOW);
-    digitalWrite(left_motor_inb, HIGH);
-    direction_indicator_right = 1;
-    direction_indicator_left = 1;
-  }
-  if (mode == 1){// 1 means that the robot is reversing
-    digitalWrite(right_motor_ina, LOW);
-    digitalWrite(right_motor_inb, HIGH);
-    digitalWrite(left_motor_ina, HIGH);
-    digitalWrite(left_motor_inb, LOW);
-    direction_indicator_right = 0;
-    direction_indicator_left = 0;
-  }
-  if (mode == 2){// 2 means that the robot is turning left
-    digitalWrite(right_motor_ina, HIGH);
-    digitalWrite(right_motor_inb, LOW);
-    digitalWrite(left_motor_ina, HIGH);
-    digitalWrite(left_motor_inb, LOW);
-    direction_indicator_right = 1;
-    direction_indicator_left = 0;
-  }
-  if (mode == 3){// 3 means that the robot is turning right
-    digitalWrite(right_motor_ina, LOW);
-    digitalWrite(right_motor_inb, HIGH);
-    digitalWrite(left_motor_ina, LOW);
-    digitalWrite(left_motor_inb, HIGH);
-    direction_indicator_right = 0;
-    direction_indicator_left = 1;
-  }
-
-}
-
-void message_mode(std_msgs::Int16& mode_comand){
-  mode_mode = mode_comand.data;
-  direction_seclection(mode_mode);
-  //String string_mode = String(mode_mode);
-  nh.loginfo(mode_mode);
-}
 
 ros::Subscriber<geometry_msgs::Vector3> sub("pwm_sig", &message_pwm);
-ros::Subscriber<std_msgs::Int16> sub1("mode_sig", &message_mode);
 
 
-void imu_collection(){
-  Wire.beginTransmission(MPU_addr);
-  Wire.write(0x3B);  // starting with register 0x3B (accel_XOUT_H)
-  Wire.endTransmission(false);
-  Wire.requestFrom(MPU_addr,14,true);  // request a total of 14 registers  String AX = String(mpu6050.getAccX());
+void imu_collection() {
+  /*Wire.beginTransmission(MPU_addr);
+    Wire.write(0x3B);  // starting with register 0x3B (accel_XOUT_H)
+    Wire.endTransmission(false);
+    Wire.requestFrom(MPU_addr, 14, true); // request a total of 14 registers  String AX = String(mpu6050.getAccX());
 
-  accel_X=Wire.read()<<8|Wire.read();  // 0x3B (accel_XOUT_H) & 0x3C (accel_XOUT_L)
-  accel_Y=Wire.read()<<8|Wire.read();  // 0x3D (accel_YOUT_H) & 0x3E (accel_YOUT_L)
-  accel_Z=Wire.read()<<8|Wire.read();  // 0x3F (accel_ZOUT_H) & 0x40 (accel_ZOUT_L)
-  tmp=Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
-  gyro_X=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-  gyro_Y=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-  gyro_Z=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+    accel_X = Wire.read() << 8 | Wire.read(); // 0x3B (accel_XOUT_H) & 0x3C (accel_XOUT_L)
+    accel_Y = Wire.read() << 8 | Wire.read(); // 0x3D (accel_YOUT_H) & 0x3E (accel_YOUT_L)
+    accel_Z = Wire.read() << 8 | Wire.read(); // 0x3F (accel_ZOUT_H) & 0x40 (accel_ZOUT_L)
+    tmp = Wire.read() << 8 | Wire.read(); // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
+    gyro_X = Wire.read() << 8 | Wire.read(); // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
+    gyro_Y = Wire.read() << 8 | Wire.read(); // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
+    gyro_Z = Wire.read() << 8 | Wire.read(); // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+  */
+
+  accelgyro.getMotion9(&accel_X, &accel_Y, &accel_Z, &gyro_X, &gyro_Y, &gyro_Z, &mx, &my, &mz);
 
   imu_acc.x = accel_X;
   imu_acc.y = accel_Y;
   imu_acc.z = accel_Z;
   IMU_data_acc.publish(&imu_acc);
+
   imu_gyro.x = gyro_X;
   imu_gyro.y = gyro_Y;
   imu_gyro.z = gyro_Z;
   IMU_data_gyro.publish(&imu_gyro);
+  // data from the magnetometer that is calibrated and turned into a heading
+  imu_mag.x = mx;
+  imu_mag.y = my;
+  imu_mag.z = mz;
+  IMU_data_mag.publish(&imu_mag);
+  measured_angle = atan2(my - mag_y_cal, mx - mag_x_cal) * 180 / pi;
+  data_measured_angle.x = mx;
+  data_measured_angle.y = reference_angle;
+  data_measured_angle.z = measured_angle;
+  datadata_measured_angle.publish(&data_measured_angle);
 }
 
+void heading_controller(float measured_angle, float reference_angle, float p_gain) { //(measured, goal, p_value)
+  int heading_error = reference_angle - measured_angle;
+  int control_signal = heading_error * p_gain;
+  setPWM(control_signal, - control_signal);
+}
 
-
-double encoder_to_unit(int encoder_count,int unit_output){//if unit_output is 1 the unit is deg, if its 2 its rad
+double encoder_to_unit(int encoder_count, int unit_output) { //if unit_output is 1 the unit is deg, if its 2 its rad
   double output_number;
   float temp_number;
-  if (unit_output == 1){
+  if (unit_output == 1) {
     output_number = encoder_count * count_to_deg;
     //output_number = temp_number % float(360);
     //output_number = map(encoder_count,-counts_per_revolution, counts_per_revolution, -360, 360);
   }
-  if (unit_output == 2){
+  if (unit_output == 2) {
     output_number = encoder_count * count_to_rad;
     //output_number = temp_number % (2*pi);
     //output_number = map(encoder_count,-counts_per_revolution, counts_per_revolution, -2*pi, 2*pi);
@@ -291,30 +297,51 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(left_encoder_a), encoder_count_chage_left, CHANGE);
   attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
   nh.subscribe(sub);
-  nh.subscribe(sub1);
+  //  nh.subscribe(sub1);
   nh.advertise(mode_pub);
   nh.advertise(ankle_pub);
   nh.advertise(speed_pub);
   nh.advertise(IMU_data_acc);
   nh.advertise(IMU_data_gyro);
+  nh.advertise(IMU_data_mag);
+  nh.advertise(datadata_measured_angle);
 
   Wire.begin();
-  Wire.beginTransmission(MPU_addr);
-  Wire.write(0x6B);  // PWR_MGMT_1 register
-  Wire.write(0);     // set to zero (wakes up the MPU-6050)
-  Wire.endTransmission(true);
+  //Wire.beginTransmission(MPU_addr);
+  //Wire.write(0x6B);  // PWR_MGMT_1 register
+  //Wire.write(0);     // set to zero (wakes up the MPU-6050)
+  //Wire.endTransmission(true);
+  accelgyro.initialize();
+  Serial.println("Testing device connections...");
+  Serial.println(accelgyro.testConnection() ? "MPU9250 connection successful" : "MPU9250 connection failed");
+
 }
 
 void loop() {
-//  mode_confurm.data = test;
-//  mode_pub.publish(&mode_confurm);
-//  float test = encoder_to_unit(encoder_counter_right,1);
-//  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
+  //  mode_confurm.data = test;
+  //  mode_pub.publish(&mode_confurm);
+  //  float test = encoder_to_unit(encoder_counter_right,1);
+  //  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
+
+
+
   mode_confurm.data = speed_array_left[1];
   mode_pub.publish(&mode_confurm);
 
   wheel_speed.data = average_omega_right;
   speed_pub.publish(&wheel_speed);
+
+  //in order to improve the measured_angle reading, you can do measured=(integral(gyro))*0.9+magnetometer*0.1
+  //the integral is going to drift, but the magnetometer will correct it (you need to find the correct ratio)
+  //in short term, we trust gyro, but in a long term, we trust magnetometer more
+
   imu_collection();
+  heading_controller(measured_angle, reference_angle, 2.0); // 2.0 to use all the range (for now - testing purposes)
+  //Serial.print("Measured:");
+  //Serial.println(measured_angle);
+  //Serial.print("Reference:");
+  //Serial.println(reference_angle);
+
+
   nh.spinOnce();
 }
