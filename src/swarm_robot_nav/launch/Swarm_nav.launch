@@ -1,13 +1,28 @@
 <launch>
+<!-- Lidar node -->
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
+  <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+  <param name="serial_baudrate"     type="int"    value="115200"/><!--A1/A2 -->
+  <!--param name="serial_baudrate"     type="int"    value="256000"--><!--A3 -->
+  <param name="frame_id"            type="string" value="laser"/>
+  <param name="inverted"            type="bool"   value="false"/>
+  <param name="angle_compensate"    type="bool"   value="true"/>
+  </node>
 
-   <node pkg="sensor_node_pkg" type="sensor_node_type" name="sensor_node_name" output="screen">
-    <param name="sensor_param" value="param_value" />
- </node>
+<!-- Odometry node
  <node pkg="odom_node_pkg" type="odom_node_type" name="odom_node" output="screen">
     <param name="odom_param" value="param_value" />
  </node>
- <node pkg="transform_configuration_pkg" type="transform_configuration_type" name="transform_configuration_name" output="screen">
-    <param name="transform_configuration_param" value="param_value" />
+-->
+
+ <!-- Transform_config for robot and lidar-->
+ <node pkg="robot_setup_tf" type="tf_broadcaster" name="robot_tf" output="screen">
+<!--    <param name="transform_configuration_param" value="param_value" /> -->
+ </node>
+
+ <!-- Ros_serial com (com between rpi and teensy) -->
+ <node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" output="screen">
+    <param name="port" value="/dev/ttyACM0" />
  </node>
 
 </launch>
