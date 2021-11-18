@@ -39,25 +39,90 @@ def callback_lidar(data):
     print(lidar_array[i])
 
 def cartian_to_polar(current_pose_x, current_pose_y, quat_x, quat_y, quat_z, quat_w , goal_pose_x, goal_pose_y, lidar_array_temp):
-    delta_x = current_pose_x - goal_pose_x
-    delta_y = current_pose_y - goal_pose_y
     t3 = +2.0 * (quat_w * quat_z + quat_x * quat_y)
     t4 = +1.0 - 2.0 * (quat_y * quat_y + quat_z * quat_z)
     current_yaw = math.degrees(math.atan2(t3, t4))
     current_theta = math.atan2(t3, t4)
-    theta_goal = numpy.arctan((delta_y/delta_x))
-    delta_theta = current_goal - theta_goal
-    if delta_theta > math.radians(0) and delta_theta < math.radians(180):
-        
+
+    global_delta_x = goal_pose_x - current_pose_x
+    global_delta_y = goal_pose_y - current_pose_y
+
+    if global_delta_x == 0:
+        if global_delta_y > 0:
+            global_theta_goal = math.radians(0)
+        if global_delta_y < 0:
+             global_theta_goal = math.radians(180)
+    if global_delta_y == 0:
+        if global_delta_x > 0:
+            global_theta_goal = math.radians(0)
+        if global_delta_x < 0:
+             global_theta_goal = math.radians(180)
+    if global_delta_x == 0 and global_delta_y == 0:
+        global_theta_goal = 0
+    if global_delta_x != 0:
+        global_theta_goal = numpy.arctan((global_delta_y/global_delta_x))
 
 
-    return
+    robot_coord_current_x =  math.cos(current_theta)*current_pose_x - math.sin(current_theta)*current_pose_y
+    robot_coord_current_y =  math.sin(current_theta)*current_pose_x + math.cos(current_theta)*current_pose_y
+    robot_coord_goal_x = math.cos(current_theta)*goal_pose_x - math.sin(current_theta)*goal_pose_y
+    robot_coord_goal_y = math.sin(current_theta)*goal_pose_x + math.cos(current_theta)*goal_pose_y
+
+    delta_x = robot_coord_goal_x - robot_coord_current_x
+    delta_y = robot_coord_goal_y - robot_coord_current_y
+    if delta_x == 0:
+        if delta_y > 0:
+            theta_goal = math.radians(0)
+        if delta_y < 0:
+             theta_goal = math.radians(180)
+    if delta_y == 0:
+        if delta_x > 0:
+            theta_goal = math.radians(0)
+        if delta_x < 0:
+             theta_goal = math.radians(180)
+    if delta_x == 0 and delta_y == 0:
+        theta_goal = 0
+    if delta_x != 0:
+        theta_goal = numpy.arctan((delta_y/delta_x))
+
+    delta_theta = current_theta - theta_goal
+    r = math.sqrt(pow(delta_x,2) + pow(delta_y,2))
+
+    #v = ((numpy.arctan(r-4))/1)+1
+    v = 50
+
+    print(math.degrees(delta_theta))
+    global_delta_theta = current_theta - global_theta_goal
+    if current_theta > 180 and global_theta_goal < 180:
+        if delta_theta > math.radians(180):
+            heading = -delta_theta
+            v_r = abs(math.sin(delta_theta))*v
+            v_l = v
+            print("one")
+        if delta_theta < math.radians(180):
+            heading = math.radians(360)-
+            v_r = math.sin(delta_theta)*v
+            v_l = v
+            print("two")
+    if current_theta < 180 and global_theta_goal > 180:
+        if delta_theta > -math.radians(180):
+            heading =
+            v_l = abs(math.sin(delta_theta))*v
+            v_r = v
+            print("three")
+        if delta_theta < -math.radians(180):
+            heading = -delta_theta
+            v_l = math.sin(delta_theta)*v
+            v_r = v
+            print("four")
+
+    return math.degrees(current_theta), math.degrees(theta_goal), math.degrees(delta_theta), r, v_r, v_l
 
 
 def lidar_data():
     rospy.init_node('local_avoider', anonymous=True)
     rospy.Subscriber("scan", LaserScan, callback_lidar)
-    print(cartian_to_polar(0,0,0,0,0.7072,0.7072,1,1,lidar_array))
+    print(cartian_to_polar(0,0,0,0,0.7072,0.7072,-1,0,lidar_array))
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
