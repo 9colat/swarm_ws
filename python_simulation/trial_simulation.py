@@ -3,6 +3,7 @@ import random
 import statistics
 import pygame
 import time
+import array as arr
 
 
 pygame.init()
@@ -17,7 +18,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 ROBOT_SIZE = (25,25)
 numberofObstacles = 10
-numberofRobots = 20
+numberofRobots = 1000
 
 
 #create a grid (continued in the main loop)
@@ -79,10 +80,10 @@ class Robot(pygame.sprite.Sprite):
 
 
 ADDOBSTACLE = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDOBSTACLE, 1)
+pygame.time.set_timer(ADDOBSTACLE, 100)
 obstacles = pygame.sprite.Group()
 ADDROBOT = pygame.USEREVENT + 2
-pygame.time.set_timer(ADDROBOT, 1)
+pygame.time.set_timer(ADDROBOT, 200)
 robots = pygame.sprite.Group()
 
 #for rendering
@@ -116,6 +117,19 @@ while running:
                     new_robot = Robot()
                     robots.add(new_robot)
                     all_sprites.add(new_robot)
+                    if pygame.sprite.groupcollide(obstacles, robots, False, True) == True:
+                        print("now")
+                        for entity in robots:
+                            print("i am")
+                            entity.kill()
+                            print("dead")
+                    #if pygame.sprite.groupcollide(robots, new_robot, False, True) == True:
+                    #    print("misa")
+                    #    for entity in robots:
+                    #        print("will")
+                    #        entity.kill()
+                    #        print("dead too")
+
 
     # Flip the display
     pygame.display.flip()
