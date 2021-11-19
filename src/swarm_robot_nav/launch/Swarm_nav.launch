@@ -20,7 +20,7 @@
 <!--    <param name="transform_configuration_param" value="param_value" /> -->
  </node>
 
- <!-- Ros_serial com (com between rpi and teensy) -->
+ <!-- Ros_serial com (com between rpi and teeny) -->
  <node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" output="screen">
     <param name="port" value="/dev/ttyACM0" />
  </node>
