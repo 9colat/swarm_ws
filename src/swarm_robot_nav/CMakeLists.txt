@@ -11,9 +11,9 @@ find_package(catkin REQUIRED COMPONENTS
   move_base
   roscpp
   rospy
-  swarm_laser_sensor_config_dep
-  swarm_odom_config_dep
-  swarm_tf_config_dep
+  ##swarm_laser_sensor_config_dep
+  ##swarm_odom_config_dep
+  ##swarm_tf_config_dep
 )
 
 ## System dependencies are found with CMake's conventions
