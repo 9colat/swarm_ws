@@ -234,7 +234,7 @@ void message_pwm(geometry_msgs::Vector3& pwm_comand) {
   //analogWrite(right_motor_pwm, pwm_value_right);
   //analogWrite(left_motor_pwm, pwm_value_left);
   //nh.loginfo(pwm_procent);
-  //setPWM(pwm_procent_left, pwm_procent_right);
+  setPWM(pwm_procent_left, pwm_procent_right);
 }
 
 
@@ -360,8 +360,8 @@ void loop() {
   //the integral is going to drift, but the magnetometer will correct it (you need to find the correct ratio)
   //in short term, we trust gyro, but in a long term, we trust magnetometer more
 
-  imu_collection();
-  heading_controller(measured_angle, reference_angle, 2.0); // 2.0 to use all the range (for now - testing purposes)
+  //imu_collection();
+  //heading_controller(measured_angle, reference_angle, 2.0); // 2.0 to use all the range (for now - testing purposes)
   //Serial.print("Measured:");
   //Serial.println(measured_angle);
   //Serial.print("Reference:");

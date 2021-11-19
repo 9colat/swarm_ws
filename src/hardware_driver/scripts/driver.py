@@ -2,7 +2,13 @@
 import rospy
 import sys
 from std_msgs.msg import Int16
+from std_msgs.msg import Float64
 from geometry_msgs.msg import Vector3
+
+def speed_writting(data):
+    f = open("wheel_speed.txt","a")
+    f.write(str(data.data))
+    f.close()
 
 def talker():
     pub = rospy.Publisher('pwm_sig', Vector3, queue_size=10)
@@ -23,6 +29,7 @@ def talker():
         pwm_comand.x = int(temp_pwm_r)
         pwm_comand.y = int(temp_pwm_l)
         pwm_comand.z = int(temp_heading)
+        rospy.Subscriber("wheel_speed", Float64, speed_writting)
         rospy.loginfo(pwm_comand)
         pub.publish(pwm_comand)
         rospy.loginfo(dir_comand)
