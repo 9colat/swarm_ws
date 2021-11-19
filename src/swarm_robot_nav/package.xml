@@ -52,21 +52,21 @@
   <build_depend>move_base</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
-  <build_depend>swarm_laser_sensor_config_dep</build_depend>
-  <build_depend>swarm_odom_config_dep</build_depend>
-  <build_depend>swarm_tf_config_dep</build_depend>
+<!--  <build_depend>swarm_laser_sensor_config_dep</build_depend> -->
+<!--  <build_depend>swarm_odom_config_dep</build_depend<name   /> -->
+<!--  <build_depend>swarm_tf_config_dep</build_depend>-->
   <build_export_depend>move_base</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
-  <build_export_depend>swarm_laser_sensor_config_dep</build_export_depend>
-  <build_export_depend>swarm_odom_config_dep</build_export_depend>
-  <build_export_depend>swarm_tf_config_dep</build_export_depend>
+  <!--<build_export_depend>swarm_laser_sensor_config_dep</build_export_depend>-->
+<!--  <build_export_depend>swarm_odom_config_dep</build_export_depend>-->
+  <!--<build_export_depend>swarm_tf_config_dep</build_export_depend>-->
   <exec_depend>move_base</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
-  <exec_depend>swarm_laser_sensor_config_dep</exec_depend>
-  <exec_depend>swarm_odom_config_dep</exec_depend>
-  <exec_depend>swarm_tf_config_dep</exec_depend>
+<!--  <exec_depend>swarm_laser_sensor_config_dep</exec_depend> -->
+<!--  <exec_depend>swarm_odom_config_dep</exec_depend>-->
+<!--  <exec_depend>swarm_tf_config_dep</exec_depend>-->
 
 
   <!-- The export tag contains other, unspecified, tags -->
