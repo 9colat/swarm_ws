@@ -1,6 +1,6 @@
 obstacle_range: 2.5
 raytrace_range: 3.0
-footprint: [[x0, y0], [x1, y1], ... [xn, yn]]
+#footprint: [[x0, y0], [x1, y1], ... [xn, yn]]
 #robot_radius: ir_of_robot
 inflation_radius: 0.55
 
@@ -10,4 +10,4 @@ laser_scan_sensor: {sensor_frame: base_laser, data_type: LaserScan, topic: scan,
 
 #point_cloud_sensor: {sensor_frame: frame_name, data_type: PointCloud, topic: topic_name, marking: true, clearing: true}
 
-#The "marking" and "clearing" parameters determine whether the sensor will be used to add obstacle information to the costmap, clear obstacle information from the costmap, or do both. 
+#The "marking" and "clearing" parameters determine whether the sensor will be used to add obstacle information to the costmap, clear obstacle information from the costmap, or do both.
