@@ -315,7 +315,7 @@ void odometry(){
   v_x = v*cos(phi);
   v_y = v*sin(phi);
 
-  
+
   odom_trans.header.stamp = nh.now();
   odom_trans.header.frame_id = "odom";
   odom_trans.child_frame_id = "base_link";
@@ -389,7 +389,7 @@ void setup() {
 void loop() {
 
 
-
+  odometry();
   mode_confurm.data = speed_array_left[1];
   mode_pub.publish(&mode_confurm);
 
