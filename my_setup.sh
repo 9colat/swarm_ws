@@ -45,6 +45,8 @@ sudo ./install.sh
 cd
 cd arduino-1.8.15/libraries/
 rosrun rosserial_arduino make_libraries.py .
+cd
+sudo apt install ros-noetic-navigation -y
 
 echo "installing Teensy"
 cd
