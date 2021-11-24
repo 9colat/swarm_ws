@@ -1,11 +1,3 @@
-//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/ros.h>
-//#include <Wire.h>
-//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/std_msgs/String.h>
-//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/std_msgs/Int16.h>
-//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/std_msgs/Float32.h>
-//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/std_msgs/Float64.h>
-//#include </home/nicoleg/arduino-1.8.15/libraries/ros_lib/geometry_msgs/Vector3.h>
-
 #include <Arduino.h>
 #include "I2Cdev.h"
 #include "MPU9250.h"
@@ -31,6 +23,9 @@ const byte left_motor_inb = 28;     // setting the pin for the left motors b dir
 const byte left_motor_ina = 30;     // setting the pin for the left motors a direction pin
 const byte left_encoder_a = 24;     // setting the pin for the left motors first encoder signal pin
 const byte left_encoder_b = 25;     // setting the pin for the left motors secondt encoder signal pin
+const byte RGB_led_green = 2;
+const byte RGB_led_blue = 3;
+const byte RGB_led_red = 4;
 //-----variabels-----//
 int counts_per_revolution = 1920.0;   // the number of counts per full wheel revulotion
 const float pi = 3.141593;          // this is pi, or an aproximation, what did you expeced?
@@ -301,12 +296,52 @@ double encoder_to_unit(int encoder_count, int unit_output) { //if unit_output is
   return output_number;
 }
 
-
+void RGB_led_set(const String& color){
+  if(color == "red"||color == "Red"||color == "RED"){
+    digitalWrite(RGB_led_green, HIGH);
+    digitalWrite(RGB_led_blue, HIGH);
+    digitalWrite(RGB_led_red, LOW);
+  }
+  if(color == "green"||color == "Green"||color == "GREEN"){
+    digitalWrite(RGB_led_green, LOW);
+    digitalWrite(RGB_led_blue, HIGH);
+    digitalWrite(RGB_led_red, HIGH);
+  }
+  if(color == "blue"||color == "Blue"||color == "BLUE"){
+    digitalWrite(RGB_led_green, HIGH;
+    digitalWrite(RGB_led_blue, LOW);
+    digitalWrite(RGB_led_red, HIGH);
+  }
+  if(color == "cyan"||color == "Cyan"||color == "CYAN"){
+    digitalWrite(RGB_led_green, LOW);
+    digitalWrite(RGB_led_blue, LOW);
+    digitalWrite(RGB_led_red, HIGH);
+  }
+  if(color == "purple"||color == "Purple"||color == "PURPLE"){
+    digitalWrite(RGB_led_green, HIGH);
+    digitalWrite(RGB_led_blue, LOW);
+    digitalWrite(RGB_led_red, LOW;
+  }
+  if(color == "orange"||color == "Orange"||color == "ORANGE"){
+    digitalWrite(RGB_led_green, LOW);
+    digitalWrite(RGB_led_blue, HIGH);
+    digitalWrite(RGB_led_red, LOW;
+  }
+  if(color == "white "||color == "White"||color == "WHITE"){
+    digitalWrite(RGB_led_green, LOW);
+    digitalWrite(RGB_led_blue, LOW);
+    digitalWrite(RGB_led_red, LOW;
+  }
+}
 
 void setup() {
   Serial.begin(9600);
   Serial.println("Start up");
   nh.initNode();
+  pinMode(RGB_led_green, OUTPUT);
+  pinMode(RGB_led_blue, OUTPUT);
+  pinMode(RGB_led_red, OUTPUT);
+  RGB_led_set("white");
   pinMode(right_motor_pwm, OUTPUT);
   pinMode(right_motor_ina, OUTPUT);
   pinMode(right_motor_inb, OUTPUT);
@@ -343,6 +378,7 @@ void setup() {
 }
 
 void loop() {
+  RGB_led_set(green);
   //  mode_confurm.data = test;
   //  mode_pub.publish(&mode_confurm);
   //  float test = encoder_to_unit(encoder_counter_right,1);
