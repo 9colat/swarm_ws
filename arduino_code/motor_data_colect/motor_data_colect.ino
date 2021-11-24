@@ -35,7 +35,7 @@ int pwm_value_right;                // initialzing the PWM value aka. turning th
 int pwm_value_left;                 // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
 float measured_angle;  // a heading angle we get from the IMU
 float reference_angle = 0.0; // a heading angle we want to be at - our goal angle
-int mode_mode;                      // initialzing the mode of the system
+int mode_mode = 0;                      // initialzing the mode of the system
 double delta_time_right = 0.0;             // initialzing the the differents in time that is used to calculate the angular velocity
 double old_time_right = 0.0;    // setting the initial time of the system for the right motor
 double delta_time_left = 0.0;              // initialzing the the differents in time that is used to calculate the angular velocity
@@ -49,18 +49,16 @@ float average_omega_left;
 float float_to_long_factor = 10000.0;
 float robot_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
 float wheel_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
-int16_t accel_X, accel_Y, accel_Z, tmp, gyro_X, gyro_Y, gyro_Z, mx, my, mz;
-long publisher_timer;
-MPU9250 accelgyro;
-int mag_x_cal = -20; //magnetometer callibration in x direction
-int mag_y_cal = -6; //magnetometer callibration in y direct
-float num = 0.0;
 
-ros::NodeHandle nh;                 // here the node handler is set with the name nh
-std_msgs::Int16 mode_confurm;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
-ros::Publisher mode_pub("mode_repeat", &mode_confurm);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
-std_msgs::Float64 wheel_speed;
-ros::Publisher speed_pub("wheel_speed", &wheel_speed);
+ros::NodeHandle nh;
+geometry_msgs::Vector3 right_wheel_speed;
+ros::Publisher data_pub("collection", &right_wheel_speed);
+
+
+void message_mode(std_msgs::Int16& mode_comand) {
+  mode_mode = mode_comand.data;
+}
+ros::Subscriber<std_msgs::Int16> sub("mode_sig", &message_mode);
 
 void array_push(long the_input_array[], float data) {
   for (int x = sizeof(the_input_array); x > 0; x = x - 1) {
@@ -87,7 +85,6 @@ void encoder_count_chage_right() {
       encoder_counter_right++;
       current_omega_right = count_to_rad / delta_time_right;
       array_push(speed_array_right, current_omega_right);
-
     }
     if (direction_indicator_right == 0) {
       encoder_counter_right = encoder_counter_right - 1;
@@ -108,8 +105,6 @@ void encoder_count_chage_right() {
       current_omega_right = -count_to_rad * 1.0 / delta_time_right;
       array_push(speed_array_right, current_omega_right);
     }
-
-
   }
   average_omega_right = averaging_array(speed_array_right);
 }
@@ -127,7 +122,6 @@ void encoder_count_chage_left() {
       encoder_counter_left = encoder_counter_left - 1;
       current_omega_left = -count_to_rad / delta_time_left;
       array_push(speed_array_left, current_omega_left);
-
     }
   }
   if (encoder_counter_left == counts_per_revolution) {
@@ -143,65 +137,8 @@ void encoder_count_chage_left() {
       current_omega_left = -count_to_rad * 1.0 / delta_time_left;
       array_push(speed_array_left, current_omega_left);
     }
-
-
   }
-
   average_omega_left = averaging_array(speed_array_left);
-}
-
-
-void setPWM(int pwm_left, int pwm_right) {
-  //setting the correct direction of the motor
-  digitalWrite(right_motor_ina, pwm_right >= 0);
-  digitalWrite(right_motor_inb, pwm_right < 0);
-  digitalWrite(left_motor_ina, pwm_left >= 0);
-  digitalWrite(left_motor_inb, pwm_left < 0);
-  //setting the value of the motor
-  pwm_right = abs(pwm_right);
-  pwm_left = abs(pwm_left);
-  if (pwm_left > 255) {
-    pwm_left = 255;
-  }
-  if (pwm_right > 255) {
-    pwm_right = 255;
-  }
-  analogWrite(right_motor_pwm, pwm_right);
-  analogWrite(left_motor_pwm, pwm_left);
-}
-
-
-
-
-void message_pwm(geometry_msgs::Vector3& pwm_comand) {
-  pwm_procent_right = pwm_comand.x;
-  pwm_procent_left = pwm_comand.y;
-  //pwm_value_left = map(pwm_procent_left, 0, 100, 0, 255);
-  reference_angle = pwm_comand.z;
-  //analogWrite(right_motor_pwm, pwm_value_right);
-  //analogWrite(left_motor_pwm, pwm_value_left);
-  //nh.loginfo(pwm_procent);
-  //setPWM(pwm_procent_left, pwm_procent_right);
-}
-void
-
-
-ros::Subscriber<geometry_msgs::Vector3> sub("pwm_sig", &message_pwm);
-ros::Subscriber<std_msgs::Int16> sub1("mode_sig", &mode_set);
-
-
-
-
-double encoder_to_unit(int encoder_count, int unit_output) { //if unit_output is 1 the unit is deg, if its 2 its rad
-  double output_number;
-  float temp_number;
-  if (unit_output == 1) {
-    output_number = encoder_count * count_to_deg;
-  }
-  if (unit_output == 2) {
-    output_number = encoder_count * count_to_rad;
-  }
-  return output_number;
 }
 
 
@@ -225,40 +162,26 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(left_encoder_a), encoder_count_chage_left, CHANGE);
   attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
   nh.subscribe(sub);
-  nh.subscribe(sub1);
-  nh.advertise(ankle_pub);
-  nh.advertise(speed_pub);
-  nh.advertise(datadata_measured_angle);
-
-  Wire.begin();
-  //Wire.beginTransmission(MPU_addr);
-  //Wire.write(0x6B);  // PWR_MGMT_1 register
-  //Wire.write(0);     // set to zero (wakes up the MPU-6050)
-  //Wire.endTransmission(true);
-  accelgyro.initialize();
-  Serial.println("Testing device connections...");
-  Serial.println(accelgyro.testConnection() ? "MPU9250 connection successful" : "MPU9250 connection failed");
-
+  nh.advertise(data_pub);
+  digitalWrite(right_motor_ina, HIGH);
+  digitalWrite(left_motor_inb, HIGH);
 }
 
 void loop() {
-  while(reference_angle = 1){
-    for (int i = 0; i >= 51; i++){
-       int spe = i*5;
-       setPWM(spe, spe);
-       for(int j = 0; j >= 100; j++){
-        wheel_speed.data = average_omega_right;
-        speed_pub.publish(&wheel_speed);
-        angle_of_wheel.data = num;
-        ankle_pub.publish(&angle_of_wheel);
+  if (mode_mode == 1){
+    for(int i = 0; i < 256; i++){
+      for(int j = 0; j < 25; j++){
+        analogWrite(right_motor_pwm, i);
+        analogWrite(left_motor_pwm, i);
+        right_wheel_speed.x = average_omega_right;
+        right_wheel_speed.y = average_omega_left;
+        right_wheel_speed.z = i;
+        data_pub.publish(&right_wheel_speed);
         nh.spinOnce();
-        num = num + 1;
-        delay(100);
-       }
-       
+        delay(8);
+      }
     }
-  
-  
-    delay(60000);
+    mode_mode = 0;
   }
+  nh.spinOnce();
 }
