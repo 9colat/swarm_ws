@@ -14,7 +14,13 @@
     <param name="odom_param" value="param_value" />
  </node>
 -->
-
+<!--static_transform_publisher x y z qx qy qz qw frame_id child_frame_id  period_in_ms  -->
+<node pkg="tf" type="static_transform_publisher" name="base_link_to_lidar"        args="-0.012 0 0.0116 0 0 0 0 base_link base_laser 100" />
+<node pkg="tf" type="static_transform_publisher" name="lidar_to_footprint"        args="0 0 -0.0191 0 0 0 0 base_link footprint 100" />
+<node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 30" />
+<!--
+<node pkg="tf" type="static_transform_publisher" name="imu_broadcaster" args="0 0.06 0.02 0 0 0 base_link imu 30" />
+-->
  <!-- Transform_config for robot and lidar-->
  <node pkg="robot_setup_tf" type="tf_broadcaster" name="robot_tf" output="screen">
 <!--    <param name="transform_configuration_param" value="param_value" /> -->
