@@ -308,7 +308,7 @@ void RGB_led_set(const String& color){
     digitalWrite(RGB_led_red, HIGH);
   }
   if(color == "blue"||color == "Blue"||color == "BLUE"){
-    digitalWrite(RGB_led_green, HIGH;
+    digitalWrite(RGB_led_green, HIGH);
     digitalWrite(RGB_led_blue, LOW);
     digitalWrite(RGB_led_red, HIGH);
   }
@@ -320,17 +320,17 @@ void RGB_led_set(const String& color){
   if(color == "purple"||color == "Purple"||color == "PURPLE"){
     digitalWrite(RGB_led_green, HIGH);
     digitalWrite(RGB_led_blue, LOW);
-    digitalWrite(RGB_led_red, LOW;
+    digitalWrite(RGB_led_red, LOW);
   }
   if(color == "orange"||color == "Orange"||color == "ORANGE"){
     digitalWrite(RGB_led_green, LOW);
     digitalWrite(RGB_led_blue, HIGH);
-    digitalWrite(RGB_led_red, LOW;
+    digitalWrite(RGB_led_red, LOW);
   }
   if(color == "white "||color == "White"||color == "WHITE"){
     digitalWrite(RGB_led_green, LOW);
     digitalWrite(RGB_led_blue, LOW);
-    digitalWrite(RGB_led_red, LOW;
+    digitalWrite(RGB_led_red, LOW);
   }
 }
 
@@ -378,7 +378,7 @@ void setup() {
 }
 
 void loop() {
-  RGB_led_set(green);
+  RGB_led_set("green");
   //  mode_confurm.data = test;
   //  mode_pub.publish(&mode_confurm);
   //  float test = encoder_to_unit(encoder_counter_right,1);
