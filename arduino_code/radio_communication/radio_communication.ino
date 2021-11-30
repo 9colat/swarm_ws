@@ -14,7 +14,7 @@ String message_to_send;
 std_msgs::String data_to_be_received;
 
 
-// first we need to subscribe to data, so we can send it over the radio later
+// first we need to subscribe to data, so we can send it over the radio later (WORKS AS AN INTERRUPTER)
 void data_to_be_sent (const std_msgs::String& data_msg) {
   message_to_send = data_msg.data;
   Serial.println(message_to_send);
@@ -35,20 +35,18 @@ void receiving() {
 
     for (int i = 0; i < message_size; i++) {
 
-      Serial.print("Reading  ");
       char radio_data = char(radio_module.read()); // reading data in chars, saved in radio_data char
       str[i] = radio_data; // radio_data char passed to the str char array
-      Serial.print(i);
-      Serial.print(" ");
-      Serial.println(str[i]);
 
       //FILTER STUFF THAT IS DUMB AND YOU DONT WANT TO PASS IT INTO THE ARRAY
-      Serial.println(str);
     }
-
-    data_to_be_received.data = str;
-    publisher.publish(&data_to_be_received); //now the read data is being published through ROS
+    
+    if (str != NULL) {
+      data_to_be_received.data = str;
+      publisher.publish(&data_to_be_received); //now the read data is being published through ROS
+    }
   }
+
 }
 
 
@@ -57,6 +55,7 @@ void setup() {
 
   Serial.begin(57600); // terminal
   radio_module.begin(9600); // radio module
+  Serial.println("Setup initialised");
 
   nh.initNode();
   nh.advertise(publisher);
@@ -68,7 +67,7 @@ void setup() {
 
 void loop() {
 
-  Serial.println("Start the main loop");
+
   receiving();
   nh.spinOnce();
 
