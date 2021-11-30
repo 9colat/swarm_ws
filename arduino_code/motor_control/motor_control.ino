@@ -121,34 +121,31 @@ void encoder_count_chage_right() {
     if (direction_indicator_right == 1) {
       encoder_counter_right++;
       current_omega_right = count_to_rad / delta_time_right;
-      array_push(speed_array_right, current_omega_right);
 
     }
     if (direction_indicator_right == 0) {
       encoder_counter_right = encoder_counter_right - 1;
       current_omega_right = -count_to_rad / delta_time_right;
-      array_push(speed_array_right, current_omega_right);
     }
   }
   if (encoder_counter_right == counts_per_revolution) {
     if (direction_indicator_right == 1) {
       encoder_counter_right = 0;
       current_omega_right = count_to_rad / delta_time_right;
-      array_push(speed_array_right, current_omega_right);
     }
   }
   if (encoder_counter_right == -counts_per_revolution) {
     if (direction_indicator_right == 0) {
       encoder_counter_right = 0;
       current_omega_right = -count_to_rad * 1.0 / delta_time_right;
-      array_push(speed_array_right, current_omega_right);
     }
 
 
   }
-  if (speed_array_right < 20 && speed_array_right > -20)
-    average_omega_right = averaging_array(speed_array_right);
+  if (current_omega_right < 20 && current_omega_right > -20){
+    array_push(speed_array_right, current_omega_right);
   }
+  average_omega_right = averaging_array(speed_array_right);
 }
 
 void encoder_count_chage_left() {
@@ -158,34 +155,30 @@ void encoder_count_chage_left() {
     if (direction_indicator_left == 1) {
       encoder_counter_left++;
       current_omega_left = count_to_rad / delta_time_left;
-      array_push(speed_array_left, current_omega_left);
     }
     if (direction_indicator_left == 0) {
       encoder_counter_left = encoder_counter_left - 1;
       current_omega_left = -count_to_rad / delta_time_left;
-      array_push(speed_array_left, current_omega_left);
-
     }
   }
   if (encoder_counter_left == counts_per_revolution) {
     if (direction_indicator_left == 1) {
       encoder_counter_left = 0;
       current_omega_left = count_to_rad / delta_time_left;
-      array_push(speed_array_left, current_omega_left);
     }
   }
   if (encoder_counter_left == -counts_per_revolution) {
     if (direction_indicator_left == 0) {
       encoder_counter_left = 0;
       current_omega_left = -count_to_rad * 1.0 / delta_time_left;
-      array_push(speed_array_left, current_omega_left);
     }
 
 
   }
-  if (speed_array_left < 20 && speed_array_left > -20){
-    average_omega_left = averaging_array(speed_array_left);
+  if (current_omega_left < 20 && current_omega_left > -20){
+    array_push(speed_array_left, current_omega_left);
   }
+  average_omega_left = averaging_array(speed_array_left);
 }
 
 
