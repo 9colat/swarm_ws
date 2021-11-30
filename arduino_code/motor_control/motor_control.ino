@@ -146,7 +146,9 @@ void encoder_count_chage_right() {
 
 
   }
-  average_omega_right = averaging_array(speed_array_right);
+  if (speed_array_right < 20 && speed_array_right > -20)
+    average_omega_right = averaging_array(speed_array_right);
+  }
 }
 
 void encoder_count_chage_left() {
@@ -181,8 +183,9 @@ void encoder_count_chage_left() {
 
 
   }
-
-  average_omega_left = averaging_array(speed_array_left);
+  if (speed_array_left < 20 && speed_array_left > -20){
+    average_omega_left = averaging_array(speed_array_left);
+  }
 }
 
 
