@@ -16,7 +16,7 @@
 -->
 <!--static_transform_publisher x y z qx qy qz qw frame_id child_frame_id  period_in_ms  -->
 <node pkg="tf" type="static_transform_publisher" name="base_link_to_lidar"        args="-0.012 0 0.0116 0 0 0 0 base_link base_laser 100" />
-<node pkg="tf" type="static_transform_publisher" name="lidar_to_footprint"        args="0 0 -0.0191 0 0 0 0 base_link base_footprint 100" />
+<node pkg="tf" type="static_transform_publisher" name="lidar_to_footprint"        args="0 0 -0.0191 0 0 0 0 base_laser base_footprint 100" />
 <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 30" />
 <!--
 <node pkg="tf" type="static_transform_publisher" name="imu_broadcaster" args="0 0.06 0.02 0 0 0 base_link imu 30" />
@@ -61,7 +61,7 @@
 
  <!-- Initial Pose and Goal Publisher -->
  <!-- Publish: /initialpose, /move_base_simple/goal -->
- <node pkg="rviz" type="rviz" name="rviz">
+ <node pkg="rviz" type="rviz" name="rviz" args="$(find swarm_robot_nav)/maps/my_map.rviz">
  </node>
  <!-- Subscribe: /initialpose, /move_base_simple/goal -->
  <!-- Publish: /initial_2d, /goal_2d -->
