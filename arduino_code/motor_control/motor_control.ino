@@ -222,9 +222,6 @@ void message_pwm(geometry_msgs::Vector3& pwm_comand) {
   pwm_procent_left = pwm_comand.y;
   //pwm_value_left = map(pwm_procent_left, 0, 100, 0, 255);
   reference_angle = pwm_comand.z;
-  //analogWrite(right_motor_pwm, pwm_value_right);
-  //analogWrite(left_motor_pwm, pwm_value_left);
-  //nh.loginfo(pwm_procent);
   setPWM(pwm_procent_left, pwm_procent_right);
 }
 
@@ -233,20 +230,6 @@ ros::Subscriber<geometry_msgs::Vector3> sub("pwm_sig", &message_pwm);
 
 
 void imu_collection() {
-  /*Wire.beginTransmission(MPU_addr);
-    Wire.write(0x3B);  // starting with register 0x3B (accel_XOUT_H)
-    Wire.endTransmission(false);
-    Wire.requestFrom(MPU_addr, 14, true); // request a total of 14 registers  String AX = String(mpu6050.getAccX());
-
-    accel_X = Wire.read() << 8 | Wire.read(); // 0x3B (accel_XOUT_H) & 0x3C (accel_XOUT_L)
-    accel_Y = Wire.read() << 8 | Wire.read(); // 0x3D (accel_YOUT_H) & 0x3E (accel_YOUT_L)
-    accel_Z = Wire.read() << 8 | Wire.read(); // 0x3F (accel_ZOUT_H) & 0x40 (accel_ZOUT_L)
-    tmp = Wire.read() << 8 | Wire.read(); // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
-    gyro_X = Wire.read() << 8 | Wire.read(); // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-    gyro_Y = Wire.read() << 8 | Wire.read(); // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-    gyro_Z = Wire.read() << 8 | Wire.read(); // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
-  */
-
   accelgyro.getMotion9(&accel_X, &accel_Y, &accel_Z, &gyro_X, &gyro_Y, &gyro_Z, &mx, &my, &mz);
 
   imu_acc.x = accel_X;
