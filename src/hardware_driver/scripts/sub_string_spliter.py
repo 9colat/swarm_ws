@@ -23,6 +23,8 @@ def splitter():
     rospy.init_node('hallo_there', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     rospy.Subscriber("data_to_be_received", String, call_back_msgs_splitter)
+    while not rospy.is_shutdown():
+        print("still running!")
 
 
 
