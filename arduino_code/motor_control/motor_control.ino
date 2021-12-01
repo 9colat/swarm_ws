@@ -119,14 +119,17 @@ float averaging_array(long the_input_array[]) {
 void encoder_count_chage_right() {
   delta_time_right =  double(micros()) / 1000000 - old_time_right;
   old_time_right = double(micros()) / 1000000;
+  int right_count_tick;
   if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution) {
     if (direction_indicator_right == 1) {
       encoder_counter_right++;
+      right_count_tick = 1;
       current_omega_right = count_to_rad / delta_time_right;
 
     }
     if (direction_indicator_right == 0) {
       encoder_counter_right = encoder_counter_right - 1;
+      right_count_tick = -1;
       current_omega_right = -count_to_rad / delta_time_right;
     }
   }
@@ -147,7 +150,7 @@ void encoder_count_chage_right() {
   if (current_omega_right < 20 && current_omega_right > -20){
     array_push(speed_array_right, current_omega_right);
   }
-  right_tick.data = 1;
+  right_tick.data = right_count_tick;
   right_tick_pub.publish(&right_tick);
   average_omega_right = averaging_array(speed_array_right);
 }
@@ -155,13 +158,16 @@ void encoder_count_chage_right() {
 void encoder_count_chage_left() {
   delta_time_left = double(micros()) / 1000000 - old_time_left;
   old_time_left = double(micros()) / 1000000;
+  int left_count_tick;
   if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution) {
     if (direction_indicator_left == 1) {
       encoder_counter_left++;
+      left_count_tick = 1;
       current_omega_left = count_to_rad / delta_time_left;
     }
     if (direction_indicator_left == 0) {
       encoder_counter_left = encoder_counter_left - 1;
+      left_count_tick = -1;
       current_omega_left = -count_to_rad / delta_time_left;
     }
   }
@@ -182,7 +188,7 @@ void encoder_count_chage_left() {
   if (current_omega_left < 20 && current_omega_left > -20){
     array_push(speed_array_left, current_omega_left);
   }
-  left_tick.data = 1;
+  left_tick.data = left_count_tick;
   left_tick_pub.publish(&left_tick);
   average_omega_left = averaging_array(speed_array_left);
 }
