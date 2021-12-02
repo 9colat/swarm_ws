@@ -40,10 +40,10 @@ void receiving() {
 
       //FILTER STUFF THAT IS DUMB AND YOU DONT WANT TO PASS IT INTO THE ARRAY
     }
-    
+    Serial.println(str);
     if (str != NULL) {
       data_to_be_received.data = str;
-      publisher.publish(&data_to_be_received); //now the read data is being published through ROS
+      //publisher.publish(&data_to_be_received); //now the read data is being published through ROS
     }
   }
 
@@ -66,9 +66,10 @@ void setup() {
 
 
 void loop() {
-
-
-  receiving();
+  
+  radio_module.write("Since;the;dawn;of;time,;mankind;has;always;had;a;desire;to;reach;further;and;explore;the;unknown.;late;in;the;tast;ola;when;cry;because;some;thing;just;do;not;want;to;work;penis;&");
+; //receiving();
   nh.spinOnce();
+  delay(10000);
 
 }
