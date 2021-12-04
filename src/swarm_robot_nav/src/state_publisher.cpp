@@ -19,18 +19,18 @@ int main(int argc, char** argv) {
     geometry_msgs::TransformStamped odom_trans;
     sensor_msgs::JointState joint_state;
     odom_trans.header.frame_id = "odom";
-    odom_trans.child_frame_id = "axis";
+    odom_trans.child_frame_id = "base_link";
 
     while (ros::ok()) {
         //update joint_state
         joint_state.header.stamp = ros::Time::now();
         joint_state.name.resize(3);
         joint_state.position.resize(3);
-        joint_state.name[0] ="swivel";
+        joint_state.name[0] ="base_laser";
         joint_state.position[0] = swivel;
-        joint_state.name[1] ="tilt";
+        joint_state.name[1] ="base_footprint";
         joint_state.position[1] = tilt;
-        joint_state.name[2] ="periscope";
+        joint_state.name[2] ="lidar_to_footprint";
         joint_state.position[2] = height;
 
 
