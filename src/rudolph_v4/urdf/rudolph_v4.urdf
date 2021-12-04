@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="rudolph_v4">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.0822244838639973 0.0128168335616271 0.000136671970985585"
+        rpy="0 0 0" />
+      <mass
+        value="0.758326893106696" />
+      <inertia
+        ixx="0.00162129691405741"
+        ixy="5.73236474515784E-07"
+        ixz="-1.33780486379509E-06"
+        iyy="0.0045442711593911"
+        iyz="1.91062463696691E-07"
+        izz="0.00299515938580574" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="base_laser">
+    <inertial>
+      <origin
+        xyz="-0.00676641398454258 -0.00981507539280287 -9.19718367893077E-05"
+        rpy="0 0 0" />
+      <mass
+        value="1.33010751695787" />
+      <inertia
+        ixx="0.000613770576870691"
+        ixy="-0.000158237807214438"
+        ixz="8.01970112250505E-07"
+        iyy="0.00109694905180103"
+        iyz="-3.09368466835676E-06"
+        izz="0.000959131136457615" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/base_laser.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/base_laser.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lidar"
+    type="fixed">
+    <origin
+      xyz="0.1199 0.1111 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_laser" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="lidar_to_footprint">
+    <inertial>
+      <origin
+        xyz="-0.0249459100005222 0.0365579440202124 0.00298344367628638"
+        rpy="0 0 0" />
+      <mass
+        value="0.04527047104807" />
+      <inertia
+        ixx="2.69955110919247E-05"
+        ixy="6.34387177434798E-21"
+        ixz="-8.9252626146913E-07"
+        iyy="2.66771115637789E-05"
+        iyz="4.47588869767628E-21"
+        izz="5.18129879141908E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/lidar_to_footprint.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/lidar_to_footprint.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="foot_print"
+    type="continuous">
+    <origin
+      xyz="0 -0.184869976584764 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_laser" />
+    <child
+      link="lidar_to_footprint" />
+    <axis
+      xyz="0.335999590456849 0 -0.941862131743723" />
+  </joint>
+</robot>

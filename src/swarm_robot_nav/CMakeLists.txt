@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   ##swarm_laser_sensor_config_dep
   ##swarm_odom_config_dep
   ##swarm_tf_config_dep
+  tf
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -207,3 +209,7 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+include_directories(include ${catkin_INCLUDE_DIRS})
+add_executable(state_publisher src/state_publisher.cpp)
+target_link_libraries(state_publisher ${catkin_LIBRARIES})
