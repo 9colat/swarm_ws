@@ -70,7 +70,7 @@ std_msgs::Int16 left_tick;       // the variable is initilazed as a Int16, this 
 ros::Publisher left_tick_pub("left_tick", &left_tick);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 std_msgs::Float32 angle_of_wheel;
 ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
-std_msgs::Float64 wheel_speed;
+std_msgs::Vector3 wheel_speed;
 ros::Publisher speed_pub("wheel_speed", &wheel_speed);
 
 
@@ -150,9 +150,10 @@ void encoder_count_chage_right() {
   if (current_omega_right < 20 && current_omega_right > -20){
     array_push(speed_array_right, current_omega_right);
   }
+
   right_tick.data = right_count_tick;
   right_tick_pub.publish(&right_tick);
-  average_omega_right = averaging_array(speed_array_right);
+
 }
 
 void encoder_count_chage_left() {
@@ -188,8 +189,10 @@ void encoder_count_chage_left() {
   if (current_omega_left < 20 && current_omega_left > -20){
     array_push(speed_array_left, current_omega_left);
   }
+
   left_tick.data = left_count_tick;
   left_tick_pub.publish(&left_tick);
+
   average_omega_left = averaging_array(speed_array_left);
 }
 
@@ -377,7 +380,11 @@ void loop() {
   //  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
 
 
-  wheel_speed.data = average_omega_right;
+  mode_confurm.data = speed_array_left[1];
+  mode_pub.publish(&mode_confurm);
+
+  wheel_speed.x = average_omega_right;
+  wheel_speed.y = average_omega_left;
   speed_pub.publish(&wheel_speed);
 
   //in order to improve the measured_angle reading, you can do measured=(integral(gyro))*0.9+magnetometer*0.1
