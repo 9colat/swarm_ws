@@ -39,7 +39,7 @@
     <param name="baud" value="115200"/>
  </node> -->
 
- <node pkg="localization_data_pub" type="ekf_odom_pub" name="ekf_odom_pub">
+ <!--<node pkg="localization_data_pub" type="ekf_odom_pub" name="ekf_odom_pub">
  </node>
 
 
@@ -58,7 +58,7 @@
    <param name="self_diagnose" value="false"/>
  </node>
 
-
+-->
 
  <arg name="map_file" default="/home/casper/swarm_ws/src/swarm_robot_nav/maps/my_map.yaml"/>
 -->

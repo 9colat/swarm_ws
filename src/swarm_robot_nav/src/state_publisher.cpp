@@ -37,9 +37,9 @@ int main(int argc, char** argv) {
         // update transform
         // (moving in a circle with radius=2)
         odom_trans.header.stamp = ros::Time::now();
-        odom_trans.transform.translation.x = cos(angle)*2;
-        odom_trans.transform.translation.y = sin(angle)*2;
-        odom_trans.transform.translation.z = .7;
+        odom_trans.transform.translation.x = cos(angle);
+        odom_trans.transform.translation.y = sin(angle);
+        odom_trans.transform.translation.z = 0.02;
         odom_trans.transform.rotation = tf::createQuaternionMsgFromYaw(angle+M_PI/2);
 
         //send the joint state and transform
