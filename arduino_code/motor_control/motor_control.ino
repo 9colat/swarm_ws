@@ -68,7 +68,7 @@ std_msgs::Int16 mode_confurm;       // the variable is initilazed as a Int16, th
 ros::Publisher mode_pub("mode_repeat", &mode_confurm);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 std_msgs::Float32 angle_of_wheel;
 ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
-std_msgs::Float64 wheel_speed;
+std_msgs::Vector3 wheel_speed;
 ros::Publisher speed_pub("wheel_speed", &wheel_speed);
 
 
@@ -368,7 +368,8 @@ void loop() {
   mode_confurm.data = speed_array_left[1];
   mode_pub.publish(&mode_confurm);
 
-  wheel_speed.data = average_omega_right;
+  wheel_speed.x = average_omega_right;
+  wheel_speed.y = average_omega_left;
   speed_pub.publish(&wheel_speed);
 
   //in order to improve the measured_angle reading, you can do measured=(integral(gyro))*0.9+magnetometer*0.1
