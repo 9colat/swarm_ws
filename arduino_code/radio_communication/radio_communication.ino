@@ -5,13 +5,26 @@
 ros::NodeHandle  nh;
 SoftwareSerial radio_module(4, 7); // TX 4, RX 7
 
+char a = 33; //! = start bit
+char b = 122; //z
+char c = 101; //e
+char d = 116; //t
+char e = 38; //& = end bit
+char f = 14858414; //⸮
+char g = 0;
+char h = 0;
+char i = 0;
+char j = 0;
+char test_array[] = {f};
 
 
 
-const int message_size = 63; // how many chars the message can contain
+const int message_size = 178; // how many chars the message can contain
 char str[message_size]; // array of chars initialised, that will contain the sent message
 String message_to_send;
 std_msgs::String data_to_be_received;
+char inverted_question_mark = 14858414; //⸮
+char end_character = 38; //& = end bit
 
 
 // first we need to subscribe to data, so we can send it over the radio later (WORKS AS AN INTERRUPTER)
@@ -29,21 +42,38 @@ ros::Publisher publisher("data_to_be_received", &data_to_be_received); //publish
 
 // first we need to receive the data over the radio, so we can publish it later
 void receiving() {
+
   if (radio_module.available() > 0) { // is there something on the radio? (enable the radio)
 
-    Serial.println("Radio module available");
+    //Serial.println("Radio module available");
+    int j = 0;
+    int k = 0;
+
 
     for (int i = 0; i < message_size; i++) {
 
       char radio_data = char(radio_module.read()); // reading data in chars, saved in radio_data char
-      str[i] = radio_data; // radio_data char passed to the str char array
 
-      //FILTER STUFF THAT IS DUMB AND YOU DONT WANT TO PASS IT INTO THE ARRAY
+      if (radio_data < 127 && radio_data > 32) { // inverse question mark filter - we can read symbols from 33rd to 126th in the ASCII table
+        str[j] = radio_data; // radio_data char passed to the str char array
+        j++;
+        //delay();
+        
+        if (radio_data == end_character || k == 1){
+          str[j] = 0;
+          k = 1;
+          exit(0); //exit the loop when it hits the end character
+        } 
+      }
+      
+    delay(1);
+    
     }
-    Serial.println(str);
-    if (str != NULL) {
+
+    if (str != NULL) { //this is because we want to send the full message
       data_to_be_received.data = str;
-      //publisher.publish(&data_to_be_received); //now the read data is being published through ROS
+      publisher.publish(&data_to_be_received); //now the read data is being published through ROS
+      Serial.println(str);
     }
   }
 
@@ -66,10 +96,12 @@ void setup() {
 
 
 void loop() {
-  
-  radio_module.write("Since;the;dawn;of;time,;mankind;has;always;had;a;desire;to;reach;further;and;explore;the;unknown.;late;in;the;tast;ola;when;cry;because;some;thing;just;do;not;want;to;work;penis;&");
-; //receiving();
+
+  //Serial.print(test_array);
+  //radio_module.write(f);
+  //delay(1000);
+  receiving();
   nh.spinOnce();
-  delay(10000);
+  //Serial.println(str);
 
 }
