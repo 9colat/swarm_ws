@@ -18,7 +18,7 @@
 <node pkg="tf" type="static_transform_publisher" name="base_link_to_lidar" args="-0.012 0 0.0116 0 0 0 base_link base_laser 100" />
 <node pkg="tf" type="static_transform_publisher" name="lidar_to_footprint" args="0 -0.0191 0 0 0 0 base_laser base_footprint 100" />
 <!-- <node pkg="tf" type="static_transform_publisher" name="base_to_map" args="-1 -1 0 0 0 0 base_footprint map 30" />-->
-<!-- <node pkg="tf" type="static_transform_pubargslisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 30" />-->
+<!-- <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 30" />-->
 
 
 <param name="robot_description" textfile="/home/casper/swarm_ws/src/rudolph_v4/urdf/rudolph_v4.urdf" />
