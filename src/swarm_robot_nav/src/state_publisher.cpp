@@ -63,11 +63,11 @@ int main(int argc, char** argv) {
         joint_state.name.resize(3);
         joint_state.position.resize(3);
         joint_state.name[0] ="base_laser";
-        joint_state.position[0] = swivel;
+        //joint_state.position[0] = swivel;
         joint_state.name[1] ="base_footprint";
-        joint_state.position[1] = tilt;
+        //joint_state.position[1] = tilt;
         joint_state.name[2] ="lidar_to_footprint";
-        joint_state.position[2] = height;
+        //joint_state.position[2] = height;
 
 
 
