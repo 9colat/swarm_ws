@@ -1,8 +1,10 @@
 // Libraries //
+
 #include <string>
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
+
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Quaternion.h>
 #include <cmath>
@@ -50,8 +52,6 @@ int main(int argc, char** argv) {
     tf::TransformBroadcaster broadcaster;
     ros::Rate loop_rate(30);
 
-
-    // Message declarations //
     geometry_msgs::TransformStamped odom_trans;
     sensor_msgs::JointState joint_state;
     odom_trans.header.frame_id = "odom";
@@ -68,6 +68,7 @@ int main(int argc, char** argv) {
         joint_state.position[1] = tilt;
         joint_state.name[2] ="lidar_to_footprint";
         joint_state.position[2] = height;
+
 
 
 

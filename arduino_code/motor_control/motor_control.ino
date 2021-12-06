@@ -64,8 +64,10 @@ int mag_y_cal = -6; //magnetometer callibration in y direction
 
 
 ros::NodeHandle nh;                 // here the node handler is set with the name nh
-std_msgs::Int16 mode_confurm;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
-ros::Publisher mode_pub("mode_repeat", &mode_confurm);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
+std_msgs::Int16 right_tick;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
+ros::Publisher right_tick_pub("right_tick", &right_tick);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
+std_msgs::Int16 left_tick;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
+ros::Publisher left_tick_pub("left_tick", &left_tick);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 std_msgs::Float32 angle_of_wheel;
 ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
 std_msgs::Vector3 wheel_speed;
@@ -117,14 +119,17 @@ float averaging_array(long the_input_array[]) {
 void encoder_count_chage_right() {
   delta_time_right =  double(micros()) / 1000000 - old_time_right;
   old_time_right = double(micros()) / 1000000;
+  int right_count_tick;
   if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution) {
     if (direction_indicator_right == 1) {
       encoder_counter_right++;
+      right_count_tick = 1;
       current_omega_right = count_to_rad / delta_time_right;
 
     }
     if (direction_indicator_right == 0) {
       encoder_counter_right = encoder_counter_right - 1;
+      right_count_tick = -1;
       current_omega_right = -count_to_rad / delta_time_right;
     }
   }
@@ -145,19 +150,25 @@ void encoder_count_chage_right() {
   if (current_omega_right < 20 && current_omega_right > -20){
     array_push(speed_array_right, current_omega_right);
   }
-  average_omega_right = averaging_array(speed_array_right);
+
+  right_tick.data = right_count_tick;
+  right_tick_pub.publish(&right_tick);
+
 }
 
 void encoder_count_chage_left() {
   delta_time_left = double(micros()) / 1000000 - old_time_left;
   old_time_left = double(micros()) / 1000000;
+  int left_count_tick;
   if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution) {
     if (direction_indicator_left == 1) {
       encoder_counter_left++;
+      left_count_tick = 1;
       current_omega_left = count_to_rad / delta_time_left;
     }
     if (direction_indicator_left == 0) {
       encoder_counter_left = encoder_counter_left - 1;
+      left_count_tick = -1;
       current_omega_left = -count_to_rad / delta_time_left;
     }
   }
@@ -178,6 +189,10 @@ void encoder_count_chage_left() {
   if (current_omega_left < 20 && current_omega_left > -20){
     array_push(speed_array_left, current_omega_left);
   }
+
+  left_tick.data = left_count_tick;
+  left_tick_pub.publish(&left_tick);
+
   average_omega_left = averaging_array(speed_array_left);
 }
 
@@ -337,7 +352,8 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
   nh.subscribe(sub);
   //  nh.subscribe(sub1);
-  nh.advertise(mode_pub);
+  nh.advertise(right_tick_pub);
+  nh.advertise(left_tick_pub);
   nh.advertise(ankle_pub);
   nh.advertise(speed_pub);
   nh.advertise(IMU_data_acc);
@@ -362,7 +378,6 @@ void loop() {
   //  mode_pub.publish(&mode_confurm);
   //  float test = encoder_to_unit(encoder_counter_right,1);
   //  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
-
 
 
   mode_confurm.data = speed_array_left[1];
