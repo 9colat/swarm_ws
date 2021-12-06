@@ -22,7 +22,7 @@ double omega_left; // initilazed left wheel rotation velocity
 
 
 // Call back functions //
-void chatterCallback(const std_msgs::Quaternion::ConstPtr& msg){
+void chatterCallback(const geometry_msgs::Quaternion::ConstPtr& msg){
   omega_right = msg.x;
   omega_left = msg.y;
 
