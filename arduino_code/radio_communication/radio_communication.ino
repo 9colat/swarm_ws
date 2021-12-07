@@ -106,15 +106,8 @@ void setup() {
 void loop() {
 
   //Serial.print(test_array);
-<<<<<<< HEAD
   //radio_module.write(test_array);
   delay(1000);
-=======
-  //String something = "hellonicetomeetyouihaveaverynicestreaktodaysoiamveryhappyandexcitedforkeepingmyhabitforsomanydaysthreehundredsixtyfivedayswoopwoop";
-  //Serial.println(something);
-  //radio_module.write(&something);
-  //delay(1000);
->>>>>>> c2832d8d0fe4fa4da45d1e3641d56508d2843cb0
   receiving();
   nh.spinOnce();
   //Serial.println(str);
