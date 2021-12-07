@@ -3,7 +3,7 @@
 #include <std_msgs/String.h>
 
 ros::NodeHandle  nh;
-SoftwareSerial radio_module(4, 7); // TX 4, RX 7
+SoftwareSerial radio_module(16, 17); // TX -> 17, RX -> 16
 
 char a = 33; //! = start bit
 char b = 122; //z
