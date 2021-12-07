@@ -380,6 +380,11 @@ void loop() {
   //  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
 
 
+<<<<<<< HEAD
+=======
+//  mode_confirm.data = speed_array_left[1];
+//  mode_pub.publish(&mode_confurm);
+>>>>>>> 19c151877a0f23c6e9a2b06b01873e4fa6e84e6b
 
   wheel_speed.x = average_omega_right;
   wheel_speed.y = average_omega_left;

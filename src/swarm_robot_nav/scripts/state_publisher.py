@@ -2,7 +2,7 @@
 ## Libraries ##
 import rospy
 from sensor_msgs.msg import JointState
-from tf.msg import transform_broadcaster
+import tf
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Quaternion
 import math
@@ -17,7 +17,7 @@ y_pose = 0
 z_pose = 0.02
 n = 1920
 pi = 3.14159
-omega_right, omega_left, tick_right, tick_left, old_tick_right, old_tick_left
+global omega_right, omega_left, tick_right, tick_left, old_tick_right, old_tick_left
 
 
 def callback_odom(data):
@@ -56,21 +56,19 @@ def main():
     pub = rospy.Publisher('joint_states', JointState, queue_size=10)
     rospy.init_node('state_publisher', anonymous=True)
 
-    joint_state = JointState()
-    odom_trans = TransformStamped()
-    odom_trans.header.frame_id = "odom"
-    odom_trans.child_frame_id = "base_link"
-    while not rospy.is_shutdown():
-        joint_state.header.stamp = rospy.Time.now()
-        joint_state.name.resize(3)
-        joint_state.position.resize(3)
-        joint_state.name[0] ="base_laser"
-        ##joint_state.position[0] = swivel
-        joint_state.name[1] ="base_footprint"
-        ##joint_state.position[1] = tilt
-        joint_state.name[2] ="lidar_to_footprint"
-        ##joint_state.position[2] = height
-        rospy.Subscriber("speed_and_tick", Quaternion, speed_writting)
+#    joint_state = JointState()
+#    odom_trans = TransformStamped()
+#    odom_trans.header.frame_id = "odom"
+#    odom_trans.child_frame_id = "base_link"
+#    while not rospy.is_shutdown():
+#        joint_state.header.stamp = rospy.Time.now()
+#        joint_state.name[0] ="base_laser"
+#        ##joint_state.position[0] = swivel
+#        joint_state.name[1] ="base_footprint"
+#        ##joint_state.position[1] = tilt
+#        joint_state.name[2] ="lidar_to_footprint"
+#        ##joint_state.position[2] = height
+#        rospy.Subscriber("speed_and_tick", Quaternion, speed_writting)
 
 
 
