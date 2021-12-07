@@ -57,10 +57,11 @@ def main():
     rospy.init_node('state_publisher', anonymous=True)
 
 #    joint_state = JointState()
-#    odom_trans = TransformStamped()
-#    odom_trans.header.frame_id = "odom"
-#    odom_trans.child_frame_id = "base_link"
-#    while not rospy.is_shutdown():
+    odom_trans = TransformStamped()
+    odom_trans.header.frame_id = "odom"
+    odom_trans.child_frame_id = "base_link"
+    while not rospy.is_shutdown():
+        print("pee pee")
 #        joint_state.header.stamp = rospy.Time.now()
 #        joint_state.name[0] ="base_laser"
 #        ##joint_state.position[0] = swivel
