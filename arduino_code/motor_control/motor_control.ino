@@ -8,7 +8,7 @@
 #include <std_msgs/Float32.h>
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/Vector3.h>
-
+#include <geometry_msgs/Quaternion.h>
 
 
 //-----pinout setting up-----//
@@ -70,8 +70,8 @@ std_msgs::Int16 left_tick;       // the variable is initilazed as a Int16, this 
 ros::Publisher left_tick_pub("left_tick", &left_tick);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 std_msgs::Float32 angle_of_wheel;
 ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
-std_msgs::Vector3 wheel_speed;
-ros::Publisher speed_pub("wheel_speed", &wheel_speed);
+std_msgs::Quaternion wheel_speed;
+ros::Publisher speed_pub("speed_and_tick", &wheel_speed);
 
 
 struct Quaternion
@@ -385,6 +385,9 @@ void loop() {
 
   wheel_speed.x = average_omega_right;
   wheel_speed.y = average_omega_left;
+  wheel_speed.z = right_count_tick
+  wheel_speed.w = left_count_tick
+
   speed_pub.publish(&wheel_speed);
 
   //in order to improve the measured_angle reading, you can do measured=(integral(gyro))*0.9+magnetometer*0.1

@@ -98,8 +98,8 @@ void setup() {
 void loop() {
 
   //Serial.print(test_array);
-  //radio_module.write(f);
-  //delay(1000);
+  radio_module.write("pinis");
+  delay(1000);
   receiving();
   nh.spinOnce();
   //Serial.println(str);
