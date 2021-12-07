@@ -53,8 +53,8 @@ def callback_odom(data):
 
 def main():
     print("hi")
-    pub = rospy.Publisher('joint_states', JointState, queue_size=10)
-    rospy.init_node('state_publisher', anonymous=True)
+#    pub = rospy.Publisher('joint_states', JointState, queue_size=10)
+#    rospy.init_node('state_publisher', anonymous=True)
 
 #    joint_state = JointState()
     odom_trans = TransformStamped()

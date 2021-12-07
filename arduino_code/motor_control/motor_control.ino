@@ -398,7 +398,7 @@ void loop() {
   //Serial.println(measured_angle);
   //Serial.print("Reference:");
   //Serial.println(reference_angle);
-
+  
 
   nh.spinOnce();
-}
+  delay(10);}
