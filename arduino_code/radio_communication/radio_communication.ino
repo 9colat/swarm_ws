@@ -15,7 +15,9 @@ char g = 0;
 char h = 0;
 char i = 0;
 char j = 0;
-char test_array[] = {f};
+char test_array[] = {a,b,c,d,e};
+byte green = 5;
+byte yellow = 6;
 
 
 
@@ -29,6 +31,8 @@ char end_character = 38; //& = end bit
 
 // first we need to subscribe to data, so we can send it over the radio later (WORKS AS AN INTERRUPTER)
 void data_to_be_sent (const std_msgs::String& data_msg) {
+  digitalWrite(green, LOW);
+  digitalWrite(yellow, HIGH);
   message_to_send = data_msg.data;
   Serial.println(message_to_send);
   radio_module.write(&message_to_send); //now the subscribed data is being sent over the radio
@@ -42,7 +46,8 @@ ros::Publisher publisher("data_to_be_received", &data_to_be_received); //publish
 
 // first we need to receive the data over the radio, so we can publish it later
 void receiving() {
-
+  digitalWrite(green, HIGH);
+  digitalWrite(yellow, LOW);
   if (radio_module.available() > 0) { // is there something on the radio? (enable the radio)
 
     //Serial.println("Radio module available");
@@ -65,8 +70,8 @@ void receiving() {
           exit(0); //exit the loop when it hits the end character
         } 
       }
-      
-    delay(1);
+    Serial.println(i);
+    //delay(1);
     
     }
 
@@ -86,7 +91,10 @@ void setup() {
   Serial.begin(57600); // terminal
   radio_module.begin(9600); // radio module
   Serial.println("Setup initialised");
-
+  pinMode(green, OUTPUT);
+  pinMode(yellow, OUTPUT);
+  digitalWrite(green, HIGH);
+  digitalWrite(yellow,HIGH);
   nh.initNode();
   nh.advertise(publisher);
   nh.subscribe(subscriber);
@@ -98,7 +106,7 @@ void setup() {
 void loop() {
 
   //Serial.print(test_array);
-  radio_module.write("pinis");
+  //radio_module.write(test_array);
   delay(1000);
   receiving();
   nh.spinOnce();

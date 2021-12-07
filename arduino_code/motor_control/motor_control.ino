@@ -70,32 +70,32 @@ std_msgs::Int16 left_tick;       // the variable is initilazed as a Int16, this 
 ros::Publisher left_tick_pub("left_tick", &left_tick);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 std_msgs::Float32 angle_of_wheel;
 ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
-std_msgs::Quaternion wheel_speed;
+geometry_msgs::Quaternion wheel_speed;
 ros::Publisher speed_pub("speed_and_tick", &wheel_speed);
 
 
 struct Quaternion
 {
-    double w, x, y, z;
+  double w, x, y, z;
 };
 
 Quaternion ToQuaternion(double yaw, double pitch, double roll) // yaw (Z), pitch (Y), roll (X)
 {
-    // Abbreviations for the various angular functions
-    double cy = cos(yaw * 0.5);
-    double sy = sin(yaw * 0.5);
-    double cp = cos(pitch * 0.5);
-    double sp = sin(pitch * 0.5);
-    double cr = cos(roll * 0.5);
-    double sr = sin(roll * 0.5);
+  // Abbreviations for the various angular functions
+  double cy = cos(yaw * 0.5);
+  double sy = sin(yaw * 0.5);
+  double cp = cos(pitch * 0.5);
+  double sp = sin(pitch * 0.5);
+  double cr = cos(roll * 0.5);
+  double sr = sin(roll * 0.5);
 
-    Quaternion q;
-    q.w = cr * cp * cy + sr * sp * sy;
-    q.x = sr * cp * cy - cr * sp * sy;
-    q.y = cr * sp * cy + sr * cp * sy;
-    q.z = cr * cp * sy - sr * sp * cy;
+  Quaternion q;
+  q.w = cr * cp * cy + sr * sp * sy;
+  q.x = sr * cp * cy - cr * sp * sy;
+  q.y = cr * sp * cy + sr * cp * sy;
+  q.z = cr * cp * sy - sr * sp * cy;
 
-    return q;
+  return q;
 }
 
 
@@ -147,7 +147,7 @@ void encoder_count_chage_right() {
 
 
   }
-  if (current_omega_right < 20 && current_omega_right > -20){
+  if (current_omega_right < 20 && current_omega_right > -20) {
     array_push(speed_array_right, current_omega_right);
   }
 
@@ -186,7 +186,7 @@ void encoder_count_chage_left() {
 
 
   }
-  if (current_omega_left < 20 && current_omega_left > -20){
+  if (current_omega_left < 20 && current_omega_left > -20) {
     array_push(speed_array_left, current_omega_left);
   }
 
@@ -290,38 +290,38 @@ double encoder_to_unit(int encoder_count, int unit_output) { //if unit_output is
   return output_number;
 }
 
-void RGB_led_set(const String& color){
-  if(color == "red"||color == "Red"||color == "RED"){
+void RGB_led_set(const String& color) {
+  if (color == "red" || color == "Red" || color == "RED") {
     digitalWrite(RGB_led_green, HIGH);
     digitalWrite(RGB_led_blue, HIGH);
     digitalWrite(RGB_led_red, LOW);
   }
-  if(color == "green"||color == "Green"||color == "GREEN"){
+  if (color == "green" || color == "Green" || color == "GREEN") {
     digitalWrite(RGB_led_green, LOW);
     digitalWrite(RGB_led_blue, HIGH);
     digitalWrite(RGB_led_red, HIGH);
   }
-  if(color == "blue"||color == "Blue"||color == "BLUE"){
+  if (color == "blue" || color == "Blue" || color == "BLUE") {
     digitalWrite(RGB_led_green, HIGH);
     digitalWrite(RGB_led_blue, LOW);
     digitalWrite(RGB_led_red, HIGH);
   }
-  if(color == "cyan"||color == "Cyan"||color == "CYAN"){
+  if (color == "cyan" || color == "Cyan" || color == "CYAN") {
     digitalWrite(RGB_led_green, LOW);
     digitalWrite(RGB_led_blue, LOW);
     digitalWrite(RGB_led_red, HIGH);
   }
-  if(color == "purple"||color == "Purple"||color == "PURPLE"){
+  if (color == "purple" || color == "Purple" || color == "PURPLE") {
     digitalWrite(RGB_led_green, HIGH);
     digitalWrite(RGB_led_blue, LOW);
     digitalWrite(RGB_led_red, LOW);
   }
-  if(color == "orange"||color == "Orange"||color == "ORANGE"){
+  if (color == "orange" || color == "Orange" || color == "ORANGE") {
     digitalWrite(RGB_led_green, LOW);
     digitalWrite(RGB_led_blue, HIGH);
     digitalWrite(RGB_led_red, LOW);
   }
-  if(color == "white "||color == "White"||color == "WHITE"){
+  if (color == "white " || color == "White" || color == "WHITE") {
     digitalWrite(RGB_led_green, LOW);
     digitalWrite(RGB_led_blue, LOW);
     digitalWrite(RGB_led_red, LOW);
@@ -380,13 +380,11 @@ void loop() {
   //  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
 
 
-  mode_confurm.data = speed_array_left[1];
-  mode_pub.publish(&mode_confurm);
 
   wheel_speed.x = average_omega_right;
   wheel_speed.y = average_omega_left;
-  wheel_speed.z = right_count_tick
-  wheel_speed.w = left_count_tick
+  wheel_speed.z = encoder_counter_right;
+  wheel_speed.w = encoder_counter_left;
 
   speed_pub.publish(&wheel_speed);
 
