@@ -7,6 +7,8 @@ from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Quaternion
 import math
 import numpy
+from tf.transformations import quaternion_from_euler
+from nav_msgs.msg import Odometry
 
 
 ## Variables ##
@@ -17,6 +19,10 @@ y_pose = 0
 z_pose = 0.02
 n = 1920
 pi = 3.14159
+omega_robot=0
+q = quaternion_from_euler(0, 0, 0)
+vel_x=0
+vel_y=0
 global omega_right, omega_left, tick_right, tick_left, old_tick_right, old_tick_left
 
 
@@ -35,6 +41,10 @@ def callback_odom(data):
     x_pose = x_pose + d_c*cos(theta)
     y_pose = y_pose + d_c*sin(theta)
 
+    vel=(omega_right*wheel_radius)+(omega_left*wheel_radius)
+    vel_x=vel*cos(theta)
+    vel_y=vel*sin(theta)
+
     q = quaternion_from_euler(0, 0, theta)
     quat_msg = Quaternion(q[0],q[1],q[2],q[3])
 
@@ -50,9 +60,30 @@ def callback_odom(data):
     old_tick_right = tick_right
     old_tick_left = tick_left
 
+def odom_pub():
+    pub_odom = rospy.Publisher('odom',Odometry,queue_size=10)
+    odom_data = Odometry()
+    odom_data.header.frame_id = "odom"
+    odom_data.child_frame_id = "base_link"
+    odom_data.header.stamp = rospy.Time.now()
+    odom_data.pose.pose.position.x = x_pose
+    odom_data.pose.pose.position.y = y_pose
+    odom_data.pose.pose.position.z = z_pose
+    odom_data.pose.pose.orientation = (Quaternion(q[0],q[1],q[2],q[3]))
+    odom_data.twist.twist.linear.x = vel_x
+    odom_data.twist.twist.linear.y = vel_y
+    odom_data.twist.twist.linear.z = 0
+    odom_data.twist.twist.angular.x = 0
+    odom_data.twist.twist.angular.y = 0
+    odom_data.twist.twist.angular.z=omega_robot
+    pub_odom.publish(odom_data)
+
+
+
 
 def main():
     print("hi")
+    rospy.Subscriber("speed_and_tick",Quaternion,callback_odom)
 #    pub = rospy.Publisher('joint_states', JointState, queue_size=10)
 #    rospy.init_node('state_publisher', anonymous=True)
 
@@ -62,6 +93,8 @@ def main():
     odom_trans.child_frame_id = "base_link"
     while not rospy.is_shutdown():
         print("pee pee")
+        odom_pub()
+
 #        joint_state.header.stamp = rospy.Time.now()
 #        joint_state.name[0] ="base_laser"
 #        ##joint_state.position[0] = swivel
@@ -74,4 +107,5 @@ def main():
 
 
 if __name__ == '__main__':
+    rospy.init_node('state_publisher', anonymous=True)
     main()
