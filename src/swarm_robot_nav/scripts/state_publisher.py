@@ -25,13 +25,13 @@ def callback_odom(data):
     omega_left = data.y
     tick_right = data.z
     tick_left = data.w
-    m_r = -(omega_right*wheel_radius)*(wheel_base/2)
+    m_r = (omega_right*wheel_radius)*(wheel_base/2)
     m_l = -(omega_left*wheel_radius)*(wheel_base/2)
     omega_robot = m_l + m_r
     d_r = 2*pi*wheel_radius*((tick_right-old_tick_right)/n)
     d_l = 2*pi*wheel_radius*((tick_left-old_tick_left)/n)
     d_c = (d_r+d_l)/2
-    theta = (d_r+d_l)/wheel_base + theta
+    theta = (d_r-d_l)/wheel_base + theta
     x_pose = x_pose + d_c*cos(theta)
     y_pose = y_pose + d_c*sin(theta)
 
