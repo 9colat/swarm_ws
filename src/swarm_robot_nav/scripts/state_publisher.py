@@ -58,17 +58,20 @@ def callback_odometry(data):
     q = quaternion_from_euler(0, 0, theta)
     quat_msg = Quaternion(q[0],q[1],q[2],q[3])
 
-    odom_trans.header.frame_id = "odom"
-    odom_trans.child_frame_id = "base_link"
-    odom_trans.header.stamp = rospy.Time.now()
-    odom_trans.transform.translation.x = x_pose
-    odom_trans.transform.translation.y = y_pose
-    odom_trans.transform.translation.z = z_pose
-    odom_trans.transform.rotation = Quaternion(q[0],q[1],q[2],q[3])
+#    odom_trans.header.frame_id = "odom"
+#    odom_trans.child_frame_id = "base_link"
+#    odom_trans.header.stamp = rospy.Time.now()
+#    odom_trans.transform.translation.x = x_pose
+#    odom_trans.transform.translation.y = y_pose
+#    odom_trans.transform.translation.z = z_pose
+#    odom_trans.transform.rotation = Quaternion(q[0],q[1],q[2],q[3])
 
-    #br = tf.TransformBroadcaster()
-    #br
-    tf.TransformBroadcaster().sendTransform(odom_trans)
+    br = tf.TransformBroadcaster()
+    br.sendTransform((x_pose, y_pose, z_pose),
+                    (q[0],q[1],q[2],q[3]),
+                    rospy.Time.now(),
+                    "base_link",
+                    "odom")
 
     old_tick_right = tick_right
     old_tick_left = tick_left
