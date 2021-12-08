@@ -24,9 +24,12 @@
 
 <node name="state_publisher" pkg="swarm_robot_nav" type="state_publisher.py" />
 
-<param name="robot_description" textfile="/home/casper/swarm_ws/src/rudolph_v4_3/urdf/rudolph_v4_3.urdf" />
+<arg
+  name="model" />
+<param
+  name="robot_description"
+  textfile="$(find swarm_robot_nav)/robot_discription/rudolph_v4_3.urdf" />
 
-  <!--<param name="robot_description" command="$(find urdf)/urdf inorder '$(find rudolph_v4_3)/urdf/rudolph_v4_3.urdf' transmission_hw_interface:=$(arg transmission_hw_interface)" /> -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
       <param name="use_gui" value="true"/>
   </node>
@@ -64,7 +67,9 @@
  </node>
 -->
 
- <arg name="map_file" default="/home/casper/swarm_ws/src/swarm_robot_nav/maps/my_map.yaml"/>
+
+ <arg name="map_file" default="$(find swarm_robot_nav)/maps/my_map.yaml" />
+
 
  -<node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" />
 
