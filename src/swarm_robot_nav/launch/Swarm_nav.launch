@@ -49,7 +49,7 @@
 
 
  <remap from="odom_data_quat" to="odom" />
- <!--<remap from="imu_data" to="imu/data" /> -->
+ <!--<remap from="imu_data" to="imu/data" />
  <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
    <param name="output_frame" value="odom"/>
    <param name="base_footprint_frame" value="base_link"/>
@@ -62,7 +62,7 @@
    <param name="debug" value="false"/>
    <param name="self_diagnose" value="false"/>
  </node>
-
+-->
 
  <arg name="map_file" default="/home/casper/swarm_ws/src/swarm_robot_nav/maps/my_map.yaml"/>
 

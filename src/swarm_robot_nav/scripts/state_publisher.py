@@ -20,17 +20,27 @@ z_pose = 0.02
 n = 1920
 pi = 3.14159
 omega_robot=0
-q = quaternion_from_euler(0, 0, 0)
-vel_x=0
-vel_y=0
-global omega_right, omega_left, tick_right, tick_left, old_tick_right, old_tick_left
+q = quaternion_from_euler(0, 0, 0.1)
+vel_x = 0
+vel_y = 0
+omega_right = 0
+omega_left = 0
+tick_right = 0
+tick_left = 0
+old_tick_right = 0
+old_tick_left = 0
+theta = 0
+
+odom_trans = TransformStamped()
 
 
-def callback_odom(data):
+def callback_odometry(data):
+    global old_tick_right, old_tick_left, theta, omega_right, omega_left, tick_right,tick_left,wheel_radius,wheel_base,omega_robot,vel_x,vel_y,q,x_pose,y_pose, pi, odom_trans
     omega_right = data.x
     omega_left = data.y
     tick_right = data.z
     tick_left = data.w
+    #print(old_tick_left)
     m_r = (omega_right*wheel_radius)*(wheel_base/2)
     m_l = -(omega_left*wheel_radius)*(wheel_base/2)
     omega_robot = m_l + m_r
@@ -38,29 +48,33 @@ def callback_odom(data):
     d_l = 2*pi*wheel_radius*((tick_left-old_tick_left)/n)
     d_c = (d_r+d_l)/2
     theta = (d_r-d_l)/wheel_base + theta
-    x_pose = x_pose + d_c*cos(theta)
-    y_pose = y_pose + d_c*sin(theta)
+    x_pose = x_pose + d_c*math.cos(theta)
+    y_pose = y_pose + d_c*math.sin(theta)
 
     vel=(omega_right*wheel_radius)+(omega_left*wheel_radius)
-    vel_x=vel*cos(theta)
-    vel_y=vel*sin(theta)
+    vel_x=vel*math.cos(theta)
+    vel_y=vel*math.sin(theta)
 
     q = quaternion_from_euler(0, 0, theta)
     quat_msg = Quaternion(q[0],q[1],q[2],q[3])
 
+    odom_trans.header.frame_id = "odom"
+    odom_trans.child_frame_id = "base_link"
     odom_trans.header.stamp = rospy.Time.now()
     odom_trans.transform.translation.x = x_pose
     odom_trans.transform.translation.y = y_pose
     odom_trans.transform.translation.z = z_pose
-    odom_trans.transform.rotation = quat_msg
+    odom_trans.transform.rotation = Quaternion(q[0],q[1],q[2],q[3])
 
-    br = tf.TransformBroadcaster()
-    br.sendTransform(odom_trans)
+    #br = tf.TransformBroadcaster()
+    #br
+    tf.TransformBroadcaster().sendTransform(odom_trans)
 
     old_tick_right = tick_right
     old_tick_left = tick_left
 
 def odom_pub():
+    global x_pose,y_pose,z_pose,vel_x,vel_y,omega_robot
     pub_odom = rospy.Publisher('odom',Odometry,queue_size=10)
     odom_data = Odometry()
     odom_data.header.frame_id = "odom"
@@ -82,17 +96,16 @@ def odom_pub():
 
 
 def main():
+    global odom_trans
     print("hi")
-    rospy.Subscriber("speed_and_tick",Quaternion,callback_odom)
+
 #    pub = rospy.Publisher('joint_states', JointState, queue_size=10)
 #    rospy.init_node('state_publisher', anonymous=True)
 
 #    joint_state = JointState()
-    odom_trans = TransformStamped()
-    odom_trans.header.frame_id = "odom"
-    odom_trans.child_frame_id = "base_link"
+    rospy.Subscriber("speed_and_tick", Quaternion, callback_odometry)
     while not rospy.is_shutdown():
-        print("pee pee")
+        #print("pee pee")
         odom_pub()
 
 #        joint_state.header.stamp = rospy.Time.now()
