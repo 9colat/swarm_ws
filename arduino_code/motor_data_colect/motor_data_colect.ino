@@ -9,16 +9,16 @@
 
 
 //-----pinout setting up-----//
-const byte right_motor_pwm = 38;    // setting the pin for the right motors PWM
-const byte right_motor_inb = 37;    // setting the pin for the right motors b direction pin
-const byte right_motor_ina = 39;    // setting the pin for the right motors a direction pin
-const byte right_encoder_a = 33;    // setting the pin for the right motors first encoder signal pin
-const byte right_encoder_b = 34;    // setting the pin for the right motors secondt encoder signal pin
-const byte left_motor_pwm = 29;     // setting the pin for the left motors PWM
-const byte left_motor_inb = 28;     // setting the pin for the left motors b direction pin
-const byte left_motor_ina = 30;     // setting the pin for the left motors a direction pin
-const byte left_encoder_a = 24;     // setting the pin for the left motors first encoder signal pin
-const byte left_encoder_b = 25;     // setting the pin for the left motors secondt encoder signal pin
+const byte right_motor_pwm = 29;     // setting the pin for the left motors PWM
+const byte right_motor_inb = 28;     // setting the pin for the left motors b direction pin
+const byte right_motor_ina = 30;     // setting the pin for the left motors a direction pin
+const byte right_encoder_a = 24;     // setting the pin for the left motors first encoder signal pin
+const byte right_encoder_b = 25;     // setting the pin for the left motors secondt encoder signal pin
+const byte left_motor_pwm = 38;    // setting the pin for the right motors PWM
+const byte left_motor_inb = 37;    // setting the pin for the right motors b direction pin
+const byte left_motor_ina = 39;    // setting the pin for the right motors a direction pin
+const byte left_encoder_a = 33;    // setting the pin for the right motors first encoder signal pin
+const byte left_encoder_b = 34;    // setting the pin for the right motors secondt encoder signal pin
 //-----variabels-----//
 int counts_per_revolution = 1920.0;   // the number of counts per full wheel revulotion
 const float pi = 3.141593;          // this is pi, or an aproximation, what did you expeced?
@@ -53,7 +53,8 @@ float wheel_radius = 1.0;             // needs to be updated and use the right u
 ros::NodeHandle nh;
 geometry_msgs::Vector3 right_wheel_speed;
 ros::Publisher data_pub("collection", &right_wheel_speed);
-
+std_msgs::Int16 run_end;
+ros::Publisher end_pub("end_of_run", &run_end);
 
 void message_mode(std_msgs::Int16& mode_comand) {
   mode_mode = mode_comand.data;
@@ -80,68 +81,104 @@ float averaging_array(long the_input_array[]) {
 void encoder_count_chage_right() {
   delta_time_right =  double(micros()) / 1000000 - old_time_right;
   old_time_right = double(micros()) / 1000000;
+  int right_count_tick;
   if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution) {
     if (direction_indicator_right == 1) {
       encoder_counter_right++;
+      right_count_tick = 1;
       current_omega_right = count_to_rad / delta_time_right;
-      array_push(speed_array_right, current_omega_right);
     }
     if (direction_indicator_right == 0) {
       encoder_counter_right = encoder_counter_right - 1;
+      right_count_tick = -1;
       current_omega_right = -count_to_rad / delta_time_right;
-      array_push(speed_array_right, current_omega_right);
     }
   }
   if (encoder_counter_right == counts_per_revolution) {
     if (direction_indicator_right == 1) {
       encoder_counter_right = 0;
       current_omega_right = count_to_rad / delta_time_right;
-      array_push(speed_array_right, current_omega_right);
     }
   }
   if (encoder_counter_right == -counts_per_revolution) {
     if (direction_indicator_right == 0) {
       encoder_counter_right = 0;
       current_omega_right = -count_to_rad * 1.0 / delta_time_right;
-      array_push(speed_array_right, current_omega_right);
     }
   }
+  if (current_omega_right < 20 && current_omega_right > -20) {
+    array_push(speed_array_right, current_omega_right);
+  }
+
+  //right_tick.data = right_count_tick;
+  //right_tick_pub.publish(&right_tick);
   average_omega_right = averaging_array(speed_array_right);
 }
 
 void encoder_count_chage_left() {
   delta_time_left = double(micros()) / 1000000 - old_time_left;
   old_time_left = double(micros()) / 1000000;
+  int left_count_tick;
   if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution) {
     if (direction_indicator_left == 1) {
       encoder_counter_left++;
+      left_count_tick = 1;
       current_omega_left = count_to_rad / delta_time_left;
-      array_push(speed_array_left, current_omega_left);
     }
     if (direction_indicator_left == 0) {
       encoder_counter_left = encoder_counter_left - 1;
+      left_count_tick = -1;
       current_omega_left = -count_to_rad / delta_time_left;
-      array_push(speed_array_left, current_omega_left);
     }
   }
   if (encoder_counter_left == counts_per_revolution) {
     if (direction_indicator_left == 1) {
       encoder_counter_left = 0;
       current_omega_left = count_to_rad / delta_time_left;
-      array_push(speed_array_left, current_omega_left);
     }
   }
   if (encoder_counter_left == -counts_per_revolution) {
     if (direction_indicator_left == 0) {
       encoder_counter_left = 0;
       current_omega_left = -count_to_rad * 1.0 / delta_time_left;
-      array_push(speed_array_left, current_omega_left);
     }
   }
+  if (current_omega_left < 20 && current_omega_left > -20) {
+    array_push(speed_array_left, current_omega_left);
+  }
+
+  //left_tick.data = left_count_tick;
+  //left_tick_pub.publish(&left_tick);
+
   average_omega_left = averaging_array(speed_array_left);
 }
 
-
+void setPWM(int pwm_right, int pwm_left) {
+  //setting the correct direction of the motor
+  direction_indicator_right = 0;
+  direction_indicator_left = 0;
+  if(pwm_right >= 0){
+    direction_indicator_right = 1;
+  }
+  if(pwm_left >= 0){
+    direction_indicator_left = 1;
+  }
+  digitalWrite(right_motor_ina, pwm_right >= 0);
+  digitalWrite(right_motor_inb, pwm_right < 0);
+  digitalWrite(left_motor_ina, pwm_left >= 0);
+  digitalWrite(left_motor_inb, pwm_left < 0);
+  //setting the value of the motor
+  pwm_right = abs(pwm_right);
+  pwm_left = abs(pwm_left);
+  if (pwm_left > 255) {
+    pwm_left = 255;
+  }
+  if (pwm_right > 255) {
+    pwm_right = 255;
+  }
+  analogWrite(right_motor_pwm, pwm_right);
+  analogWrite(left_motor_pwm, pwm_left);
+}
 
 void setup() {
   Serial.begin(9600);
@@ -163,6 +200,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
   nh.subscribe(sub);
   nh.advertise(data_pub);
+  nh.advertise(end_pub);
   digitalWrite(right_motor_ina, HIGH);
   digitalWrite(left_motor_inb, HIGH);
 }
@@ -171,8 +209,7 @@ void loop() {
   if (mode_mode == 1){
     for(int i = 0; i < 256; i++){
       for(int j = 0; j < 25; j++){
-        analogWrite(right_motor_pwm, i);
-        analogWrite(left_motor_pwm, i);
+        setPWM(-i,i);
         right_wheel_speed.x = average_omega_right;
         right_wheel_speed.y = average_omega_left;
         right_wheel_speed.z = i;
@@ -182,6 +219,10 @@ void loop() {
       }
     }
     mode_mode = 0;
+    run_end.data = 0;
+    end_pub.publish(&run_end);
+    analogWrite(right_motor_pwm, 0);
+    analogWrite(left_motor_pwm, 0);
   }
   nh.spinOnce();
 }

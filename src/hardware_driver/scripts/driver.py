@@ -1,17 +1,35 @@
 #!/usr/bin/env python3
 import rospy
 import sys
+import os
 from std_msgs.msg import Int16
 from std_msgs.msg import Float64
 from geometry_msgs.msg import Vector3
 
+path = "/home/nicoleg/test_data/wheel_speed%s.txt"
+number_of_files = 0
+
+
+
+def file_iterator(data):
+    global number_of_files
+    number_of_files = 0
+    while os.path.exists(path % number_of_files):
+        print("im running itorator")
+        number_of_files = number_of_files + 1
+
 def speed_writting(data):
-    f = open("wheel_speed.txt","a")
+    global path, number_of_files
+    f = open(path % number_of_files,"a")
     f.write(str(int(data.z))+","+str(data.x)+","+str(data.y)+"\n")
     f.close()
 
 def talker():
-    #pub = rospy.Publisher('pwm_sig', Vector3, queue_size=10)
+    global path, number_of_files
+    while os.path.exists(path % number_of_files):
+        print(number_of_files)
+        number_of_files = number_of_files + 1
+    pub = rospy.Publisher('file_numb', Int16, queue_size=10)
     pub1 = rospy.Publisher('mode_sig', Int16, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
@@ -25,14 +43,15 @@ def talker():
 
         dir_comand = int(temp_dir_mode)
 
-        #pwm_comand = Vector3()
-        #pwm_comand.x = int(temp_pwm_r)
+        #pwm_comand = Int16()
+        #pwm_comand.data = number_of_files
         #pwm_comand.y = int(temp_pwm_l)
         #pwm_comand.z = int(temp_heading)
         rospy.Subscriber("collection", Vector3, speed_writting)
+        rospy.Subscriber("end_of_run", Int16, file_iterator)
         #rospy.loginfo(pwm_comand)
         #pub.publish(pwm_comand)
-        rospy.loginfo(dir_comand)
+        #rospy.loginfo(dir_comand)
         pub1.publish(dir_comand)
         rate.sleep()
 

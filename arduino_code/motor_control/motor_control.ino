@@ -125,7 +125,6 @@ void encoder_count_chage_right() {
       encoder_counter_right++;
       right_count_tick = 1;
       current_omega_right = count_to_rad / delta_time_right;
-
     }
     if (direction_indicator_right == 0) {
       encoder_counter_right = encoder_counter_right - 1;
@@ -144,8 +143,6 @@ void encoder_count_chage_right() {
       encoder_counter_right = 0;
       current_omega_right = -count_to_rad * 1.0 / delta_time_right;
     }
-
-
   }
   if (current_omega_right < 20 && current_omega_right > -20) {
     array_push(speed_array_right, current_omega_right);
@@ -153,7 +150,7 @@ void encoder_count_chage_right() {
 
   right_tick.data = right_count_tick;
   right_tick_pub.publish(&right_tick);
-
+  average_omega_right = averaging_array(speed_array_right);
 }
 
 void encoder_count_chage_left() {
@@ -183,8 +180,6 @@ void encoder_count_chage_left() {
       encoder_counter_left = 0;
       current_omega_left = -count_to_rad * 1.0 / delta_time_left;
     }
-
-
   }
   if (current_omega_left < 20 && current_omega_left > -20) {
     array_push(speed_array_left, current_omega_left);
@@ -207,10 +202,16 @@ ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 //ros::Publisher data_measured_angle("measured_angle", &measured_angle);
 geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
 ros::Publisher datadata_measured_angle("data_measured_angle", &data_measured_angle);
-
-
-void setPWM(int pwm_left, int pwm_right) {
+void setPWM(int pwm_right, int pwm_left) {
   //setting the correct direction of the motor
+  direction_indicator_right = 0;
+  direction_indicator_left = 0;
+  if(pwm_right >= 0){
+    direction_indicator_right = 1;
+  }
+  if(pwm_left >= 0){
+    direction_indicator_left = 1;
+  }
   digitalWrite(right_motor_ina, pwm_right >= 0);
   digitalWrite(right_motor_inb, pwm_right < 0);
   digitalWrite(left_motor_ina, pwm_left >= 0);
@@ -398,7 +399,7 @@ void loop() {
   //Serial.println(measured_angle);
   //Serial.print("Reference:");
   //Serial.println(reference_angle);
-  
+
 
   nh.spinOnce();
   delay(10);}
