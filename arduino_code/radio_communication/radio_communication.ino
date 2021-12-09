@@ -31,11 +31,15 @@ char end_character = 38; //& = end bit
 
 // first we need to subscribe to data, so we can send it over the radio later (WORKS AS AN INTERRUPTER)
 void data_to_be_sent (const std_msgs::String& data_msg) {
+  
   digitalWrite(green, LOW);
   digitalWrite(yellow, HIGH);
+
+  char message_data[message_size];
   message_to_send = data_msg.data;
+  message_to_send.toCharArray(message_data, message_size);
   Serial.println(message_to_send);
-  radio_module.write(&message_to_send); //now the subscribed data is being sent over the radio
+  radio_module.write(&message_data); //now the subscribed data is being sent over the radio
 }
 
 ros::Subscriber<std_msgs::String> subscriber("data_to_be_sent", data_to_be_sent ); //subscriber setup
