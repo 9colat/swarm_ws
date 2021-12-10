@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 #include <ros.h>
 #include <std_msgs/String.h>
@@ -209,7 +210,7 @@ void loop() {
   if (mode_mode == 1){
     for(int i = 0; i < 256; i++){
       for(int j = 0; j < 25; j++){
-        setPWM(-i,i);
+        setPWM(-i,-i);
         right_wheel_speed.x = average_omega_right;
         right_wheel_speed.y = average_omega_left;
         right_wheel_speed.z = i;
