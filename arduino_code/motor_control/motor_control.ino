@@ -3,6 +3,7 @@
 #include "MPU9250.h"
 #include <ros.h>
 #include <Wire.h>
+#include <math.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Int16.h>
 #include <std_msgs/Float32.h>
@@ -53,14 +54,19 @@ float current_omega_right;          // initialzing the current angular velocity 
 float current_omega_left;           // initialzing the current angular velocity for the left motor
 float average_omega_right;
 float average_omega_left;
+float goal_omega_right;
+float goal_omega_left;
+float goal_theta;
 float float_to_long_factor = 10000.0;
-float robot_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
-float wheel_radius = 1.0;             // needs to be updated and use the right unit (proberbly meters)
+float wheel_base = 0.229;            // needs to be updated and use the right unit (proberbly meters)
+float wheel_radius = 0.04;           // needs to be updated and use the right unit (proberbly meters)
 int16_t accel_X, accel_Y, accel_Z, tmp, gyro_X, gyro_Y, gyro_Z, mx, my, mz;
 long publisher_timer;
 MPU9250 accelgyro;
 int mag_x_cal = -20; //magnetometer callibration in x direction
 int mag_y_cal = -6; //magnetometer callibration in y direction
+
+
 
 
 ros::NodeHandle nh;                 // here the node handler is set with the name nh
@@ -72,6 +78,15 @@ std_msgs::Float32 angle_of_wheel;
 ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
 geometry_msgs::Quaternion wheel_speed;
 ros::Publisher speed_pub("speed_and_tick", &wheel_speed);
+geometry_msgs::Vector3 imu_acc = geometry_msgs::Vector3();
+ros::Publisher IMU_data_acc("imu_acc", &imu_acc);
+geometry_msgs::Vector3 imu_gyro = geometry_msgs::Vector3();
+ros::Publisher IMU_data_gyro("imu_gyro", &imu_gyro);
+geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
+ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
+geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
+ros::Publisher datadata_measured_angle("data_measured_angle", &data_measured_angle);
+ros::Subscriber<geometry_msgs::Vector3> sub("pwm_sig", &message_pwm);
 
 
 struct Quaternion
@@ -132,18 +147,18 @@ void encoder_count_chage_right() {
       current_omega_right = -count_to_rad / delta_time_right;
     }
   }
-  if (encoder_counter_right == counts_per_revolution) {
-    if (direction_indicator_right == 1) {
-      encoder_counter_right = 0;
-      current_omega_right = count_to_rad / delta_time_right;
-    }
-  }
-  if (encoder_counter_right == -counts_per_revolution) {
-    if (direction_indicator_right == 0) {
-      encoder_counter_right = 0;
-      current_omega_right = -count_to_rad * 1.0 / delta_time_right;
-    }
-  }
+//  if (encoder_counter_right == counts_per_revolution) {
+//    if (direction_indicator_right == 1) {
+//      encoder_counter_right = 0;
+//      current_omega_right = count_to_rad / delta_time_right;
+//    }
+//  }
+//  if (encoder_counter_right == -counts_per_revolution) {
+//    if (direction_indicator_right == 0) {
+//      encoder_counter_right = 0;
+//      current_omega_right = -count_to_rad * 1.0 / delta_time_right;
+//    }
+//  }
   if (current_omega_right < 20 && current_omega_right > -20) {
     array_push(speed_array_right, current_omega_right);
   }
@@ -169,18 +184,18 @@ void encoder_count_chage_left() {
       current_omega_left = -count_to_rad / delta_time_left;
     }
   }
-  if (encoder_counter_left == counts_per_revolution) {
-    if (direction_indicator_left == 1) {
-      encoder_counter_left = 0;
-      current_omega_left = count_to_rad / delta_time_left;
-    }
-  }
-  if (encoder_counter_left == -counts_per_revolution) {
-    if (direction_indicator_left == 0) {
-      encoder_counter_left = 0;
-      current_omega_left = -count_to_rad * 1.0 / delta_time_left;
-    }
-  }
+//  if (encoder_counter_left == counts_per_revolution) {
+//    if (direction_indicator_left == 1) {
+//      encoder_counter_left = 0;
+//      current_omega_left = count_to_rad / delta_time_left;
+//    }
+//  }
+//  if (encoder_counter_left == -counts_per_revolution) {
+//    if (direction_indicator_left == 0) {
+//      encoder_counter_left = 0;
+//      current_omega_left = -count_to_rad * 1.0 / delta_time_left;
+//    }
+//  }
   if (current_omega_left < 20 && current_omega_left > -20) {
     array_push(speed_array_left, current_omega_left);
   }
@@ -192,16 +207,8 @@ void encoder_count_chage_left() {
 }
 
 
-geometry_msgs::Vector3 imu_acc = geometry_msgs::Vector3();
-ros::Publisher IMU_data_acc("imu_acc", &imu_acc);
-geometry_msgs::Vector3 imu_gyro = geometry_msgs::Vector3();
-ros::Publisher IMU_data_gyro("imu_gyro", &imu_gyro);
-geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
-ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
-//std_msgs::Float64 measured_angle = std_msgs::Float64();
-//ros::Publisher data_measured_angle("measured_angle", &measured_angle);
-geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
-ros::Publisher datadata_measured_angle("data_measured_angle", &data_measured_angle);
+
+
 void setPWM(int pwm_right, int pwm_left) {
   //setting the correct direction of the motor
   direction_indicator_right = 0;
@@ -229,7 +236,9 @@ void setPWM(int pwm_right, int pwm_left) {
   analogWrite(left_motor_pwm, pwm_left);
 }
 
+void wheel_speed_set(float input_vel_x,float input_vel_y,float input_omega){
 
+}
 
 
 void message_pwm(geometry_msgs::Vector3& pwm_comand) {
@@ -242,7 +251,7 @@ void message_pwm(geometry_msgs::Vector3& pwm_comand) {
 }
 
 
-ros::Subscriber<geometry_msgs::Vector3> sub("pwm_sig", &message_pwm);
+
 
 
 void imu_collection() {
