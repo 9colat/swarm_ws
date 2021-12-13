@@ -10,7 +10,7 @@
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Quaternion.h>
-
+#include <geometry_msgs/Twist.h>
 
 //-----pinout setting up-----//
 const int MPU_addr = 0x68; // I2C address of the MPU-6050 and mpu9250
@@ -28,8 +28,18 @@ const byte RGB_led_green = 2;
 const byte RGB_led_blue = 3;
 const byte RGB_led_red = 4;
 //-----variabels-----//
-int counts_per_revolution = 1920.0;   // the number of counts per full wheel revulotion
+
+const int counts_per_revolution = 1920.0;   // the number of counts per full wheel revulotion
 const float pi = 3.141593;          // this is pi, or an aproximation, what did you expeced?
+const float max_vel = 13.0;
+const float max_omega = 1.0;
+const float p_gain = 1.0;
+const float i_gain = 0.0;
+const float d_gain = 0.0;
+const float a = -0.0004;
+const float b = 0.1644;
+const float c = -1.4051;
+bool bool_tele_op_toggel = true;
 double encoder_counter_right = 0.0;   // this is the encoder counter for the right wheel
 double encoder_counter_left = 0.0;    // this is the encoder counter for the left wheel
 int status_of_led = HIGH;           // this can be removed later
@@ -37,8 +47,8 @@ int direction_indicator_right;  //this is a direction indicator, that can be eit
 int direction_indicator_left;   //this is a direction indicator, that can be either 0 or 1. if the variable is 0 that means that the moters are going backwards, and 1 means forwards.
 float count_to_deg = (360.0) / counts_per_revolution; //convertion constants for degrees
 double count_to_rad = (2.0 * pi) / counts_per_revolution; //convertion constants for radians
-float pwm_procent_right = 0.0;        // the PWM procentage, initialed to 0 for the right motor
-float pwm_procent_left = 0.0;         // the PWM procentage, initialed to 0 for the left motor
+int pwm_procent_right = 0;        // the PWM procentage, initialed to 0 for the right motor
+int pwm_procent_left = 0;         // the PWM procentage, initialed to 0 for the left motor
 int pwm_value_right;                // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
 int pwm_value_left;                 // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
 float measured_angle;  // a heading angle we get from the IMU
@@ -54,9 +64,9 @@ float current_omega_right;          // initialzing the current angular velocity 
 float current_omega_left;           // initialzing the current angular velocity for the left motor
 float average_omega_right;
 float average_omega_left;
-float goal_omega_right;
-float goal_omega_left;
-float goal_theta;
+//float goal_omega_right;
+//float goal_omega_left;
+//float goal_theta;
 float float_to_long_factor = 10000.0;
 float wheel_base = 0.229;            // needs to be updated and use the right unit (proberbly meters)
 float wheel_radius = 0.04;           // needs to be updated and use the right unit (proberbly meters)
@@ -86,7 +96,7 @@ geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
 ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
 ros::Publisher datadata_measured_angle("data_measured_angle", &data_measured_angle);
-ros::Subscriber<geometry_msgs::Vector3> sub("pwm_sig", &message_pwm);
+ros::Subscriber<geometry_msgs::Vector3> sub("cmd_vel", &cmd_velocity);
 
 
 struct Quaternion
@@ -206,7 +216,11 @@ void encoder_count_chage_left() {
   average_omega_left = averaging_array(speed_array_left);
 }
 
-
+int omega_to_pwm(double x){
+  float pwm = a*pow(x,2)+b*x+c
+  int pwm_int = pwm
+  return pwm_int
+}
 
 
 void setPWM(int pwm_right, int pwm_left) {
@@ -236,18 +250,49 @@ void setPWM(int pwm_right, int pwm_left) {
   analogWrite(left_motor_pwm, pwm_left);
 }
 
-void wheel_speed_set(float input_vel_x,float input_vel_y,float input_omega){
+void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
+  double goal_theta;
+  double vel_x_goal;
+  double goal_omega_right;
+  double goal_omega_left;
+  double goal_omega;
+  double error_omega_right;
+  double error_omega_left;
 
+  if (tele_op){
+    RGB_led_set("blue")
+    vel_x_goal = input_vel_x * max_vel;
+    goal_omega = input_omega * max_omega;
+    goal_omega_right = (2*vel_x_goal + wheel_base*goal_omega)/(4*wheel_radius);
+    goal_omega_left = (2*vel_x_goal - wheel_base*goal_omega)/(4*wheel_radius);
+
+    error_omega_right = goal_omega_right - average_omega_right;
+    error_omega_left = goal_omega_left - average_omega_left;
+
+    control_right = error_omega_right * p_gain;
+    control_left = error_omega_left * p_gain;
+
+    pwm_procent_left = omega_to_pwm(control_right);
+    pwm_procent_left = omega_to_pwm(control_left);
+
+  }
+  else if(tele_op == false){
+    RGB_led_set("red")
+
+  }
+  setPWM(pwm_procent_left, pwm_procent_right);
 }
 
 
-void message_pwm(geometry_msgs::Vector3& pwm_comand) {
-  pwm_procent_right = pwm_comand.x;
-  //pwm_value_right = map(pwm_procent_right, 0, 100, 0, 255);
-  pwm_procent_left = pwm_comand.y;
-  //pwm_value_left = map(pwm_procent_left, 0, 100, 0, 255);
-  reference_angle = pwm_comand.z;
-  setPWM(pwm_procent_left, pwm_procent_right);
+void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
+  double goal_vel_x = cmd_goal.linear.x;
+  double gola_vel_y = cmd_goal.linear.y;
+  double goal_omega = cmd_goal.angular.x;
+  double tele_op_toggel = cmd_goal.angular.z;
+  if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
+    bool_tele_op_toggel = !bool_tele_op_toggel;
+  }
+  wheel_speed_set(goal_vel_x, gola_vel_y, goal_omega, bool_tele_op_toggel);
 }
 
 
