@@ -38,7 +38,7 @@ void data_to_be_sent (const std_msgs::String& data_msg) {
   char message_data[message_size];
   message_to_send = data_msg.data;
   message_to_send.toCharArray(message_data, message_size);
-  Serial.println(message_to_send);
+  Serial.println(message_data);
   radio_module.write(&message_data); //now the subscribed data is being sent over the radio
 }
 
