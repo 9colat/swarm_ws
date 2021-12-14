@@ -1,3 +1,4 @@
+//-----Libraries-----//
 #include <Arduino.h>
 #include "I2Cdev.h"
 #include "MPU9250.h"
@@ -14,21 +15,21 @@
 
 //-----pinout setting up-----//
 const int MPU_addr = 0x68; // I2C address of the MPU-6050 and mpu9250
-const byte right_motor_pwm = 38;    // setting the pin for the right motors PWM
-const byte right_motor_inb = 37;    // setting the pin for the right motors b direction pin
-const byte right_motor_ina = 39;    // setting the pin for the right motors a direction pin
-const byte right_encoder_a = 33;    // setting the pin for the right motors first encoder signal pin
-const byte right_encoder_b = 34;    // setting the pin for the right motors secondt encoder signal pin
-const byte left_motor_pwm = 29;     // setting the pin for the left motors PWM
-const byte left_motor_inb = 28;     // setting the pin for the left motors b direction pin
-const byte left_motor_ina = 30;     // setting the pin for the left motors a direction pin
-const byte left_encoder_a = 24;     // setting the pin for the left motors first encoder signal pin
-const byte left_encoder_b = 25;     // setting the pin for the left motors secondt encoder signal pin
+const byte right_motor_pwm = 29;     // setting the pin for the left motors PWM
+const byte right_motor_inb = 28;     // setting the pin for the left motors b direction pin
+const byte right_motor_ina = 30;     // setting the pin for the left motors a direction pin
+const byte right_encoder_a = 24;     // setting the pin for the left motors first encoder signal pin
+const byte right_encoder_b = 25;     // setting the pin for the left motors secondt encoder signal pin
+const byte left_motor_pwm = 38;    // setting the pin for the right motors PWM
+const byte left_motor_inb = 37;    // setting the pin for the right motors b direction pin
+const byte left_motor_ina = 39;    // setting the pin for the right motors a direction pin
+const byte left_encoder_a = 33;    // setting the pin for the right motors first encoder signal pin
+const byte left_encoder_b = 34;    // setting the pin for the right motors secondt encoder signal pin
 const byte RGB_led_green = 2;
 const byte RGB_led_blue = 3;
 const byte RGB_led_red = 4;
-//-----variabels-----//
 
+//-----variabels-----//
 const int counts_per_revolution = 1920.0;   // the number of counts per full wheel revulotion
 const float pi = 3.141593;          // this is pi, or an aproximation, what did you expeced?
 const float max_vel = 13.0;
@@ -76,10 +77,10 @@ MPU9250 accelgyro;
 int mag_x_cal = -20; //magnetometer callibration in x direction
 int mag_y_cal = -6; //magnetometer callibration in y direction
 
-
-
-
+//-----ROS node handler-----//
 ros::NodeHandle nh;                 // here the node handler is set with the name nh
+
+//-----Setting up publishers and there types-----//
 std_msgs::Int16 right_tick;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
 ros::Publisher right_tick_pub("right_tick", &right_tick);  //here the publisher is initilazed with the publisher "name" the topic "name" and a pointer to the variable that is sent
 std_msgs::Int16 left_tick;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
@@ -95,10 +96,11 @@ ros::Publisher IMU_data_gyro("imu_gyro", &imu_gyro);
 geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
 ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
-ros::Publisher datadata_measured_angle("data_measured_angle", &data_measured_angle);
-ros::Subscriber<geometry_msgs::Vector3> sub("cmd_vel", &cmd_velocity);
+ros::Publisher measured_angle_pub("measured_angle", &data_measured_angle);
 
 
+
+//-----some quaternion (not being used)-----//
 struct Quaternion
 {
   double w, x, y, z;
@@ -124,6 +126,8 @@ Quaternion ToQuaternion(double yaw, double pitch, double roll) // yaw (Z), pitch
 }
 
 
+
+//-----Functions-----//
 void array_push(long the_input_array[], float data) {
   for (int x = sizeof(the_input_array); x > 0; x = x - 1) {
     the_input_array[x] = the_input_array[x - 1];
@@ -217,9 +221,9 @@ void encoder_count_chage_left() {
 }
 
 int omega_to_pwm(double x){
-  float pwm = a*pow(x,2)+b*x+c
-  int pwm_int = pwm
-  return pwm_int
+  float pwm = a*pow(x,2)+b*x+c;
+  int pwm_int = pwm;
+  return pwm_int;
 }
 
 
@@ -258,11 +262,24 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
   double goal_omega;
   double error_omega_right;
   double error_omega_left;
+  double control_right;
+  double control_left;
 
-  if (tele_op){
-    RGB_led_set("blue")
-    vel_x_goal = input_vel_x * max_vel;
-    goal_omega = input_omega * max_omega;
+  if (tele_op = true){
+    RGB_led_set("blue");
+
+    vel_x_goal = input_vel_x * 75;
+    goal_omega = input_omega * 50;
+    goal_omega_right = vel_x_goal + goal_omega;
+    goal_omega_left = vel_x_goal - goal_omega;
+    pwm_procent_right = int(map(goal_omega_right, 0, 100, 0, 255));
+    pwm_procent_left = int(map(goal_omega_left, 0, 100, 0, 255));
+
+
+  }
+  if(tele_op == false){
+    RGB_led_set("red");
+
     goal_omega_right = (2*vel_x_goal + wheel_base*goal_omega)/(4*wheel_radius);
     goal_omega_left = (2*vel_x_goal - wheel_base*goal_omega)/(4*wheel_radius);
 
@@ -273,26 +290,26 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
     control_left = error_omega_left * p_gain;
 
     pwm_procent_left = omega_to_pwm(control_right);
-    pwm_procent_left = omega_to_pwm(control_left);
-
+    pwm_procent_right = omega_to_pwm(control_left);
   }
-  else if(tele_op == false){
-    RGB_led_set("red")
+  wheel_speed.x = control_right;
+  wheel_speed.y = control_left;
+  wheel_speed.z = encoder_counter_right;
+  wheel_speed.w = encoder_counter_left;
 
-  }
-  setPWM(pwm_procent_left, pwm_procent_right);
+  speed_pub.publish(&wheel_speed);
+  setPWM(pwm_procent_right, pwm_procent_left);
 }
 
 
 void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
   double goal_vel_x = cmd_goal.linear.x;
-  double gola_vel_y = cmd_goal.linear.y;
-  double goal_omega = cmd_goal.angular.x;
+  double goal_omega = cmd_goal.linear.y;
   double tele_op_toggel = cmd_goal.angular.z;
   if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
     bool_tele_op_toggel = !bool_tele_op_toggel;
   }
-  wheel_speed_set(goal_vel_x, gola_vel_y, goal_omega, bool_tele_op_toggel);
+  wheel_speed_set(goal_vel_x, goal_omega, bool_tele_op_toggel);
 }
 
 
@@ -320,7 +337,7 @@ void imu_collection() {
   data_measured_angle.x = mx;
   data_measured_angle.y = reference_angle;
   data_measured_angle.z = measured_angle;
-  datadata_measured_angle.publish(&data_measured_angle);
+  measured_angle_pub.publish(&data_measured_angle);
 }
 
 void heading_controller(float measured_angle, float reference_angle, float p_gain) { //(measured, goal, p_value)
@@ -382,6 +399,8 @@ void RGB_led_set(const String& color) {
     digitalWrite(RGB_led_red, LOW);
   }
 }
+// Subscribers //
+ros::Subscriber<geometry_msgs::Twist> sub("cmd_vel", &cmd_velocity);
 
 void setup() {
   Serial.begin(9600);
@@ -414,7 +433,7 @@ void setup() {
   nh.advertise(IMU_data_acc);
   nh.advertise(IMU_data_gyro);
   nh.advertise(IMU_data_mag);
-  nh.advertise(datadata_measured_angle);
+  nh.advertise(measured_angle_pub);
 
   Wire.begin();
   //Wire.beginTransmission(MPU_addr);
@@ -428,20 +447,12 @@ void setup() {
 }
 
 void loop() {
-  RGB_led_set("green");
+  //RGB_led_set("green");
   //  mode_confurm.data = test;
   //  mode_pub.publish(&mode_confurm);
   //  float test = encoder_to_unit(encoder_counter_right,1);
   //  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
 
-
-
-  wheel_speed.x = average_omega_right;
-  wheel_speed.y = average_omega_left;
-  wheel_speed.z = encoder_counter_right;
-  wheel_speed.w = encoder_counter_left;
-
-  speed_pub.publish(&wheel_speed);
 
   //in order to improve the measured_angle reading, you can do measured=(integral(gyro))*0.9+magnetometer*0.1
   //the integral is going to drift, but the magnetometer will correct it (you need to find the correct ratio)
@@ -456,4 +467,5 @@ void loop() {
 
 
   nh.spinOnce();
-  delay(10);}
+  //delay(10);
+  }

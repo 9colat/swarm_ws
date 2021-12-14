@@ -19,3 +19,12 @@ rosrun hardware_driver driver.py
 chmod 777 driver.py
 
 ssh ubuntu@ip
+
+
+for tele op:
+
+roslaunch ds4_driver ds4_twist.launch
+
+rosrun rosserial_python serial_node.py /dev/ttyACM0
+
+rostopic echo /cmd_vel
