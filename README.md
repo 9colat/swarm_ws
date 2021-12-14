@@ -21,6 +21,7 @@ chmod 777 driver.py
 ssh ubuntu@ip
 
 
+
 for tele op:
 
 roslaunch ds4_driver ds4_twist.launch
