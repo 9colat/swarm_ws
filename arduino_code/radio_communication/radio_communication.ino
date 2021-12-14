@@ -22,8 +22,7 @@ byte yellow = 6;
 
 
 
-const int message_size = 178; // how many chars the message can contain
-String message_to_send;
+unsigned int message_size = 281; // how many chars the message can contain
 std_msgs::String data_to_be_received;
 char inverted_question_mark = 14858414; //⸮
 char end_character = 38; //& = end bit
@@ -31,15 +30,21 @@ char end_character = 38; //& = end bit
 
 // first we need to subscribe to data, so we can send it over the radio later (WORKS AS AN INTERRUPTER)
 void data_to_be_sent (const std_msgs::String& data_msg) {
-  
+
   digitalWrite(green, LOW);
   digitalWrite(yellow, HIGH);
 
-  char message_data[message_size];
-  message_to_send = data_msg.data;
-  message_to_send.toCharArray(message_data, message_size);
-  Serial.println(message_data);
-  radio_module.write(&message_data); //now the subscribed data is being sent over the radio
+  char message_to_radio[message_size];
+  String message_from_ros;
+  message_from_ros = data_msg.data;
+  int current_size = message_from_ros.length() + 1;
+  message_from_ros.toCharArray(message_to_radio, current_size);
+
+  
+  //nh.loginfo(&message_from_ros);
+
+  radio_module.write(message_to_radio, current_size); //now the subscribed data is being sent over the radio
+
 }
 
 ros::Subscriber<std_msgs::String> subscriber("data_to_be_sent", data_to_be_sent ); //subscriber setup
@@ -117,6 +122,7 @@ void setup() {
 void loop() {
 
   //Serial.print(test_array);
+  //radio_module.write("123456789011234567891112345678111123456711111234561111112345111111123411111111231111111112111111111112345678901123456789111234567811112345671111123456111111234511111112341111111123111111111211111111111234567890112345678911123456781111234567111112345611111123451111111234111111112311111111121111111111");
   //radio_module.write("hello");
   //delay(1000);
   receiving();
