@@ -12,6 +12,8 @@ catkin_make
 cd
 
 source ~/swarm_ws/devel/setup.bash
+cd swarm_ws
+gnome-terminal -x sh -c "./test1.sh; bash"
 #roslaunch hardware_driver test.launch
 
 
