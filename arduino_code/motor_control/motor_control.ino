@@ -41,6 +41,8 @@ const float a = -0.0004;
 const float b = 0.1644;
 const float c = -1.4051;
 bool bool_tele_op_toggel = true;
+int period = 10;
+unsigned long time_now = 0;
 double encoder_counter_right = 0.0;   // this is the encoder counter for the right wheel
 double encoder_counter_left = 0.0;    // this is the encoder counter for the left wheel
 int status_of_led = HIGH;           // this can be removed later
@@ -76,6 +78,7 @@ long publisher_timer;
 MPU9250 accelgyro;
 int mag_x_cal = -20; //magnetometer callibration in x direction
 int mag_y_cal = -6; //magnetometer callibration in y direction
+int hi;
 
 //-----ROS node handler-----//
 ros::NodeHandle nh;                 // here the node handler is set with the name nh
@@ -301,6 +304,10 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
   setPWM(pwm_procent_right, pwm_procent_left);
 }
 
+void start_up_hi(std_msgs::Int16& num){
+  hi = num.data;
+  RGB_led_set("green");
+}
 
 void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
   double goal_vel_x = cmd_goal.linear.x;
@@ -338,6 +345,7 @@ void imu_collection() {
   data_measured_angle.y = reference_angle;
   data_measured_angle.z = measured_angle;
   measured_angle_pub.publish(&data_measured_angle);
+
 }
 
 void heading_controller(float measured_angle, float reference_angle, float p_gain) { //(measured, goal, p_value)
@@ -399,8 +407,10 @@ void RGB_led_set(const String& color) {
     digitalWrite(RGB_led_red, LOW);
   }
 }
+
 // Subscribers //
-ros::Subscriber<geometry_msgs::Twist> sub("cmd_vel", &cmd_velocity);
+ros::Subscriber<geometry_msgs::Twist> sub_cmd_vel("cmd_vel", &cmd_velocity);
+ros::Subscriber<std_msgs::Int16> start_up("stat_up_done", &start_up_hi);
 
 void setup() {
   Serial.begin(9600);
@@ -424,8 +434,8 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(right_encoder_b), encoder_count_chage_right, CHANGE);
   attachInterrupt(digitalPinToInterrupt(left_encoder_a), encoder_count_chage_left, CHANGE);
   attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
-  nh.subscribe(sub);
-  //  nh.subscribe(sub1);
+  nh.subscribe(sub_cmd_vel);
+  nh.subscribe(start_up);
   nh.advertise(right_tick_pub);
   nh.advertise(left_tick_pub);
   nh.advertise(ankle_pub);
@@ -465,7 +475,9 @@ void loop() {
   //Serial.print("Reference:");
   //Serial.println(reference_angle);
 
-
-  nh.spinOnce();
+  //if(millis() > time_now + period){
+    //time_now = millis();
+   nh.spinOnce();
+  //}
   //delay(10);
   }

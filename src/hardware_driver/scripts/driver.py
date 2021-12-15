@@ -8,6 +8,7 @@ from geometry_msgs.msg import Vector3
 
 path = "/home/nicoleg/test_data/wheel_speed%s.txt"
 number_of_files = 0
+run = 1
 
 
 
@@ -25,7 +26,11 @@ def speed_writting(data):
     f.close()
 
 def talker():
-    global path, number_of_files
+    global path, number_of_files, run
+    if(run == 1):
+        run = 0
+        pub_run = rospy.Publisher('stat_up_done', Int16, queue_size=10)
+        pub_run.publish(run)
     while os.path.exists(path % number_of_files):
         print(number_of_files)
         number_of_files = number_of_files + 1
