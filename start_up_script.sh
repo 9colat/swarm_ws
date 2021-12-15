@@ -12,7 +12,7 @@ catkin_make
 cd
 
 source ~/swarm_ws/devel/setup.bash
-#roslaunch hardware_driver test.launch
+roslaunch hardware_driver test.launch
 
 
 
