@@ -8,6 +8,7 @@ sudo apt upgrade -y
 cd
 cd swarm_ws/
 git pull origin master
+catkin_make
 cd
 
 source ~/swarm_ws/devel/setup.bash
