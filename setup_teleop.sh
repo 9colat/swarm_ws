@@ -14,7 +14,13 @@ sudo udevadm trigger
 
 sudo pip install ds4drv
 
+cd
 
+sudo apt install ros-noetic-move-base
+
+cd swarm_ws
+
+catkin_make
 
 
 sudo reboot
