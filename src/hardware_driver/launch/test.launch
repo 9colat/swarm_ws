@@ -10,19 +10,19 @@
     <arg name="use_standard_msgs" value="false" />
   </include>
 
-  <node pkg="ds4_driver" type="ds4_twist_node.py" name="ds4_twist" output="screen" >
+  <node pkg="ds4_driver" type="ds4_twist_node.py" name="ds4_twist" >
     <rosparam command="load" file="$(find ds4_driver)/config/twist_$(arg dof)dof.yaml" />
 
     <param name="stamped" value="$(arg stamped)" />
   </node>
 
   <!-- Ros_serial com (com between rpi and teeny)-->
-  <node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" output="screen">
+  <node pkg="rosserial_python" type="serial_node.py" name="rosserial_python">
      <param name="port" value="/dev/ttyACM0" />
      <param name="baud" value="9600"/>
   </node>
 
-  <node pkg="hardware_driver" type="driver.py" name="driver" output="screen">
+  <node pkg="hardware_driver" type="driver.py" name="driver">
 
   </node>
 
