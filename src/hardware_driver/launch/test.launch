@@ -1,5 +1,18 @@
 <?xml version="1.0"?>
 <launch>
+  <!-- Ros_serial com (com between rpi and teeny)-->
+  <node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" output="screen">
+     <param name="port" value="/dev/ttyACM0" />
+     <param name="baud" value="9600"/>
+  </node>
+
+  <node pkg="hardware_driver" type="driver.py" name="driver" output="screen">
+
+  </node>
+
+  <node pkg="hardware_driver" type="print_node.py" name="print_node" output="screen">
+
+  </node>
   <arg name="addr" default="" />
 
   <arg name="dof" default="6" />
@@ -16,14 +29,5 @@
     <param name="stamped" value="$(arg stamped)" />
   </node>
 
-  <!-- Ros_serial com (com between rpi and teeny)-->
-  <node pkg="rosserial_python" type="serial_node.py" name="rosserial_python">
-     <param name="port" value="/dev/ttyACM0" />
-     <param name="baud" value="9600"/>
-  </node>
-
-  <node pkg="hardware_driver" type="driver.py" name="driver">
-
-  </node>
 
 </launch>

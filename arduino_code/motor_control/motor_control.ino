@@ -306,7 +306,12 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
 
 void start_up_hi(std_msgs::Int16& num){
   hi = num.data;
-  RGB_led_set("green");
+  if (hi == 1){
+    RGB_led_set("green");
+  }
+  if (hi == 0){
+    RGB_led_set("red");
+  }
 }
 
 void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
