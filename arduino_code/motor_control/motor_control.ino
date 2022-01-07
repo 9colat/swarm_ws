@@ -318,9 +318,9 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
   double goal_vel_x = cmd_goal.linear.x;
   double goal_omega = cmd_goal.linear.y;
   double tele_op_toggel = cmd_goal.angular.z;
-  if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
-    bool_tele_op_toggel = !bool_tele_op_toggel;
-  }
+  //if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
+  //  bool_tele_op_toggel = !bool_tele_op_toggel;
+  //}
   wheel_speed_set(goal_vel_x, goal_omega, bool_tele_op_toggel);
 }
 
