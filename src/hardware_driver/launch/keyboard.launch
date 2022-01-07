@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Ros_serial com (com between rpi and teeny)-->
+  <node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" output="screen">
+     <param name="port" value="/dev/ttyACM0" />
+     <param name="baud" value="9600"/>
+  </node>
+
+  <node pkg="hardware_driver" type="driver.py" name="driver" output="screen">
+
+  </node>
+
+  <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_keyboard">
+     <param name="_speed" value="1.0" />
+     <param name="_turn" value="0.5" />
+  </node>
+
+
+</launch>

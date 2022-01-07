@@ -10,9 +10,9 @@
 
   </node>
 
-  <!--<node pkg="hardware_driver" type="print_node.py" name="print_node" output="screen">-->
+  <!--<node pkg="hardware_driver" type="print_node.py" name="print_node" output="screen">
 
-  </node>
+</node>-->
   <arg name="addr" default="" />
 
   <arg name="dof" default="6" />
