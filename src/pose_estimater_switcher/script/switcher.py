@@ -12,7 +12,7 @@ lidar_pose_x = 0 ## just an initial pose estimate from lidar in x
 lidar_pose_y = 0 ## just an initial pose estimate from lidar in y
 lidar_pose_z = 0 ## just an initial pose estimate from lidar in z
 
-
+## here we need to add the Subscriber for the lidar position estimate and the ups.
 
 def callback_lidar(data):
     global estimator_switch pose_x pose_y pose_z lidar_pose_x lidar_pose_y lidar_pose_z ups_pose_x ups_pose_y ups_pose_z
@@ -26,9 +26,6 @@ def callback_lidar(data):
         pose_x = ups_pose_x
         pose_y = ups_pose_y
         pose_z = ups_pose_z
-
-
-
 
 
 def switcher():
