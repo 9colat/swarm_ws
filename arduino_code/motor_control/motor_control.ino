@@ -281,7 +281,7 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
 
   }
   if(tele_op == false){
-    RGB_led_set("red");
+    RGB_led_set("green");
 
     goal_omega_right = (2*vel_x_goal + wheel_base*goal_omega)/(4*wheel_radius);
     goal_omega_left = (2*vel_x_goal - wheel_base*goal_omega)/(4*wheel_radius);
@@ -295,12 +295,12 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
     pwm_procent_left = omega_to_pwm(control_right);
     pwm_procent_right = omega_to_pwm(control_left);
   }
-  wheel_speed.x = control_right;
-  wheel_speed.y = control_left;
+  wheel_speed.x = average_omega_right;
+  wheel_speed.y = average_omega_left;
   wheel_speed.z = encoder_counter_right;
   wheel_speed.w = encoder_counter_left;
 
-  speed_pub.publish(&wheel_speed);
+  //speed_pub.publish(&wheel_speed);
   setPWM(pwm_procent_right, pwm_procent_left);
 }
 
@@ -318,9 +318,15 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
   double goal_vel_x = cmd_goal.linear.x;
   double goal_omega = cmd_goal.linear.y;
   double tele_op_toggel = cmd_goal.angular.z;
-  if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
-    bool_tele_op_toggel = !bool_tele_op_toggel;
+  if (cmd_goal.angular.z == 0 || cmd_goal.angular.z == -0){ // here if this is true that means that the robot is being teleoperated
+    bool_tele_op_toggel = true;
   }
+  else{
+    bool_tele_op_toggel = false;
+  }
+  //if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
+  //  bool_tele_op_toggel = !bool_tele_op_toggel;
+  //}
   wheel_speed_set(goal_vel_x, goal_omega, bool_tele_op_toggel);
 }
 
@@ -482,7 +488,13 @@ void loop() {
 
   //if(millis() > time_now + period){
     //time_now = millis();
-   nh.spinOnce();
+
+  wheel_speed.x = average_omega_right;
+  wheel_speed.y = average_omega_left;
+  wheel_speed.z = encoder_counter_right;
+  wheel_speed.w = encoder_counter_left;
+  speed_pub.publish(&wheel_speed);
+  nh.spinOnce();
   //}
   //delay(10);
   }
