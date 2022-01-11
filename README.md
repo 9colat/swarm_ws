@@ -1,6 +1,11 @@
-# **Swarm_ws**
+# Swarm_ws
+The code on this repository is a part of a project done by:
+-Aleksandra Dudlik
+-Casper L. F. Mikkelsen
+-Nicolaj T. Sørensen
 
-#Install instruction
+
+##Install instruction
 first fix your repository settings so that ros can be installed:
 ```
 sudo nano /etc/apt/sources.list
