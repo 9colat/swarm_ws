@@ -1,4 +1,4 @@
-å#! /bin/bash
+#! /bin/bash
 
 #here er install ros
 echo "ros2021"|sudo -S /path/to/command
