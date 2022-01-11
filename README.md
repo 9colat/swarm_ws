@@ -1,6 +1,6 @@
-# Swarm_ws
+# **Swarm_ws**
 
-##Install instruction
+#Install instruction
 first fix your repository settings so that ros can be installed:
 ```
 sudo nano /etc/apt/sources.list
