@@ -4,8 +4,33 @@ The code on this repository is a part of a project done by:
 -Casper L. F. Mikkelsen
 -Nicolaj T. Sørensen
 
+## ssh setup
 
-##Install instruction
+first, its a good idear to install network-map since then you do not need a screen get the ip address of you raspberry pi:
+```
+apt install nmap
+```
+now to find the ip address use this command to fine all the host on the net work that is from 192.168.0.0 to 192.168.0.255
+```
+nmap 192.168.0.*
+```
+if you dont have a ssh-key at this point then you have to make one this can be done with this command:
+```
+ssh-keygen
+```
+
+
+now to set up so that you only need to enter the password once use this command where you replace the remote_host with the ip address that you found earlier:
+```
+ssh-copy-id ubuntu@remote_host
+```
+
+after this you can ssh into the machine with this command, here you also replace the remote_host with the ip address that you found earlier:
+```
+ssh ubuntu@remote_host
+```
+
+## Install instruction
 first fix your repository settings so that ros can be installed:
 ```
 sudo nano /etc/apt/sources.list
@@ -22,7 +47,7 @@ chmod +x my_setup.sh
 ```
 now that should install everything that we used to make our robot run.
 
-##User instruction:
+## User instruction:
 
 when you want to run the code with the teensy/arduino then you have to run a set of comands in the terminal.
 first you have to start the ros master:
@@ -43,7 +68,8 @@ rosrun hardware_driver driver.py
 ```
 chmod +x driver.py
 ```
-ssh ubuntu@ip
+
+
 
 
 
