@@ -41,7 +41,7 @@ sudo rosdep init
 rosdep update
 
 
-#setting up the arduino ide and libraries
+echo "setting up the arduino ide and libraries"
 sudo apt install ros-noetic-rosserial-arduino -y
 sudo apt install ros-noetic-rosserial -y
 sudo apt update -y
