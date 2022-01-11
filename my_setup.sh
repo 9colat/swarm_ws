@@ -22,29 +22,24 @@ ncmli r wifi on
 
 sudo nmcli dev wifi connect testwifi
 
-echo "here ros is checked and/or install"
-FILE=/opt/ros/noetic/env.sh
-if [ -f "$FILE" ]; then
-    echo "ros exists on the pc - nice."
-else
-    echo "ros does not exist, well here we go again ;)."
-    #sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security main restricted"
-    #sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security universe"
-    #sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security multiverse"
-    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-    sudo apt install curl
-    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
-    sudo apt update -y
-    sudo apt upgrade -y
-    sudo apt install ros-noetic-desktop -y
-    source /opt/ros/noetic/setup.bash
-    echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
-    source ~/.bashrc
-    sudo apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y
-    sudo apt install python3-rosdep -y
-    sudo rosdep init
-    rosdep update
-fi
+echo "here ros is installing"
+#sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security main restricted"
+#sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security universe"
+#sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security multiverse"
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt install curl
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install ros-noetic-desktop -y
+source /opt/ros/noetic/setup.bash
+echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+sudo apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y
+sudo apt install python3-rosdep -y
+sudo rosdep init
+rosdep update
+
 
 #setting up the arduino ide and libraries
 sudo apt install ros-noetic-rosserial-arduino -y
