@@ -1,8 +1,28 @@
-å#! /bin/bash
+#! /bin/bash
 
-#here er install ros
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+# If you have not added the Repositories for mulitivers, universe and main
+# restricted this will not work.
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+
 echo "ros2021"|sudo -S /path/to/command
 
+echo "Setting up wifi for server version of the os"
+sudo apt install network-manager -y
+
+ncmli r wifi on
+
+sudo nmcli dev wifi connect testwifi
+
+echo "here ros is checked and/or install"
 FILE=/opt/ros/noetic/env.sh
 if [ -f "$FILE" ]; then
     echo "ros exists on the pc - nice."
@@ -79,12 +99,9 @@ catkin_make
 source devel/setup.bash
 cd
 
-#installing brew package mangerger
-curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
-echo "export PATH=$PATH:/home/pi/bin" >> ~/.bashrc
-cd
-cd swarm_ws
-gnome-terminal -x sh -c "./test2.sh; bash"
+#installing snap package mangerger and the arduino cli
+sudo apt install snapd
+sudo snap install arduino-cli
 
 sudo apt install teensy-loader-cli -y
 cd
