@@ -1,7 +1,10 @@
 # Swarm_ws
 The code on this repository is a part of a project done by:
+
 -Aleksandra Dudlik
+
 -Casper L. F. Mikkelsen
+
 -Nicolaj T. Sørensen
 
 ## ssh setup
