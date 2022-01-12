@@ -39,7 +39,7 @@ sudo apt install python3-rosdep python3-rosinstall python3-rosinstall-generator 
 sudo apt install python3-rosdep -y
 sudo rosdep init
 rosdep update
-
+source ~/.bashrc
 
 echo "setting up the arduino ide and libraries"
 sudo apt install ros-noetic-rosserial-arduino -y
@@ -82,6 +82,9 @@ cd
 git clone https://github.com/9colat/swarm_ws.git
 cd swarm_ws
 #git checkout Pi_v1
+cd src
+catkin_init_workspace
+cd ..
 catkin_make
 echo "source $HOME/swarm_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
