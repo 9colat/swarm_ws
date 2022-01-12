@@ -45,6 +45,7 @@ echo "setting up the arduino ide and libraries"
 sudo apt install ros-noetic-rosserial-arduino -y
 sudo apt install ros-noetic-rosserial -y
 sudo apt install ros-noetic-move-base -y
+sudo apt-get install ros-noetic-teleop-twist-keyboard
 
 sudo apt update -y
 sudo apt upgrade -y
@@ -80,7 +81,7 @@ make
 cd
 git clone https://github.com/9colat/swarm_ws.git
 cd swarm_ws
-git checkout Pi_v1
+#git checkout Pi_v1
 catkin_make
 echo "source $HOME/swarm_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
@@ -94,7 +95,12 @@ git clone https://github.com/Slamtec/rplidar_ros.git
 cd ..
 catkin_make
 source devel/setup.bash
+git clone https://github.com/tu-darmstadt-ros-pkg/hector_slam.git
+catkin_make
+source devel/setup.bash
 cd
+
+
 
 #installing snap package mangerger and the arduino cli
 sudo apt install snapd
