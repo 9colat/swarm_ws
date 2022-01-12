@@ -46,6 +46,7 @@ sudo apt install ros-noetic-rosserial-arduino -y
 sudo apt install ros-noetic-rosserial -y
 sudo apt install ros-noetic-move-base -y
 sudo apt-get install ros-noetic-teleop-twist-keyboard
+sudo apt install ros-noetic-navigation -y
 
 sudo apt update -y
 sudo apt upgrade -y
@@ -64,7 +65,7 @@ cd
 cd arduino-1.8.15/libraries/
 rosrun rosserial_arduino make_libraries.py .
 cd
-sudo apt install ros-noetic-navigation -y
+
 
 echo "installing Teensy"
 cd
@@ -115,5 +116,5 @@ cd swarm_ws
 sudo chmod 777 arduino_make_upload.sh
 sudo chmod 777 start_up_script.sh
 
-cronjob="@reboot //home/ubuntu/swarm_ws/start_up_script.sh"
+cronjob="@reboot ~/swarm_ws/start_up_script.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
