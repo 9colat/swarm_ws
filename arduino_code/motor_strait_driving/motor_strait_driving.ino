@@ -81,7 +81,7 @@ int mag_y_cal = -6; //magnetometer callibration in y direction
 int hi;
 
 //-----ROS node handler-----//
-ros::NodeHandle nh;                 // here the node handler is set with the name nh
+ros::NodeHandle nh;   // here the node handler is set with the name nh
 
 //-----Setting up publishers and there types-----//
 std_msgs::Int16 right_tick;       // the variable is initilazed as a Int16, this is a ros type that is the type that you can sent over the ros topics
@@ -100,34 +100,6 @@ geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
 ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
 ros::Publisher measured_angle_pub("measured_angle", &data_measured_angle);
-
-
-
-//-----some quaternion (not being used)-----//
-struct Quaternion
-{
-  double w, x, y, z;
-};
-
-Quaternion ToQuaternion(double yaw, double pitch, double roll) // yaw (Z), pitch (Y), roll (X)
-{
-  // Abbreviations for the various angular functions
-  double cy = cos(yaw * 0.5);
-  double sy = sin(yaw * 0.5);
-  double cp = cos(pitch * 0.5);
-  double sp = sin(pitch * 0.5);
-  double cr = cos(roll * 0.5);
-  double sr = sin(roll * 0.5);
-
-  Quaternion q;
-  q.w = cr * cp * cy + sr * sp * sy;
-  q.x = sr * cp * cy - cr * sp * sy;
-  q.y = cr * sp * cy + sr * cp * sy;
-  q.z = cr * cp * sy - sr * sp * cy;
-
-  return q;
-}
-
 
 
 //-----Functions-----//
@@ -164,18 +136,8 @@ void encoder_count_chage_right() {
       current_omega_right = -count_to_rad / delta_time_right;
     }
   }
-//  if (encoder_counter_right == counts_per_revolution) {
-//    if (direction_indicator_right == 1) {
-//      encoder_counter_right = 0;
-//      current_omega_right = count_to_rad / delta_time_right;
-//    }
-//  }
-//  if (encoder_counter_right == -counts_per_revolution) {
-//    if (direction_indicator_right == 0) {
-//      encoder_counter_right = 0;
-//      current_omega_right = -count_to_rad * 1.0 / delta_time_right;
-//    }
-//  }
+
+
   if (current_omega_right < 20 && current_omega_right > -20) {
     array_push(speed_array_right, current_omega_right);
   }
@@ -201,18 +163,7 @@ void encoder_count_chage_left() {
       current_omega_left = -count_to_rad / delta_time_left;
     }
   }
-//  if (encoder_counter_left == counts_per_revolution) {
-//    if (direction_indicator_left == 1) {
-//      encoder_counter_left = 0;
-//      current_omega_left = count_to_rad / delta_time_left;
-//    }
-//  }
-//  if (encoder_counter_left == -counts_per_revolution) {
-//    if (direction_indicator_left == 0) {
-//      encoder_counter_left = 0;
-//      current_omega_left = -count_to_rad * 1.0 / delta_time_left;
-//    }
-//  }
+
   if (current_omega_left < 20 && current_omega_left > -20) {
     array_push(speed_array_left, current_omega_left);
   }
@@ -228,6 +179,7 @@ int omega_to_pwm(double x){
   int pwm_int = pwm;
   return pwm_int;
 }
+
 
 void setPWM(int pwm_right, int pwm_left) {
   //setting the correct direction of the motor
@@ -269,7 +221,8 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
 
   if (tele_op = true){
     RGB_led_set("blue");
-
+    // here we assume that the imput is for input_vel_x is between 0 - 1 and
+    // input_omega is between 0 - 0.5
     vel_x_goal = input_vel_x * 75;
     goal_omega = input_omega * 50;
     goal_omega_right = vel_x_goal + goal_omega;
@@ -281,9 +234,17 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
   }
   if(tele_op == false){
     RGB_led_set("green");
+    // here we assume that the imput gives a goal_omega =< 15 [rad/s]
 
     goal_omega_right = (2*vel_x_goal + wheel_base*goal_omega)/(4*wheel_radius);
     goal_omega_left = (2*vel_x_goal - wheel_base*goal_omega)/(4*wheel_radius);
+
+    if(goal_omega_right > 15){
+      goal_omega_right = 15;
+    }
+    if(goal_omega_left > 15){
+      goal_omega_left = 15;
+    }
 
     error_omega_right = goal_omega_right - average_omega_right;
     error_omega_left = goal_omega_left - average_omega_left;
@@ -319,7 +280,7 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
   if (cmd_goal.angular.x == 0 || cmd_goal.angular.x == -0){ // here if this is true that means that the robot is being teleoperated
     bool_tele_op_toggel = true;
   }
-  else{
+  if (cmd_goal.angular.x == 90){
     bool_tele_op_toggel = false;
   }
   //if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
@@ -466,32 +427,14 @@ void setup() {
 }
 
 void loop() {
-  //RGB_led_set("green");
-  //  mode_confurm.data = test;
-  //  mode_pub.publish(&mode_confurm);
-  //  float test = encoder_to_unit(encoder_counter_right,1);
-  //  angle_of_wheel.data = encoder_to_unit(encoder_counter_right,1);
 
 
-  //in order to improve the measured_angle reading, you can do measured=(integral(gyro))*0.9+magnetometer*0.1
-  //the integral is going to drift, but the magnetometer will correct it (you need to find the correct ratio)
-  //in short term, we trust gyro, but in a long term, we trust magnetometer more
-
-  //imu_collection();
-  //heading_controller(measured_angle, reference_angle, 2.0); // 2.0 to use all the range (for now - testing purposes)
-  //Serial.print("Measured:");
-  //Serial.println(measured_angle);
-  //Serial.print("Reference:");
-  //Serial.println(reference_angle);
-
-  //if(millis() > time_now + period){
-    //time_now = millis();
-
-  wheel_speed.x = average_omega_right;
-  wheel_speed.y = average_omega_left;
-  wheel_speed.z = encoder_counter_right;
-  wheel_speed.w = encoder_counter_left;
-  speed_pub.publish(&wheel_speed);
+  right_wheel_speed.x = average_omega_right;
+  right_wheel_speed.y = average_omega_left;
+  right_wheel_speed.z = i;
+  data_pub.publish(&right_wheel_speed);
+  nh.spinOnce();
+  delay(8);
   nh.spinOnce();
   //}
   //delay(10);

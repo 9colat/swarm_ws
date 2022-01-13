@@ -17,7 +17,7 @@ now to find the ip address use this command to fine all the host on the net work
 ```
 nmap 192.168.0.*
 ```
-if you dont have a ssh-key at this point then you have to make one this can be done with this command:
+if you don't have a ssh-key at this point then you have to make one this can be done with this command:
 ```
 ssh-keygen
 ```
@@ -52,7 +52,7 @@ now that should install everything that we used to make our robot run.
 
 ## User instruction:
 
-when you want to run the code with the teensy/arduino then you have to run a set of comands in the terminal.
+when you want to run the code with the teensy/arduino then you have to run a set of commands in the terminal.
 first you have to start the ros master:
 ```
 roscore
