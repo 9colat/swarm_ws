@@ -429,12 +429,10 @@ void setup() {
 void loop() {
 
 
-  right_wheel_speed.x = average_omega_right;
-  right_wheel_speed.y = average_omega_left;
-  right_wheel_speed.z = i;
-  data_pub.publish(&right_wheel_speed);
-  nh.spinOnce();
-  delay(8);
+  //right_wheel_speed.x = average_omega_right;
+  //right_wheel_speed.y = average_omega_left;
+  //right_wheel_speed.z = i;
+  //data_pub.publish(&right_wheel_speed);
   nh.spinOnce();
   //}
   //delay(10);

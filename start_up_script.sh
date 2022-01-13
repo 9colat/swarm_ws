@@ -17,7 +17,8 @@ source ~/swarm_ws/devel/setup.bash
 #cd swarm_ws
 #gnome-terminal -x sh -c "./test1.sh; bash"
 #roslaunch hardware_driver test.launch
-echo "$data" >> time_stamp.txt
+tm=$(date)
+echo "${tm} hey im working" >> time_stamp.txt
 
 
 
