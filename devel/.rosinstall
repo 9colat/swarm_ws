@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/casper/swarm_ws/devel/setup.sh

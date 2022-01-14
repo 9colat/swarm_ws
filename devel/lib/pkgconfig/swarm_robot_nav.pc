@@ -1,0 +1,8 @@
+prefix=/home/casper/swarm_ws/devel
+
+Name: swarm_robot_nav
+Description: Description of swarm_robot_nav
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

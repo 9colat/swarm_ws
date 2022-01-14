@@ -1,0 +1,8 @@
+prefix=/home/casper/swarm_ws/install
+
+Name: pose_estimater_switcher
+Description: Description of pose_estimater_switcher
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

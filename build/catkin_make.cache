@@ -1,0 +1,2 @@
+swarm_ws/src/custom_msgs:swarm_ws/src/ds4_driver:swarm_ws/src/hardware_driver:swarm_ws/src/local_avoider:swarm_ws/src/local_planner:swarm_ws/src/localization_data_pub:swarm_ws/src/pose_estimater_switcher:swarm_ws/src/robot_setup_tf:swarm_ws/src/rplidar_ros:swarm_ws/src/rudolph_v4_3:swarm_ws/src/swarm_robot_nav
+-DCATKIN_DEVEL_PREFIX=/home/casper/swarm_ws/devel -DCMAKE_INSTALL_PREFIX=/home/casper/swarm_ws/install -G Unix Makefiles
