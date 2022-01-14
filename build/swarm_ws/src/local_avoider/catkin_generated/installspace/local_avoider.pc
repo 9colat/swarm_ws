@@ -1,8 +1,0 @@
-prefix=/home/casper/swarm_ws/install
-
-Name: local_avoider
-Description: Description of local_avoider
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

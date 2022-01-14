@@ -1,8 +1,0 @@
-prefix=/home/casper/swarm_ws/devel
-
-Name: local_planner
-Description: Description of local_planner
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/casper/swarm_ws/devel
+
+Name: rudolph_v4
+Description: Description of rudolph_v4
+Version: 1.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

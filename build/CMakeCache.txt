@@ -391,18 +391,6 @@ catkin_DIR:PATH=/opt/ros/noetic/share/catkin/cmake
 //The directory containing a CMake configuration file for cpp_common.
 cpp_common_DIR:PATH=/opt/ros/noetic/share/cpp_common/cmake
 
-//Value Computed by CMake
-custom_msgs_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/custom_msgs
-
-//Value Computed by CMake
-custom_msgs_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/custom_msgs
-
-//Value Computed by CMake
-ds4_driver_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/ds4_driver
-
-//Value Computed by CMake
-ds4_driver_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/ds4_driver
-
 //The directory containing a CMake configuration file for dynamic_reconfigure.
 dynamic_reconfigure_DIR:PATH=/opt/ros/noetic/share/dynamic_reconfigure/cmake
 
@@ -473,32 +461,8 @@ gtest_hide_internal_symbols:BOOL=OFF
 //Dependencies for the target
 gtest_main_LIB_DEPENDS:STATIC=general;gtest;
 
-//Value Computed by CMake
-hardware_driver_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/hardware_driver
-
-//Value Computed by CMake
-hardware_driver_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/hardware_driver
-
 //Path to a library.
 lib:FILEPATH=/opt/ros/noetic/lib/libtf2.so
-
-//Value Computed by CMake
-local_avoider_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/local_avoider
-
-//Value Computed by CMake
-local_avoider_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/local_avoider
-
-//Value Computed by CMake
-local_planner_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/local_planner
-
-//Value Computed by CMake
-local_planner_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/local_planner
-
-//Value Computed by CMake
-localization_data_pub_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/localization_data_pub
-
-//Value Computed by CMake
-localization_data_pub_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/localization_data_pub
 
 //The directory containing a CMake configuration file for message_filters.
 message_filters_DIR:PATH=/opt/ros/noetic/share/message_filters/cmake
@@ -517,18 +481,6 @@ move_base_msgs_DIR:PATH=/opt/ros/noetic/share/move_base_msgs/cmake
 
 //The directory containing a CMake configuration file for nav_msgs.
 nav_msgs_DIR:PATH=/opt/ros/noetic/share/nav_msgs/cmake
-
-//Value Computed by CMake
-pose_estimater_switcher_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/pose_estimater_switcher
-
-//Value Computed by CMake
-pose_estimater_switcher_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/pose_estimater_switcher
-
-//Value Computed by CMake
-robot_setup_tf_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/robot_setup_tf
-
-//Value Computed by CMake
-robot_setup_tf_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/robot_setup_tf
 
 //The directory containing a CMake configuration file for rosconsole.
 rosconsole_DIR:PATH=/opt/ros/noetic/share/rosconsole/cmake
@@ -558,16 +510,10 @@ rospy_DIR:PATH=/opt/ros/noetic/share/rospy/cmake
 rostime_DIR:PATH=/opt/ros/noetic/share/rostime/cmake
 
 //Value Computed by CMake
-rplidar_ros_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/rplidar_ros
+rudolph_v4_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/rudolph_v4
 
 //Value Computed by CMake
-rplidar_ros_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/rplidar_ros
-
-//Value Computed by CMake
-rudolph_v4_3_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/rudolph_v4_3
-
-//Value Computed by CMake
-rudolph_v4_3_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/rudolph_v4_3
+rudolph_v4_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/rudolph_v4
 
 //The directory containing a CMake configuration file for sensor_msgs.
 sensor_msgs_DIR:PATH=/opt/ros/noetic/share/sensor_msgs/cmake
@@ -576,10 +522,10 @@ sensor_msgs_DIR:PATH=/opt/ros/noetic/share/sensor_msgs/cmake
 std_msgs_DIR:PATH=/opt/ros/noetic/share/std_msgs/cmake
 
 //Value Computed by CMake
-swarm_robot_nav_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_ws/src/swarm_robot_nav
+swarm_robot_nav_BINARY_DIR:STATIC=/home/casper/swarm_ws/build/swarm_robot_nav
 
 //Value Computed by CMake
-swarm_robot_nav_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_ws/src/swarm_robot_nav
+swarm_robot_nav_SOURCE_DIR:STATIC=/home/casper/swarm_ws/src/swarm_robot_nav
 
 //The directory containing a CMake configuration file for tf2.
 tf2_DIR:PATH=/opt/ros/noetic/share/tf2/cmake
@@ -747,7 +693,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=15
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
