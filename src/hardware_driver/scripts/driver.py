@@ -30,13 +30,6 @@ def main():
     global path, number_of_files, run
     print("so driver.py is starting now")
     time.sleep(3)
-    #if(run == 1):
-    #    run = 0
-    #    pub_run = rospy.Publisher('stat_up_done', Int16, queue_size=10)
-    #    pub_run.publish(run)
-    #while os.path.exists(path % number_of_files):
-    #    print(number_of_files)
-    #    number_of_files = number_of_files + 1
     pub = rospy.Publisher('stat_up_done', Int16, queue_size=10)
     pub1 = rospy.Publisher('mode_sig', Int16, queue_size=10)
     rospy.init_node('talker', anonymous=True)
