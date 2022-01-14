@@ -67,6 +67,15 @@ float current_omega_right;          // initialzing the current angular velocity 
 float current_omega_left;           // initialzing the current angular velocity for the left motor
 float average_omega_right;
 float average_omega_left;
+long current_time;
+long previous_time;
+double elapsed_time;
+double last_error_right;
+double cum_error_right;
+double rate_error_right;
+double last_error_left;
+double cum_error_left;
+double rate_error_left;
 //float goal_omega_right;
 //float goal_omega_left;
 //float goal_theta;
@@ -281,18 +290,38 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
   }
   if(tele_op == false){
     RGB_led_set("green");
+    current_time = millis();
+    elapsed_time = double(current_time - previous_time);
+    // here we assume that the imput gives a goal_omega =< 15 [rad/s]
 
     goal_omega_right = (2*vel_x_goal + wheel_base*goal_omega)/(4*wheel_radius);
     goal_omega_left = (2*vel_x_goal - wheel_base*goal_omega)/(4*wheel_radius);
 
+    if(goal_omega_right > 15){
+      goal_omega_right = 15;
+    }
+    if(goal_omega_left > 15){
+      goal_omega_left = 15;
+    }
+
     error_omega_right = goal_omega_right - average_omega_right;
     error_omega_left = goal_omega_left - average_omega_left;
 
-    control_right = error_omega_right * p_gain;
-    control_left = error_omega_left * p_gain;
+    cum_error_right += error_omega_right * elapsed_time;
+    cum_error_left += error_omega_left * elapsed_time;
+
+    rate_error_right = (error_omega_right - last_error_right) / elapsed_time;
+    rate_error_left = (error_omega_left - last_error_left) / elapsed_time;
+
+    control_right = error_omega_right * p_gain + cum_error_right * i_gain + rate_error_right * d_gain;
+    control_left = error_omega_left * p_gain + cum_error_left * i_gain + rate_error_left * d_gain;
 
     pwm_procent_left = omega_to_pwm(control_right);
     pwm_procent_right = omega_to_pwm(control_left);
+
+    previous_time = current_time;
+    last_error_right = error_omega_right;
+    last_error_left = error_omega_left;
   }
   wheel_speed.x = average_omega_right;
   wheel_speed.y = average_omega_left;
