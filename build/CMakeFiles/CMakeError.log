@@ -56,3 +56,37 @@ make: *** [Makefile:121: cmTC_628a5/fast] Error 2
 
 
 
+Determining if the include file FL/Fl.H exists failed with the following output:
+Change Dir: /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_463b5/fast && /usr/bin/make -f CMakeFiles/cmTC_463b5.dir/build.make CMakeFiles/cmTC_463b5.dir/build
+make[1]: Entering directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_463b5.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++     -o CMakeFiles/cmTC_463b5.dir/CheckIncludeFile.cxx.o -c /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx:1:10: fatal error: FL/Fl.H: No such file or directory
+    1 | #include <FL/Fl.H>
+      |          ^~~~~~~~~
+compilation terminated.
+make[1]: *** [CMakeFiles/cmTC_463b5.dir/build.make:66: CMakeFiles/cmTC_463b5.dir/CheckIncludeFile.cxx.o] Error 1
+make[1]: Leaving directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_463b5/fast] Error 2
+
+
+
+Determining if the include file pgm.h exists failed with the following output:
+Change Dir: /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_bcddf/fast && /usr/bin/make -f CMakeFiles/cmTC_bcddf.dir/build.make CMakeFiles/cmTC_bcddf.dir/build
+make[1]: Entering directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_bcddf.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++     -o CMakeFiles/cmTC_bcddf.dir/CheckIncludeFile.cxx.o -c /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx:1:10: fatal error: pgm.h: No such file or directory
+    1 | #include <pgm.h>
+      |          ^~~~~~~
+compilation terminated.
+make[1]: *** [CMakeFiles/cmTC_bcddf.dir/build.make:66: CMakeFiles/cmTC_bcddf.dir/CheckIncludeFile.cxx.o] Error 1
+make[1]: Leaving directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_bcddf/fast] Error 2
+
+
+

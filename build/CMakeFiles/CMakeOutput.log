@@ -489,3 +489,58 @@ make[1]: Leaving directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
 
 
 
+Determining if the include file unistd.h exists passed with the following output:
+Change Dir: /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_df6f0/fast && /usr/bin/make -f CMakeFiles/cmTC_df6f0.dir/build.make CMakeFiles/cmTC_df6f0.dir/build
+make[1]: Entering directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_df6f0.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_df6f0.dir/CheckIncludeFile.c.o   -c /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_df6f0
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_df6f0.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_df6f0.dir/CheckIncludeFile.c.o  -o cmTC_df6f0 
+make[1]: Leaving directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the drand48 exist passed with the following output:
+Change Dir: /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_3432b/fast && /usr/bin/make -f CMakeFiles/cmTC_3432b.dir/build.make CMakeFiles/cmTC_3432b.dir/build
+make[1]: Entering directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_3432b.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_3432b.dir/CheckSymbolExists.c.o   -c /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_3432b
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3432b.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_3432b.dir/CheckSymbolExists.c.o  -o cmTC_3432b 
+make[1]: Leaving directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+
+
+File /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <stdlib.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef drand48
+  return ((int*)(&drand48))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the include file sys/time.h exists passed with the following output:
+Change Dir: /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_8de61/fast && /usr/bin/make -f CMakeFiles/cmTC_8de61.dir/build.make CMakeFiles/cmTC_8de61.dir/build
+make[1]: Entering directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_8de61.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_8de61.dir/CheckIncludeFile.c.o   -c /home/casper/swarm_ws/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_8de61
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8de61.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_8de61.dir/CheckIncludeFile.c.o  -o cmTC_8de61 
+make[1]: Leaving directory '/home/casper/swarm_ws/build/CMakeFiles/CMakeTmp'
+
+
+
