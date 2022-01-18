@@ -11,4 +11,5 @@
 
     <node pkg="local_avoider" type="local_avoider.py" name="local_avoider" output="screen">
     </node>
+
 </launch>

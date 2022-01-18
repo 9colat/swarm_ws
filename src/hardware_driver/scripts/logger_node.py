@@ -2,6 +2,7 @@
 import rospy
 import sys
 import os
+from pathlib import Path
 from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Quaternion
@@ -32,7 +33,7 @@ from geometry_msgs.msg import Quaternion
 
 
 
-path = "~/test_data/log%s.txt"
+path =Path.home().joinpath("test_data", "log%s.txt")
 number_of_files = 0
 lidar_array = [0] * 360
 wheel_speed = [0] * 2
@@ -43,7 +44,7 @@ def file_iterator():
     global number_of_files
     number_of_files = 0
     print("im finding out how many logs there are")
-    while os.path.exists(path % number_of_files):
+    while os.path.exists(str(path) % number_of_files):
         print("im running itorator")
         number_of_files = number_of_files + 1
 
@@ -68,7 +69,7 @@ def main():
     file_iterator()
     rospy.init_node('logger', anonymous=True)
     print(str(lidar_array))
-    f = open(path % number_of_files,"a")
+    f = open(str(path) % number_of_files,"a")
     f.write("Right wheel speed"+seperator+"Left wheel speed"+lidar_label+"\n")
     f.close()
     #rospy.Subscriber("chatter", String, callback)
@@ -79,7 +80,7 @@ def main():
         rospy.Subscriber("scan", LaserScan, callback_lidar)
         rospy.Subscriber("speed_and_tick", Quaternion, callback_wheel_speed)
 
-        f = open(path % number_of_files,"a")
+        f = open(str(path) % number_of_files,"a")
         for i in range(len(wheel_speed)):
             f.write(str(wheel_speed[i])+seperator)
         for j in range(len(lidar_array)-1):

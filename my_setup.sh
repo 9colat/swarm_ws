@@ -116,5 +116,13 @@ cd swarm_ws
 sudo chmod 777 arduino_make_upload.sh
 sudo chmod 777 start_up_script.sh
 
+cd
+
+sudo apt-get install qt5-default -y
+
+sudo apt install python3-pip
+
+pip install pathlib
+
 cronjob="@reboot ~/swarm_ws/start_up_script.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
