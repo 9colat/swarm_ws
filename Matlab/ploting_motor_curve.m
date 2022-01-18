@@ -1,7 +1,7 @@
 
 
 
-%%plot(linspace(0,length(A),length(A)),abs(A),'r');
+plot(linspace(0,length(A),length(A)),abs(A),'r');
 hold on
 
 plot(linspace(0,length(B),length(B)),abs(B/2*pi),'b');

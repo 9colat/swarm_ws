@@ -2,4 +2,4 @@ global_costmap:
   global_frame: map
   robot_base_frame: base_link
   update_frequency: 5.0 #Hz - map update loop
-  static_map: true #using a map server? if yes, then true
+  static_map: false #using a map server? if yes, then true

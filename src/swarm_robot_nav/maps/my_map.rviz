@@ -7,9 +7,9 @@ Panels:
         - /Global Options1
         - /Status1
         - /Map1
-        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
+        - /Path1
       Splitter Ratio: 0.5
     Tree Height: 549
   - Class: rviz/Selection
@@ -105,13 +105,15 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
+        laser:
+          Value: true
         left_wheel:
           Value: true
         map:
           Value: true
-        odom:
-          Value: true
         right_wheel:
+          Value: true
+        scanmatcher_frame:
           Value: true
       Marker Alpha: 1
       Marker Scale: 1
@@ -121,15 +123,18 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          odom:
-            base_link:
-              base_laser:
-                base_footprint:
-                  {}
-              left_wheel:
+          base_link:
+            base_laser:
+              base_footprint:
                 {}
-              right_wheel:
-                {}
+            laser:
+              {}
+            left_wheel:
+              {}
+            right_wheel:
+              {}
+          scanmatcher_frame:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -173,11 +178,51 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Pose
+      Queue Size: 10
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /slam_out_pose
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 25; 255; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Queue Size: 10
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /trajectory
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: base_laser
     Frame Rate: 30
   Name: root
   Tools:
@@ -201,7 +246,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 7.187210559844971
+      Distance: 5.058256149291992
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -217,9 +262,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1103980541229248
+      Pitch: 0.24539798498153687
       Target Frame: <Fixed Frame>
-      Yaw: 2.220404624938965
+      Yaw: 3.6090846061706543
     Saved: ~
 Window Geometry:
   Displays:

@@ -6,8 +6,8 @@ from geometry_msgs.msg import Twist
 
 
 def talker():
-    pub1 = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     rospy.init_node('driving_control', anonymous=True)
+    pub1 = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         vel_comand = input("please enter the direction mode you want 0: strait mode, 1: turning mode:")

@@ -34,12 +34,17 @@ const int counts_per_revolution = 1920.0;   // the number of counts per full whe
 const float pi = 3.141593;          // this is pi, or an aproximation, what did you expeced?
 const float max_vel = 13.0;
 const float max_omega = 1.0;
-const float p_gain = 1.0;
-const float i_gain = 0.0;
+const float p_gain = 2.0;
+const float i_gain = 0.03;
 const float d_gain = 0.0;
-const float a = -0.0004;
-const float b = 0.1644;
-const float c = -1.4051;
+const double a = 0.1899;
+const double b = -3.462;
+const double c = 23.78;
+const double d = -9.307;
+const double a_2 = 1.72;
+const double b_2 = 22.88;
+const int change_over_point = 2;
+const int opper_lim = 255;
 bool bool_tele_op_toggel = true;
 int period = 10;
 unsigned long time_now = 0;
@@ -76,9 +81,8 @@ double rate_error_right;
 double last_error_left;
 double cum_error_left;
 double rate_error_left;
-//float goal_omega_right;
-//float goal_omega_left;
-//float goal_theta;
+double goal_omega_right;
+double goal_omega_left;
 float float_to_long_factor = 10000.0;
 float wheel_base = 0.229;            // needs to be updated and use the right unit (proberbly meters)
 float wheel_radius = 0.04;           // needs to be updated and use the right unit (proberbly meters)
@@ -184,8 +188,25 @@ void encoder_count_chage_left() {
 }
 
 int omega_to_pwm(double x){
-  float pwm = a*pow(x,2)+b*x+c;
-  int pwm_int = pwm;
+  double pwm_cal;
+  int sign;
+  if(x < 0){
+    sign = -1;
+  }
+  else{
+    sign = 1;
+  }
+  if (abs(x) > change_over_point){
+    pwm_cal = a*pow(abs(x),3)+b*pow(abs(x),2)+c*abs(x)+d;
+  }
+  if (abs(x) <= change_over_point && abs(x) > 0.01){
+    pwm_cal = a_2*abs(x) + b_2;
+  }
+  if (pwm_cal>opper_lim){
+    pwm_cal = opper_lim;
+  }
+  int pwm_int = sign * pwm_cal;
+
   return pwm_int;
 }
 
@@ -217,19 +238,35 @@ void setPWM(int pwm_right, int pwm_left) {
   analogWrite(left_motor_pwm, pwm_left);
 }
 
-void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
-  double goal_theta;
-  double vel_x_goal;
-  double goal_omega_right;
-  double goal_omega_left;
-  double goal_omega;
-  double error_omega_right;
-  double error_omega_left;
-  double control_right;
-  double control_left;
+void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_r, double last_error_r, double goal_wheel_speed_l, double current_wheel_speed_l, double last_error_l, double elapsed_time){
+  double cum_error_r;
+  double cum_error_l;
+  double error_r = goal_wheel_speed_r - current_wheel_speed_r;
+  double error_l = goal_wheel_speed_l - current_wheel_speed_l;
+  cum_error_r += error_r * elapsed_time;
+  cum_error_l += error_l * elapsed_time;
+  double rate_error_r = (error_r - last_error_r) / elapsed_time;
+  double rate_error_l = (error_l - last_error_l) / elapsed_time;
+  double controller_output_r = error_r * p_gain + cum_error_r * i_gain + rate_error_r * d_gain;
+  double controller_output_l = error_l * p_gain + cum_error_l * i_gain + rate_error_l * d_gain;
+  double pwm_signal_r = omega_to_pwm(controller_output_r);
+  double pwm_signal_l = omega_to_pwm(controller_output_l);
+  setPWM(pwm_signal_r,pwm_signal_l);
+  wheel_speed.x = goal_wheel_speed_r;
+  wheel_speed.y = error_r;
+  wheel_speed.z = controller_output_r;
+  wheel_speed.w = pwm_signal_r;
 
-  if (tele_op = true){
-    RGB_led_set("blue");
+  speed_pub.publish(&wheel_speed);
+
+}
+
+void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
+  double vel_x_goal;
+  double goal_omega;
+
+  if (tele_op == true){
+    RGB_led_set("cyan");
     // here we assume that the imput is for input_vel_x is between 0 - 1 and
     // input_omega is between 0 - 0.5
     vel_x_goal = input_vel_x * 75;
@@ -238,51 +275,32 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
     goal_omega_left = vel_x_goal - goal_omega;
     pwm_procent_right = int(map(goal_omega_right, 0, 100, 0, 255));
     pwm_procent_left = int(map(goal_omega_left, 0, 100, 0, 255));
-
+    setPWM(pwm_procent_right, pwm_procent_left);
 
   }
-  if(tele_op == false){
+  else if(tele_op == false){
     RGB_led_set("green");
-    current_time = millis();
-    elapsed_time = double(current_time - previous_time);
     // here we assume that the imput gives a goal_omega =< 15 [rad/s]
-
+    vel_x_goal = input_vel_x;
+    goal_omega = input_omega;
     goal_omega_right = (2*vel_x_goal + wheel_base*goal_omega)/(4*wheel_radius);
     goal_omega_left = (2*vel_x_goal - wheel_base*goal_omega)/(4*wheel_radius);
-
+    double time_elapsed = double(current_time - previous_time);
     if(goal_omega_right > 15){
       goal_omega_right = 15;
     }
     if(goal_omega_left > 15){
       goal_omega_left = 15;
     }
+    speed_PID_controller(goal_omega_right, average_omega_right, last_error_right, goal_omega_left, average_omega_left, last_error_left, time_elapsed);
 
-    error_omega_right = goal_omega_right - average_omega_right;
-    error_omega_left = goal_omega_left - average_omega_left;
-
-    cum_error_right += error_omega_right * elapsed_time;
-    cum_error_left += error_omega_left * elapsed_time;
-
-    rate_error_right = (error_omega_right - last_error_right) / elapsed_time;
-    rate_error_left = (error_omega_left - last_error_left) / elapsed_time;
-
-    control_right = error_omega_right * p_gain + cum_error_right * i_gain + rate_error_right * d_gain;
-    control_left = error_omega_left * p_gain + cum_error_left * i_gain + rate_error_left * d_gain;
-
-    pwm_procent_left = omega_to_pwm(control_right);
-    pwm_procent_right = omega_to_pwm(control_left);
-
-    previous_time = current_time;
-    last_error_right = error_omega_right;
-    last_error_left = error_omega_left;
   }
-  wheel_speed.x = average_omega_right;
-  wheel_speed.y = average_omega_left;
-  wheel_speed.z = encoder_counter_right;
-  wheel_speed.w = encoder_counter_left;
+  //wheel_speed.x = vel_x_goal;
+  //wheel_speed.y = goal_omega;
+  //wheel_speed.z = goal_omega_right;
+  //wheel_speed.w = goal_omega_left;
 
   //speed_pub.publish(&wheel_speed);
-  setPWM(pwm_procent_right, pwm_procent_left);
 }
 
 void start_up_hi(std_msgs::Int16& num){
@@ -298,10 +316,10 @@ void start_up_hi(std_msgs::Int16& num){
 void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
   double goal_vel_x = cmd_goal.linear.x;
   double goal_omega = cmd_goal.angular.z;
-  if (cmd_goal.angular.x == 0 || cmd_goal.angular.x == -0){ // here if this is true that means that the robot is being teleoperated
+  if (cmd_goal.angular.x == 0){ // here if this is true that means that the robot is being teleoperated
     bool_tele_op_toggel = true;
   }
-  if (cmd_goal.angular.x == 90){
+  if (cmd_goal.angular.x > 0){
     bool_tele_op_toggel = false;
   }
   //if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
@@ -436,6 +454,7 @@ void setup() {
   nh.advertise(IMU_data_mag);
   nh.advertise(measured_angle_pub);
 
+
   Wire.begin();
   //Wire.beginTransmission(MPU_addr);
   //Wire.write(0x6B);  // PWR_MGMT_1 register
@@ -449,7 +468,15 @@ void setup() {
 
 void loop() {
 
+  if(bool_tele_op_toggel == false){
+    current_time = micros();
+    double time_elapsed = double(current_time - previous_time);
+    speed_PID_controller(goal_omega_right, average_omega_right, last_error_right, goal_omega_left, average_omega_left, last_error_left, time_elapsed);
 
+    previous_time = current_time;
+    last_error_right = goal_omega_right - average_omega_right;
+    last_error_left = goal_omega_left - average_omega_left;
+  }
   //right_wheel_speed.x = average_omega_right;
   //right_wheel_speed.y = average_omega_left;
   //right_wheel_speed.z = i;
