@@ -95,13 +95,13 @@ ls -l /dev | grep ttyUSB
 sudo chmod 666 /dev/ttyUSB0
 cd
 cd swarm_ws/src
-git clone https://github.com/Slamtec/rplidar_ros.git
+##git clone https://github.com/Slamtec/rplidar_ros.git
 cd ..
-catkin_make
-source devel/setup.bash
-git clone https://github.com/tu-darmstadt-ros-pkg/hector_slam.git
-catkin_make
-source devel/setup.bash
+#catkin_make
+#source devel/setup.bash
+##git clone https://github.com/tu-darmstadt-ros-pkg/hector_slam.git
+#catkin_make
+#source devel/setup.bash
 cd
 
 
