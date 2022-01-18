@@ -7,6 +7,31 @@ from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Quaternion
 
 
+
+
+##### this is a subscriber example that can be copy pasta later #####
+
+## paste this as a global variable, outside of the callback function (after "number_of_files = 0")
+#data_to_be_logged = [0] * 3 # remember to specify this correctly, depending on what you are trying to log
+
+## now we specify the callback function for the specific data subscription (replace "something" with what you want)
+#def callback_something(data):
+
+#    global data_to_be_logged
+#    data_to_be_logged[0] = data.x
+#    data_to_be_logged[1] = data.y
+#    data_to_be_logged[2] = data.z
+
+## past the thing  below in the main loop within "while not rospy.is_shutdown():"
+#    rospy.Subscriber("topic_name", Data_Type, callback_something) #(topic name, data type, callback function)
+
+##### now you should have a working subscriber! #####
+
+
+
+
+
+
 path = "~/test_data/log%s.txt"
 number_of_files = 0
 lidar_array = [0] * 360
@@ -25,7 +50,7 @@ def file_iterator():
 def callback(data):
     print(data.data)
 
-def callback_lidar(data):
+def callback_lidar(data):#####
     global lidar_array
     print("laser data recived")
     for i in range(len(data.ranges)):
