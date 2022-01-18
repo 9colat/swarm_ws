@@ -10,8 +10,8 @@ def talker():
     pub1 = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
-        vel_comand = input("please enter the direction mode you want 0: strait mode, 1: turning mode:")
-        omega_comand = input("please enter the direction mode you want 0: strait mode, 1: turning mode:")
+        vel_comand = input("please enter liniar speed:")
+        omega_comand = input("please enter the angular speed:")
         if vel_comand == "kill" or vel_comand == "quit" or vel_comand == "end" or vel_comand == "stop" or vel_comand == "q" or omega_comand == "kill" or omega_comand == "quit" or omega_comand == "end" or omega_comand == "stop" or omega_comand == "q":
             sys.exit("kill compleat")
 

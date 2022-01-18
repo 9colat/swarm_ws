@@ -7,7 +7,7 @@ from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Quaternion
 
 
-path = "/home/nicoleg/test_data/log%s.txt"
+path = "~/test_data/log%s.txt"
 number_of_files = 0
 lidar_array = [0] * 360
 wheel_speed = [0] * 2
