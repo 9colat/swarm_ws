@@ -2,7 +2,7 @@
 echo "hey"
 #gnome-terminal -x sh -c "./launch.sh; bash"
 sleep 1
-export ROS_MASTER_URI=http://ubuntu:11311
+export ROS_MASTER_URI=http://192.168.0.5:11311
 rosrun hardware_driver driver.py
 #sleep 60
 #gnome-terminal -x sh -c "./test1.sh; bash"
