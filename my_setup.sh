@@ -13,12 +13,15 @@
 ################################################################################
 ################################################################################
 
-echo "ros2021"|sudo -S /path/to/command
+#echo "ros2021"|sudo -S /path/to/command
+echo "updating and upgrading the system"
+sudo apt update -y
+sudo apt upgrade -y
 
 echo "Setting up wifi for server version of the os"
 sudo apt install network-manager -y
 
-ncmli r wifi on
+nmcli r wifi on
 
 sudo nmcli dev wifi connect testwifi
 
@@ -29,8 +32,6 @@ echo "here ros is installing"
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 sudo apt install curl
 curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
-sudo apt update -y
-sudo apt upgrade -y
 sudo apt install ros-noetic-desktop -y
 source /opt/ros/noetic/setup.bash
 echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
@@ -78,7 +79,16 @@ cd arduino-1.8.15/hardware/teensy/avr/cores/teensy3
 perl -pi -e 's/MCU=MK20DX256/MCU=MK66FX1M0/g' Makefile
 make
 
+cd
+echo "installing qt5"
+sudo apt-get install qt5-default -y
+echo "installing pip"
+sudo apt install python3-pip -y
+echo "pip installing pathlib"
+pip install pathlib
+
 #here we setup the git reposetory that we have made.
+echo "clonning the github repo"
 cd
 git clone https://github.com/9colat/swarm_ws.git
 cd swarm_ws
@@ -116,13 +126,6 @@ cd swarm_ws
 sudo chmod 777 arduino_make_upload.sh
 sudo chmod 777 start_up_script.sh
 
-cd
-
-sudo apt-get install qt5-default -y
-
-sudo apt install python3-pip
-
-pip install pathlib
 
 cronjob="@reboot ~/swarm_ws/start_up_script.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -

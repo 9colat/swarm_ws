@@ -13,7 +13,7 @@ run = 1
 
 
 
-def file_iterator(data):
+def file_iterator():
     global number_of_files
     number_of_files = 0
     while os.path.exists(path % number_of_files):

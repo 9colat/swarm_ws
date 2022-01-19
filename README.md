@@ -11,7 +11,7 @@ The code on this repository is a part of a project done by:
 
 first, its a good idear to install network-map since then you do not need a screen get the ip address of you raspberry pi:
 ```
-apt install nmap
+sudo apt install nmap
 ```
 now to find the ip address use this command to fine all the host on the net work that is from 192.168.0.0 to 192.168.0.255
 ```
@@ -48,7 +48,11 @@ now make it executable:
 ```
 chmod +x my_setup.sh
 ```
-now that should install everything that we used to make our robot run.
+now the only thing left is to install everything that we used to make our robot run, by using the "my_setup.sh" script
+
+```
+./my_setup.sh
+```
 
 ## User instruction:
 
