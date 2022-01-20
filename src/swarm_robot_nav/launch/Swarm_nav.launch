@@ -36,10 +36,6 @@
       <param name="use_gui" value="true"/>
   </node>
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-<!--  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_model)/urdf.rviz" />-->
-<!--
-<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
--->
 
 
  <!-- Ros_serial com (com between rpi and teeny)-->
@@ -69,12 +65,12 @@
  </node>
 -->
 
-<!--
+<!-- -->
  <arg name="map_file" default="$(find swarm_robot_nav)/maps/my_map.yaml" />
 
 
  -<node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" />
--->
+
 
 
   <arg name="geotiff_map_file_path" default="$(find swarm_robot_nav)/maps"/>
