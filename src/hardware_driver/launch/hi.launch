@@ -6,7 +6,7 @@
      <param name="baud" value="9600"/>
   </node> -->
 
-  <node pkg="hardware_driver" type="driver.py" name="driving" output="screen">
+  <node pkg="hardware_driver" type="hi.py" name="hi" output="screen">
 
   </node>
 
