@@ -1,8 +1,11 @@
 #! /bin/bash
+IP=$1
 echo "hey"
 #gnome-terminal -x sh -c "./launch.sh; bash"
-export ROS_MASTER_URI=http://192.168.0.5:11311
-roslaunch hardware_driver test_1.launch
+read A B C D <<<"${IP//./ }"
+export ROS_IP=$A.$B.$C.$D
+export ROS_MASTER_URI=http://$A.$B.$C.$D:11311
+roslaunch hardware_driver hi.launch
 #sleep 60
 #gnome-terminal -x sh -c "./test1.sh; bash"
 #echo "whats wrong with your face?"
