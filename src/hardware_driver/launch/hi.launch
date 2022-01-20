@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Ros_serial com (com between rpi and teeny)-->
+  <!--<node pkg="rosserial_python" type="serial_node.py" name="rosserial_python">
+     <param name="port" value="/dev/ttyACM0" />
+     <param name="baud" value="9600"/>
+  </node> -->
+
+  <node pkg="hardware_driver" type="hi.py" name="hi" output="screen">
+
+  </node>
+
+  <!--<node pkg="hardware_driver" type="print_node.py" name="print_node" output="screen">
+
+</node>-->
+
+
+</launch>
