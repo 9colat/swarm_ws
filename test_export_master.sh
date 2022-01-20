@@ -1,9 +1,8 @@
 #! /bin/bash
 echo "hey"
 #gnome-terminal -x sh -c "./launch.sh; bash"
-sleep 1
 export ROS_MASTER_URI=http://192.168.0.5:11311
-rosrun hardware_driver driver.py
+roslaunch hardware_driver test_1.launch
 #sleep 60
 #gnome-terminal -x sh -c "./test1.sh; bash"
 #echo "whats wrong with your face?"

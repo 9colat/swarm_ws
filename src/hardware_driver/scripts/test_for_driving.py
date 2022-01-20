@@ -5,14 +5,16 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
 
-def talker():
+def main():
     rospy.init_node('driving_control', anonymous=True)
     pub1 = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
-        vel_comand = input("please enter liniar speed:")
-        omega_comand = input("please enter the angular speed:")
-        if vel_comand == "kill" or vel_comand == "quit" or vel_comand == "end" or vel_comand == "stop" or vel_comand == "q" or omega_comand == "kill" or omega_comand == "quit" or omega_comand == "end" or omega_comand == "stop" or omega_comand == "q":
+        vel_comand = input("please enter liniar speed: ")
+        if vel_comand == "kill" or vel_comand == "quit" or vel_comand == "end" or vel_comand == "stop" or vel_comand == "q":
+            sys.exit("kill compleat")
+        omega_comand = input("please enter the angular speed: ")
+        if omega_comand == "kill" or omega_comand == "quit" or omega_comand == "end" or omega_comand == "stop" or omega_comand == "q":
             sys.exit("kill compleat")
 
         dir_comand = Twist()
@@ -25,6 +27,6 @@ def talker():
 
 if __name__ == '__main__':
     try:
-        talker()
+        main()
     except rospy.ROSInterruptException:
         pass
