@@ -90,12 +90,6 @@
  <!-- Publish: /initialpose, /move_base_simple/goal -->
 <node pkg="rviz" type="rviz" name="rviz" args="-d $(find swarm_robot_nav)/maps/my_map.rviz"/>
 
- <!-- Subscribe: /initialpose, /move_base_simple/goal -->
- <!-- Publish: /initial_2d, /goal_2d
- <node pkg="localization_data_pub" type="rviz_click_to_2d" name="rviz_click_to_2d">
- </node>
- -->
-
  <include file="$(find amcl)/examples/amcl_diff.launch" />
 
 <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
