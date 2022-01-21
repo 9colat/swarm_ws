@@ -86,7 +86,7 @@ int16_t accel_X, accel_Y, accel_Z, tmp, gyro_X, gyro_Y, gyro_Z, mx, my, mz;
 long publisher_timer;
 MPU9250 accelgyro;
 int mag_x_cal = -20; //magnetometer callibration in x direction
-int mag_y_cal = -6; //magnetometer callibratiowrong checksumn in y direction
+int mag_y_cal = -6; //magnetometer callibration in y direction
 int hi;
 
 //-----ROS node handler-----//
@@ -399,7 +399,7 @@ double encoder_to_unit(int encoder_count, int unit_output) { //if unit_output is
     output_number = encoder_count * count_to_deg;
     //output_number = temp_number % float(360);
     //output_number = map(encoder_count,-counts_per_revolution, counts_per_revolution, -360, 360);
-//  }s is all part of roscpp's "toolbox, not framework" philosophy. roscpp does not mandate a particular threading model for your node, nor does it demand to wrap your main(). ros::spin() is purely a conveni
+  }
   if (unit_output == 2) {
     output_number = encoder_count * count_to_rad;
     //output_number = temp_number % (2*pi);
@@ -523,5 +523,5 @@ void loop() {
   speed_pub.publish(&wheel_speed);
   nh.spinOnce();
   //}
-  delay(10);
+  delay(100);
   }

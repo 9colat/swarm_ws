@@ -6,9 +6,9 @@
      <param name="baud" value="9600"/>
   </node>
 
-  <node pkg="hardware_driver" type="driver.py" name="driver">
+<!--  <node pkg="hardware_driver" type="driver.py" name="driver">
 
-  </node>
+</node> -->
 
   <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_keyboard" output="screen">
      <param name="speed" value="1.0" />
