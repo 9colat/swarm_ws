@@ -416,8 +416,6 @@ ros::Subscriber<geometry_msgs::Twist> sub_cmd_vel("cmd_vel", &cmd_velocity);
 ros::Subscriber<std_msgs::Int16> start_up("stat_up_done", &start_up_hi);
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Start up");
   nh.initNode();
   pinMode(RGB_led_green, OUTPUT);
   pinMode(RGB_led_blue, OUTPUT);
@@ -455,8 +453,7 @@ void setup() {
   //Wire.write(0);     // set to zero (wakes up the MPU-6050)
   //Wire.endTransmission(true);
   accelgyro.initialize();
-  Serial.println("Testing device connections...");
-  Serial.println(accelgyro.testConnection() ? "MPU9250 connection successful" : "MPU9250 connection failed");
+
 
 }
 
