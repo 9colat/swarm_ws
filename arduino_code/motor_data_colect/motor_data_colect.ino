@@ -86,25 +86,13 @@ void encoder_count_chage_right() {
   if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution) {
     if (direction_indicator_right == 1) {
       encoder_counter_right++;
-      right_count_tick = 1;
+      right_count_tick += 1;
       current_omega_right = count_to_rad / delta_time_right;
     }
     if (direction_indicator_right == 0) {
       encoder_counter_right = encoder_counter_right - 1;
-      right_count_tick = -1;
+      right_count_tick += -1;
       current_omega_right = -count_to_rad / delta_time_right;
-    }
-  }
-  if (encoder_counter_right == counts_per_revolution) {
-    if (direction_indicator_right == 1) {
-      encoder_counter_right = 0;
-      current_omega_right = count_to_rad / delta_time_right;
-    }
-  }
-  if (encoder_counter_right == -counts_per_revolution) {
-    if (direction_indicator_right == 0) {
-      encoder_counter_right = 0;
-      current_omega_right = -count_to_rad * 1.0 / delta_time_right;
     }
   }
   if (current_omega_right < 20 && current_omega_right > -20) {
@@ -123,25 +111,13 @@ void encoder_count_chage_left() {
   if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution) {
     if (direction_indicator_left == 1) {
       encoder_counter_left++;
-      left_count_tick = 1;
+      left_count_tick += 1;
       current_omega_left = count_to_rad / delta_time_left;
     }
     if (direction_indicator_left == 0) {
       encoder_counter_left = encoder_counter_left - 1;
-      left_count_tick = -1;
+      left_count_tick += -1;
       current_omega_left = -count_to_rad / delta_time_left;
-    }
-  }
-  if (encoder_counter_left == counts_per_revolution) {
-    if (direction_indicator_left == 1) {
-      encoder_counter_left = 0;
-      current_omega_left = count_to_rad / delta_time_left;
-    }
-  }
-  if (encoder_counter_left == -counts_per_revolution) {
-    if (direction_indicator_left == 0) {
-      encoder_counter_left = 0;
-      current_omega_left = -count_to_rad * 1.0 / delta_time_left;
     }
   }
   if (current_omega_left < 20 && current_omega_left > -20) {

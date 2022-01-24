@@ -76,7 +76,8 @@ long current_time;
 long previous_time;
 double elapsed_time;
 double last_error_right;
-double cum_error_right;
+double cum_error_r;
+double cum_error_l;
 double rate_error_right;
 double last_error_left;
 double cum_error_left;
@@ -84,6 +85,8 @@ double rate_error_left;
 double goal_omega_right;
 double goal_omega_left;
 float float_to_long_factor = 10000.0;
+int right_count_tick;
+int left_count_tick;
 float wheel_base = 0.229;            // needs to be updated and use the right unit (proberbly meters)
 float wheel_radius = 0.04;           // needs to be updated and use the right unit (proberbly meters)
 int16_t accel_X, accel_Y, accel_Z, tmp, gyro_X, gyro_Y, gyro_Z, mx, my, mz;
@@ -136,16 +139,15 @@ float averaging_array(long the_input_array[]) {
 void encoder_count_chage_right() {
   delta_time_right =  double(micros()) / 1000000 - old_time_right;
   old_time_right = double(micros()) / 1000000;
-  int right_count_tick;
   if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution) {
     if (direction_indicator_right == 1) {
       encoder_counter_right++;
-      right_count_tick = 1;
+      right_count_tick += 1;
       current_omega_right = count_to_rad / delta_time_right;
     }
     if (direction_indicator_right == 0) {
       encoder_counter_right = encoder_counter_right - 1;
-      right_count_tick = -1;
+      right_count_tick += -1;
       current_omega_right = -count_to_rad / delta_time_right;
     }
   }
@@ -163,16 +165,15 @@ void encoder_count_chage_right() {
 void encoder_count_chage_left() {
   delta_time_left = double(micros()) / 1000000 - old_time_left;
   old_time_left = double(micros()) / 1000000;
-  int left_count_tick;
   if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution) {
     if (direction_indicator_left == 1) {
       encoder_counter_left++;
-      left_count_tick = 1;
+      left_count_tick += 1;
       current_omega_left = count_to_rad / delta_time_left;
     }
     if (direction_indicator_left == 0) {
       encoder_counter_left = encoder_counter_left - 1;
-      left_count_tick = -1;
+      left_count_tick += -1;
       current_omega_left = -count_to_rad / delta_time_left;
     }
   }
@@ -239,8 +240,6 @@ void setPWM(int pwm_right, int pwm_left) {
 }
 
 void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_r, double last_error_r, double goal_wheel_speed_l, double current_wheel_speed_l, double last_error_l, double elapsed_time){
-  double cum_error_r;
-  double cum_error_l;
   double error_r = goal_wheel_speed_r - current_wheel_speed_r;
   double error_l = goal_wheel_speed_l - current_wheel_speed_l;
   cum_error_r += error_r * elapsed_time;
@@ -252,13 +251,6 @@ void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_
   double pwm_signal_r = omega_to_pwm(controller_output_r);
   double pwm_signal_l = omega_to_pwm(controller_output_l);
   setPWM(pwm_signal_r,pwm_signal_l);
-  wheel_speed.x = goal_wheel_speed_r;
-  wheel_speed.y = error_r;
-  wheel_speed.z = controller_output_r;
-  wheel_speed.w = pwm_signal_r;
-
-  speed_pub.publish(&wheel_speed);
-
 }
 
 void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
@@ -314,6 +306,8 @@ void start_up_hi(std_msgs::Int16& num){
 }
 
 void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
+  cum_error_r = 0;
+  cum_error_l = 0;
   double goal_vel_x = cmd_goal.linear.x;
   double goal_omega = cmd_goal.angular.z;
   if (cmd_goal.angular.x == 0){ // here if this is true that means that the robot is being teleoperated
@@ -467,7 +461,6 @@ void setup() {
 }
 
 void loop() {
-
   if(bool_tele_op_toggel == false){
     current_time = micros();
     double time_elapsed = double(current_time - previous_time);
@@ -477,11 +470,17 @@ void loop() {
     last_error_right = goal_omega_right - average_omega_right;
     last_error_left = goal_omega_left - average_omega_left;
   }
-  //right_wheel_speed.x = average_omega_right;
-  //right_wheel_speed.y = average_omega_left;
-  //right_wheel_speed.z = i;
-  //data_pub.publish(&right_wheel_speed);
+
+  if(millis() > time_now + period){
+    time_now = millis();
+
+    wheel_speed.x = average_omega_right;
+    wheel_speed.y = average_omega_left;
+    wheel_speed.z = right_count_tick;
+    wheel_speed.w = left_count_tick;
+    speed_pub.publish(&wheel_speed);
+  }
   nh.spinOnce();
   //}
-  //delay(10);
+  //delay(100);
   }
