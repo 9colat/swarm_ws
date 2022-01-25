@@ -6,9 +6,9 @@
      <!-- <param name="baud" value="9600"/> -->
   </node>
 
-  <node pkg="hardware_driver" type="test_for_driving.py" name="test_for_driving" output="screen">
+  <!--<node pkg="hardware_driver" type="test_for_driving.py" name="test_for_driving" output="screen">
 
-  </node>
+  </node>-->
 
   <!--<node pkg="hardware_driver" type="print_node.py" name="print_node" output="screen">
 
