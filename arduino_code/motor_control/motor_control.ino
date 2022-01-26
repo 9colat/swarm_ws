@@ -177,8 +177,8 @@ void encoder_count_chage_right() {
     array_push(speed_array_right, current_omega_right);
   }
 
-  right_tick.data = right_count_tick;
-  right_tick_pub.publish(&right_tick);
+  //right_tick.data = right_count_tick;
+  //right_tick_pub.publish(&right_tick);
   average_omega_right = averaging_array(speed_array_right);
 }
 
@@ -202,8 +202,8 @@ void encoder_count_chage_left() {
     array_push(speed_array_left, current_omega_left);
   }
 
-  left_tick.data = left_count_tick;
-  left_tick_pub.publish(&left_tick);
+  //left_tick.data = left_count_tick;
+  //left_tick_pub.publish(&left_tick);
 
   average_omega_left = averaging_array(speed_array_left);
 }

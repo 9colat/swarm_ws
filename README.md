@@ -76,8 +76,15 @@ rosrun hardware_driver driver.py
 chmod +x driver.py
 ```
 
+## bluetooth setting up:
 
+```
+sudo bluetoothctl
+```
 
+```
+connect D0:27:88:70:E1:D3
+```
 
 
 for tele op:

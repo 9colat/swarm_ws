@@ -26,9 +26,9 @@ nmcli r wifi on
 sudo nmcli dev wifi connect testwifi
 
 echo "here ros is installing"
-#sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu fstart_up_scriptocal-security main restricted"
-#sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security universe"
-#sudo add-apt-repository "deb-src http://security.ubuntu.com/ubuntu focal-security multiverse"
+echo 'deb-src http://ports.ubuntu.com/ubuntu-ports focal-security main restricted' | sudo tee --append /etc/apt/sources.list
+echo 'deb-src http://ports.ubuntu.com/ubuntu-ports focal-security universe'| sudo tee --append /etc/apt/sources.list
+echo 'deb-src http://ports.ubuntu.com/ubuntu-ports focal-security multiverse'| sudo tee --append /etc/apt/sources.list
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 sudo apt install curl
 curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
@@ -131,5 +131,10 @@ sudo chmod 777 arduino_make_upload.sh
 sudo chmod 777 start_up_script.sh
 
 
+echo 'include btcfg.txt' | sudo tee --append /boot/firmware/usercfg.txt
+
+
 cronjob="@reboot ~/swarm_ws/start_up_script.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
+
+sudo reboot
