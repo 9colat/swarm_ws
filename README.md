@@ -9,73 +9,77 @@ The code on this repository is a part of a project done by:
 
 ## ssh setup
 
-first, its a good idear to install network-map since then you do not need a screen get the ip address of you raspberry pi:
+First, it is a good idea to install network-map on your PC, because you do not need a RP-screen, to get the IP address of you raspberry pi:
 ```
 sudo apt install nmap
 ```
-now to find the ip address use this command to fine all the host on the net work that is from 192.168.0.0 to 192.168.0.255
+This allows you to search the network devices on WIFI/LAN access points.
+In order to find the IP address, use this command to find all the host on the net work that is from 192.168.0.0 to 192.168.0.255 (remember to find out your router's IP first!):
 ```
 nmap 192.168.0.*
 ```
-if you don't have a ssh-key at this point then you have to make one this can be done with this command:
+If you don't have a ssh-key at this point, then you have to make one. This can be done with this command:
 ```
 ssh-keygen
 ```
+This allows the system to give the key, so we are seen now as a 'safe' device.
+(this command you use only once, regardless of how many devices you want to ssh into)
+This key needs to be saved in a specific file (just press ENTER three times). After this step, your ssh identifier has been successfully generated.
 
-
-now to set up so that you only need to enter the password once use this command where you replace the remote_host with the ip address that you found earlier:
+Now, we copy the generated key (ssh identifier) to the host, so it will not ask us for password in the future. Use this command, but remember to replace the remote_host with the IP address that you found earlier (e.g. 192.168.0.3):
 ```
 ssh-copy-id ubuntu@remote_host
 ```
 
-after this you can ssh into the machine with this command, here you also replace the remote_host with the ip address that you found earlier:
+Now you can ssh into the machine with the following command (here you also replace the remote_host with the IP address that you found earlier, like in the previous step):
 ```
 ssh ubuntu@remote_host
 ```
 
 ## Install instruction
-first fix your repository settings so that ros can be installed:
-
-
-~~sudo nano /etc/apt/sources.list~~
-
-
-~~go to the bottom and uncomment the 3 last lines that are commented out. (# means that its commented out)~~
-
+> First, fix your repository settings, so ROS can be installed:
+> ~~sudo nano /etc/apt/sources.list~~
+> ~~go to the bottom and uncomment the 3 last lines that are commented out. (# means that it is commented out)~~
 > This is not the case any more, and you can skip the first step of the install instruction.
 
-next you need to get the "my_setup.sh" script this should set everything up for you, the same way that we have it set up. If you are on the full server version without a gui, then i recument that you make a folder and change directory to that so that you can keep the "home" folder a little clean:
+The next step requires "my_setup.sh" script, which installs all neccessary software and packages needed for this project. The script should set everything up for you, the same way that we have set it up. If you are on the full server version without a GUI, then i recommend that you make a folder and change directory to that, so you can keep the "home" folder a little clean.
+Download the script:
 ```
 curl -o my_setup.sh https://raw.githubusercontent.com/9colat/swarm_ws/master/my_setup.sh
 ```
-now make it executable:
+And make it executable:
 ```
 chmod +x my_setup.sh
 ```
-now the only thing left is to install everything that we used to make our robot run, by using the "my_setup.sh" script
+You can quickly test if it is executable by running "ls" command. If it appears in a green colour (in terminator), then it means it is indeed executable.
+
+Now the only thing left is to install everything that we used to make our robot run, by using the "my_setup.sh" script:
 
 ```
 ./my_setup.sh
 ```
 
+It will take some time, roughly around 90 minutes. Enjoy yourself.
+
 ## User instruction:
 
-when you want to run the code with the teensy/arduino then you have to run a set of commands in the terminal.
-first you have to start the ros master:
+When you want to run the code with the Teensy/Arduino, then you have to run a set of commands in the terminal.
+
+First, you need to start the ROS master:
 ```
 roscore
 ```
-then you have to set up the conection with the serial port:
+Then you have to set up the connection with the serial port:
 ```
 rosrun rosserial_python serial_node.py /dev/ttyACM0
 ```
-note that the port might differ between mechines so to find it you go to the arduino ide and go to the tool/port and there you will find the port your teensy/arduino is conected to.  
+Note that the port might differ between machines. To find it, you need to go to the Arduino IDE and click on the tool/port - there you find the port your Teensy/Arduino is connected to.  
 
-to run the test controller code then then run the following comands
+To run the test controller code, run the following commands:
 ```
 rosrun hardware_driver driver.py
 ```
->if this does not work then go to the swarm_ws/src/hardware_driver/scripts and run the following comande, the reason that this is needed is because the system does not concider the script executable:
+>if this does not work then go to the swarm_ws/src/hardware_driver/scripts and run the following command; the reason that this is needed is because the system does not consider the script executable:
 ```
 chmod +x driver.py
 ```
