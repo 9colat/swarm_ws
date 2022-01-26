@@ -37,10 +37,10 @@ ssh ubuntu@remote_host
 first fix your repository settings so that ros can be installed:
 
 
-~~sudo nano /etc/apt/sources.list
+~~sudo nano /etc/apt/sources.list~~
 
 
-go to the bottom and uncomment the 3 last lines that are commented out. (# means that its commented out)~~
+~~go to the bottom and uncomment the 3 last lines that are commented out. (# means that its commented out)~~
 
 > This is not the case any more, and you can skip the first step of the install instruction.
 
