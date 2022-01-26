@@ -36,9 +36,11 @@ ssh ubuntu@remote_host
 ## Install instruction
 first fix your repository settings so that ros can be installed:
 ```
-sudo nano /etc/apt/sources.list
+~~sudo nano /etc/apt/sources.list~~
 ```
 go to the bottom and uncomment the 3 last lines that are commented out. (# means that its commented out)
+
+> This is not the case any more, and you can skip the first step of the install instruction.
 
 next you need to get the "my_setup.sh" script this should set everything up for you, the same way that we have it set up. If you are on the full server version without a gui, then i recument that you make a folder and change directory to that so that you can keep the "home" folder a little clean:
 ```
