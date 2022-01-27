@@ -119,7 +119,7 @@ void publish_quat() {
   nav_msgs::Odometry quatOdom;
   quatOdom.header.stamp = odomNew.header.stamp;
   quatOdom.header.frame_id = "odom";
-  quatOdom.child_frame_id = "base_link";
+  quatOdom.child_frame_id = "base_footprint";
   quatOdom.pose.pose.position.x = odomNew.pose.pose.position.x;
   quatOdom.pose.pose.position.y = odomNew.pose.pose.position.y;
   quatOdom.pose.pose.position.z = odomNew.pose.pose.position.z;
