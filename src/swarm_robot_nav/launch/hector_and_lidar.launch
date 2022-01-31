@@ -1,0 +1,8 @@
+<launch>
+  <!--Lidar node-->
+<include file="$(find rplidar_ros)/launch/rplidar.launch"/>
+
+  <!--hector_slam -->
+<include file="$(find hector_slam_launch)/launch/tutorial.launch"/>
+
+</launch>

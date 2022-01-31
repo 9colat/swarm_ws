@@ -1,0 +1,18 @@
+<launch>
+
+
+  <!--Lidar node-->
+<include file="$(find rplidar_ros)/launch/rplidar.launch"/>
+
+  <!--hector_slam -->
+<include file="$(find hector_slam_launch)/launch/tutorial.launch"/>
+
+  <!-- robot model and state publisher -->
+<arg
+  name="model" />
+<param
+  name="robot_description" textfile="$(find swarm_robot_nav)/robot_discription/rudolph_v4_3.urdf" />
+
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+</launch>
