@@ -141,12 +141,12 @@ void encoder_count_chage_right() {
   old_time_right = double(micros()) / 1000000;
   if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution) {
     if (direction_indicator_right == 1) {
-      encoder_counter_right++;
+    //  encoder_counter_right++;
       right_count_tick += 1;
       current_omega_right = count_to_rad / delta_time_right;
     }
     if (direction_indicator_right == 0) {
-      encoder_counter_right = encoder_counter_right - 1;
+    //  encoder_counter_right = encoder_counter_right - 1;
       right_count_tick += -1;
       current_omega_right = -count_to_rad / delta_time_right;
     }
@@ -167,12 +167,12 @@ void encoder_count_chage_left() {
   old_time_left = double(micros()) / 1000000;
   if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution) {
     if (direction_indicator_left == 1) {
-      encoder_counter_left++;
+    //  encoder_counter_left++;
       left_count_tick += 1;
       current_omega_left = count_to_rad / delta_time_left;
     }
     if (direction_indicator_left == 0) {
-      encoder_counter_left = encoder_counter_left - 1;
+    //  encoder_counter_left = encoder_counter_left - 1;
       left_count_tick += -1;
       current_omega_left = -count_to_rad / delta_time_left;
     }
@@ -242,8 +242,10 @@ void setPWM(int pwm_right, int pwm_left) {
 void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_r, double last_error_r, double goal_wheel_speed_l, double current_wheel_speed_l, double last_error_l, double elapsed_time){
   double error_r = goal_wheel_speed_r - current_wheel_speed_r;
   double error_l = goal_wheel_speed_l - current_wheel_speed_l;
-  cum_error_r += error_r * elapsed_time;
-  cum_error_l += error_l * elapsed_time;
+  cum_error_r += error_r;
+  //* elapsed_time;
+  cum_error_l += error_l;
+  //* elapsed_time;
   double rate_error_r = (error_r - last_error_r) / elapsed_time;
   double rate_error_l = (error_l - last_error_l) / elapsed_time;
   double controller_output_r = error_r * p_gain + cum_error_r * i_gain + rate_error_r * d_gain;
