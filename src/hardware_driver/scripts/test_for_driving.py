@@ -14,7 +14,7 @@ def main():
     start_dir.angular.z = 0
     start_dir.angular.x = 90
     pub1.publish(start_dir)
-    rospy.spinOnce()
+    ##rospy.spin()
     while not rospy.is_shutdown():
         vel_comand = input("please enter liniar speed: ")
         if vel_comand == "kill" or vel_comand == "quit" or vel_comand == "end" or vel_comand == "stop" or vel_comand == "q":
