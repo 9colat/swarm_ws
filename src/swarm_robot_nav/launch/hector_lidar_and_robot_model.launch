@@ -16,3 +16,4 @@
 <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
 </launch>
+<!-- https://github.com/NickL77/RPLidar_Hector_SLAM-->
