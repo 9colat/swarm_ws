@@ -1,1 +1,6 @@
-plot(A, B)
+plot(B,A)
+title('PWM Over Angular Velocity')
+xlabel('Angular Velocity') 
+ylabel('PWM') 
+xlim([0 17])
+ylim([0 275])

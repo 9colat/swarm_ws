@@ -9,6 +9,12 @@ def main():
     rospy.init_node('driving_control', anonymous=True)
     pub1 = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     rate = rospy.Rate(10) # 10hz
+    start_dir = Twist()
+    start_dir.linear.x = 0
+    start_dir.angular.z = 0
+    start_dir.angular.x = 90
+    pub1.publish(start_dir)
+    ##rospy.spin()
     while not rospy.is_shutdown():
         vel_comand = input("please enter liniar speed: ")
         if vel_comand == "kill" or vel_comand == "quit" or vel_comand == "end" or vel_comand == "stop" or vel_comand == "q":

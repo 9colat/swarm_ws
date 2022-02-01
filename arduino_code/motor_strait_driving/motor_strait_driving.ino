@@ -13,6 +13,10 @@
 #include <geometry_msgs/Quaternion.h>
 #include <geometry_msgs/Twist.h>
 
+
+double error_l;
+double error_r;
+
 //-----pinout setting up-----//
 const int MPU_addr = 0x68; // I2C address of the MPU-6050 and mpu9250
 const byte right_motor_pwm = 29;     // setting the pin for the left motors PWM
@@ -35,7 +39,7 @@ const float pi = 3.141593;          // this is pi, or an aproximation, what did 
 const float max_vel = 13.0;
 const float max_omega = 1.0;
 const float p_gain = 2.0;
-const float i_gain = 0.03;
+const float i_gain = 0.5; //0.3 is roughly good, a little slow
 const float d_gain = 0.0;
 const double a = 0.1899;
 const double b = -3.462;
@@ -46,7 +50,7 @@ const double b_2 = 22.88;
 const int change_over_point = 2;
 const int opper_lim = 255;
 bool bool_tele_op_toggel = true;
-int period = 10;
+int period = 100;
 unsigned long time_now = 0;
 double encoder_counter_right = 0.0;   // this is the encoder counter for the right wheel
 double encoder_counter_left = 0.0;    // this is the encoder counter for the left wheel
@@ -240,12 +244,12 @@ void setPWM(int pwm_right, int pwm_left) {
 }
 
 void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_r, double last_error_r, double goal_wheel_speed_l, double current_wheel_speed_l, double last_error_l, double elapsed_time){
-  double error_r = goal_wheel_speed_r - current_wheel_speed_r;
-  double error_l = goal_wheel_speed_l - current_wheel_speed_l;
-  cum_error_r += error_r;
-  //* elapsed_time;
-  cum_error_l += error_l;
-  //* elapsed_time;
+  //double error_r = goal_wheel_speed_r - current_wheel_speed_r;
+  error_r = goal_wheel_speed_r - current_wheel_speed_r;
+  //double error_l = goal_wheel_speed_l - current_wheel_speed_l;
+  error_l = goal_wheel_speed_l - current_wheel_speed_l;
+  cum_error_r += error_r * elapsed_time;
+  cum_error_l += error_l * elapsed_time;
   double rate_error_r = (error_r - last_error_r) / elapsed_time;
   double rate_error_l = (error_l - last_error_l) / elapsed_time;
   double controller_output_r = error_r * p_gain + cum_error_r * i_gain + rate_error_r * d_gain;
@@ -462,7 +466,7 @@ void setup() {
 void loop() {
   if(bool_tele_op_toggel == false){
     current_time = micros();
-    double time_elapsed = double(current_time - previous_time);
+    double time_elapsed = double(current_time - previous_time)*pow(10,-6);
     speed_PID_controller(goal_omega_right, average_omega_right, last_error_right, goal_omega_left, average_omega_left, last_error_left, time_elapsed);
 
     previous_time = current_time;
@@ -473,10 +477,14 @@ void loop() {
   if(millis() > time_now + period){
     time_now = millis();
 
-    wheel_speed.x = average_omega_right;
+    /*wheel_speed.x = average_omega_right;
     wheel_speed.y = average_omega_left;
     wheel_speed.z = right_count_tick;
-    wheel_speed.w = left_count_tick;
+    wheel_speed.w = left_count_tick;*/
+    wheel_speed.x = error_r;
+    wheel_speed.y = error_l;
+    wheel_speed.z = cum_error_r;
+    wheel_speed.w = cum_error_l;
     speed_pub.publish(&wheel_speed);
   }
   nh.spinOnce();

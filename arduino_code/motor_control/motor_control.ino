@@ -118,6 +118,8 @@ struct Quaternion
   double w, x, y, z;
 };
 
+//-----Functions-----//
+
 Quaternion ToQuaternion(double yaw, double pitch, double roll) // yaw (Z), pitch (Y), roll (X)
 {
   // Abbreviations for the various angular functions
@@ -139,7 +141,6 @@ Quaternion ToQuaternion(double yaw, double pitch, double roll) // yaw (Z), pitch
 
 
 
-//-----Functions-----//
 void array_push(long the_input_array[], float data) {
   for (int x = sizeof(the_input_array); x > 0; x = x - 1) {
     the_input_array[x] = the_input_array[x - 1];
@@ -177,8 +178,8 @@ void encoder_count_chage_right() {
     array_push(speed_array_right, current_omega_right);
   }
 
-  //right_tick.data = right_count_tick;
-  //right_tick_pub.publish(&right_tick);
+  right_tick.data = right_count_tick;
+  right_tick_pub.publish(&right_tick);
   average_omega_right = averaging_array(speed_array_right);
 }
 
@@ -202,8 +203,8 @@ void encoder_count_chage_left() {
     array_push(speed_array_left, current_omega_left);
   }
 
-  //left_tick.data = left_count_tick;
-  //left_tick_pub.publish(&left_tick);
+  left_tick.data = left_count_tick;
+  left_tick_pub.publish(&left_tick);
 
   average_omega_left = averaging_array(speed_array_left);
 }
@@ -218,10 +219,10 @@ void setPWM(int pwm_right, int pwm_left) {
   //setting the correct direction of the motor
   direction_indicator_right = 0;
   direction_indicator_left = 0;
-  if(pwm_right >= 0){
+  if(pwm_right > 0){
     direction_indicator_right = 1;
   }
-  if(pwm_left >= 0){
+  if(pwm_left > 0){
     direction_indicator_left = 1;
   }
   digitalWrite(right_motor_ina, pwm_right >= 0);
@@ -433,7 +434,6 @@ void setup() {
   pinMode(RGB_led_green, OUTPUT);
   pinMode(RGB_led_blue, OUTPUT);
   pinMode(RGB_led_red, OUTPUT);
-  RGB_led_set("white");
   pinMode(right_motor_pwm, OUTPUT);
   pinMode(right_motor_ina, OUTPUT);
   pinMode(right_motor_inb, OUTPUT);
@@ -448,6 +448,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(right_encoder_b), encoder_count_chage_right, CHANGE);
   attachInterrupt(digitalPinToInterrupt(left_encoder_a), encoder_count_chage_left, CHANGE);
   attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
+  RGB_led_set("white");
   nh.subscribe(sub_cmd_vel);
   nh.subscribe(start_up);
   nh.advertise(right_tick_pub);
@@ -459,14 +460,14 @@ void setup() {
   nh.advertise(IMU_data_mag);
   nh.advertise(measured_angle_pub);
 
-  Wire.begin();
+  //Wire.begin();
   //Wire.beginTransmission(MPU_addr);
   //Wire.write(0x6B);  // PWR_MGMT_1 register
   //Wire.write(0);     // set to zero (wakes up the MPU-6050)
   //Wire.endTransmission(true);
   accelgyro.initialize();
-  Serial.println("Testing device connections...");
-  Serial.println(accelgyro.testConnection() ? "MPU9250 connection successful" : "MPU9250 connection failed");
+  //Serial.println("Testing device connections...");
+  //Serial.println(accelgyro.testConnection() ? "MPU9250 connection successful" : "MPU9250 connection failed");
 
 }
 
