@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="rudolph_v4">
+  <link
+    name="footprint">
+    <inertial>
+      <origin
+        xyz="0.0201377391083233 0.00589614363224876 0.114446431952097"
+        rpy="0 0 0" />
+      <mass
+        value="0.967190772167895" />
+      <inertia
+        ixx="0.00203017514247501"
+        ixy="2.82248237015213E-06"
+        ixz="6.30629341824404E-07"
+        iyy="0.0035897929679706"
+        iyz="-7.32674381029651E-07"
+        izz="0.00548735070363094" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/footprint.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.647058823529412 0.517647058823529 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/footprint.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.122165211658201 -4.85872640913765E-06 -0.00300184230279451"
+        rpy="0 0 0" />
+      <mass
+        value="0.343684409999019" />
+      <inertia
+        ixx="0.00109418059278303"
+        ixy="-7.10430115040712E-08"
+        ixz="-4.65149223006999E-08"
+        iyy="0.0024082835601597"
+        iyz="1.89355200813577E-09"
+        izz="0.00350040441274559" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_link"
+    type="fixed">
+    <origin
+      xyz="0.1199 0 0.07677"
+      rpy="0 0 0" />
+    <parent
+      link="footprint" />
+    <child
+      link="base_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="laser">
+    <inertial>
+      <origin
+        xyz="0.00676641398454259 -9.19718367893042E-05 -0.00981507539280285"
+        rpy="0 0 0" />
+      <mass
+        value="1.33010751695787" />
+      <inertia
+        ixx="0.00061377057687069"
+        ixy="-8.0197011225056E-07"
+        ixz="0.000158237807214438"
+        iyy="0.000959131136457615"
+        iyz="-3.0936846683567E-06"
+        izz="0.00109694905180103" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/laser.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/laser.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lidar"
+    type="fixed">
+    <origin
+      xyz="-0.1199 0 0.1271"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="laser" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="right_wheel">
+    <inertial>
+      <origin
+        xyz="-2.3037127760972E-15 0.000128187508022362 2.15105711021124E-16"
+        rpy="0 0 0" />
+      <mass
+        value="0.0566666492820036" />
+      <inertia
+        ixx="2.86195955633458E-05"
+        ixy="-1.44874702257291E-19"
+        ixz="9.67538371676845E-18"
+        iyy="5.44361404566751E-05"
+        iyz="3.28892177791244E-20"
+        izz="2.86195955633414E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/right_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/right_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right"
+    type="continuous">
+    <origin
+      xyz="0.1199 -0.11994 0.0425"
+      rpy="0 0 0" />
+    <parent
+      link="footprint" />
+    <child
+      link="right_wheel" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+  <link
+    name="left_wheel">
+    <inertial>
+      <origin
+        xyz="-2.1094237467878E-15 -0.000128187508022348 -8.43075609324728E-16"
+        rpy="0 0 0" />
+      <mass
+        value="0.0566666492820037" />
+      <inertia
+        ixx="2.86195955633805E-05"
+        ixy="1.60099748394835E-19"
+        ixz="-7.02435105572206E-18"
+        iyy="5.44361404567349E-05"
+        iyz="5.38911121195928E-20"
+        izz="2.86195955633666E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/left_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/left_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left"
+    type="continuous">
+    <origin
+      xyz="0.1199 0.11994 0.0425"
+      rpy="0 0 0" />
+    <parent
+      link="footprint" />
+    <child
+      link="left_wheel" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+  <link
+    name="UPS">
+    <inertial>
+      <origin
+        xyz="0.0347933430750397 -0.000116190741974557 -0.00299999999999997"
+        rpy="0 0 0" />
+      <mass
+        value="0.255010204859763" />
+      <inertia
+        ixx="0.000793573677370603"
+        ixy="2.9783586931944E-06"
+        ixz="1.05018285233613E-21"
+        iyy="0.000992227100894082"
+        iyz="3.43935691831692E-22"
+        izz="0.00178427071703553" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/UPS.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://rudolph_v4/meshes/UPS.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ultar_sonic_position"
+    type="fixed">
+    <origin
+      xyz="0 0 0.234769976584764"
+      rpy="0 0 0" />
+    <parent
+      link="footprint" />
+    <child
+      link="UPS" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>

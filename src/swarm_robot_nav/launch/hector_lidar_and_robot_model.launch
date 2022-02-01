@@ -11,7 +11,7 @@
 <arg
   name="model" />
 <param
-  name="robot_description" textfile="$(find swarm_robot_nav)/robot_discription/rudolph_v4_3.urdf" />
+  name="robot_description" textfile="$(find swarm_robot_nav)/robot_description/rudolph_v4/urdf/rudolph_v4.urdf" />
 
 <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
