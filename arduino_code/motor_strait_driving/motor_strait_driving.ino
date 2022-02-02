@@ -245,6 +245,7 @@ void setPWM(int pwm_right, int pwm_left) {
 
 void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_r, double last_error_r, double goal_wheel_speed_l, double current_wheel_speed_l, double last_error_l, double elapsed_time){
   //double error_r = goal_wheel_speed_r - current_wheel_speed_r;
+  previous_time = micros();
   error_r = goal_wheel_speed_r - current_wheel_speed_r;
   //double error_l = goal_wheel_speed_l - current_wheel_speed_l;
   error_l = goal_wheel_speed_l - current_wheel_speed_l;
@@ -477,14 +478,14 @@ void loop() {
   if(millis() > time_now + period){
     time_now = millis();
 
-    /*wheel_speed.x = average_omega_right;
+    wheel_speed.x = average_omega_right;
     wheel_speed.y = average_omega_left;
-    wheel_speed.z = right_count_tick;
-    wheel_speed.w = left_count_tick;*/
-    wheel_speed.x = error_r;
+    wheel_speed.z = error_r;
+    wheel_speed.w = cum_error_r;
+    /*wheel_speed.x = error_r;
     wheel_speed.y = error_l;
     wheel_speed.z = cum_error_r;
-    wheel_speed.w = cum_error_l;
+    wheel_speed.w = cum_error_l;*/
     speed_pub.publish(&wheel_speed);
   }
   nh.spinOnce();
