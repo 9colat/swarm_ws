@@ -314,7 +314,6 @@ void start_up_hi(std_msgs::Int16& num){
 void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
   cum_error_r = 0;
   cum_error_l = 0;
-  previous_time = micros();
   double goal_vel_x = cmd_goal.linear.x;
   double goal_omega = cmd_goal.angular.z;
   if (cmd_goal.angular.x == 0){ // here if this is true that means that the robot is being teleoperated
