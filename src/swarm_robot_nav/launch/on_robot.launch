@@ -18,6 +18,7 @@
 <include file="$(find hector_mapping)/launch/mapping_default.launch"/>
     <arg name="base_frame" default="footprint"/>
     <arg name="odom_frame" default="footprint"/>
+    <arg name="base_footprint" default="footprint"/>
 <include file="$(find hector_geotiff_launch)/launch/geotiff_mapper.launch">
     <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
     <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
