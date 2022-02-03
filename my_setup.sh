@@ -102,7 +102,7 @@ catkin_init_workspace
 cd ..
 catkin_make
 echo "source $HOME/swarm_ws/devel/setup.bash" >> ~/.bashrc
-echo "export ROSCONSOLE_FORMAT='[${severity}] - ${node}: [${time}] ${message}'" >> ~/.bashrc
+echo "export ROSCONSOLE_FORMAT='[\${severity}] - \${node}: [\${time}] \${message}'" >> ~/.bashrc
 
 source ~/.bashrc
 
