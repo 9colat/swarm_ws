@@ -35,6 +35,8 @@ input_speed = 0
 
 
 path = Path.home().joinpath("test_data", "log%s.txt")
+folder_path = Path.home() + "test_data"
+isfolder = os.path.isfile(folder_path)
 number_of_files = 0
 lidar_array = [0] * 360
 wheel_speed = [0] * 2
@@ -70,7 +72,9 @@ def callback_input_speed(data):
 
 
 def main():
-    global path, number_of_files, seperator
+    global path, folder_path, isfolder, number_of_files, seperator
+    if isfolder:
+        os.mkdir(folder_path)
     file_iterator()
     rospy.init_node('logger', anonymous=True)
     #print(str(lidar_array))
