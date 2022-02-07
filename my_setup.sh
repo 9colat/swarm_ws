@@ -133,8 +133,12 @@ sudo chmod 777 start_up_script.sh
 
 echo 'include btcfg.txt' | sudo tee --append /boot/firmware/usercfg.txt
 
+btattach -B /dev/ttyAMA0 -P bcm -S 115200 -N &
+
 
 cronjob="@reboot ~/swarm_ws/start_up_script.sh"
+(crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
+cronjob="@reboot ~/swarm_ws/bt_boot.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
 
 sudo reboot
