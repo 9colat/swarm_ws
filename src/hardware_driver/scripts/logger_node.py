@@ -35,7 +35,7 @@ input_speed = 0
 
 
 path = Path.home().joinpath("test_data", "log%s.txt")
-folder_path = Path.home() + "test_data"
+folder_path = str(Path.home().joinpath("test_data"))
 isfolder = os.path.isfile(folder_path)
 number_of_files = 0
 lidar_array = [0] * 360
