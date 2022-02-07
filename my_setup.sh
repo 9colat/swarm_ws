@@ -23,7 +23,7 @@ sudo apt install network-manager -y
 
 nmcli r wifi on
 
-sudo nmcli dev wifi connect testwifi
+sudo nmcli dev wifi connect testwifi1 password "ros123456789"
 
 echo "here ros is installing"
 echo 'deb-src http://ports.ubuntu.com/ubuntu-ports focal-security main restricted' | sudo tee --append /etc/apt/sources.list
@@ -138,7 +138,8 @@ btattach -B /dev/ttyAMA0 -P bcm -S 115200 -N &
 
 cronjob="@reboot ~/swarm_ws/start_up_script.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
+
+./swarm_ws/start_up_script.sh
+
 cronjob="@reboot ~/swarm_ws/bt_boot.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
-
-sudo reboot
