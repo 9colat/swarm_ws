@@ -90,6 +90,11 @@ echo "installing pip"
 sudo apt install python3-pip -y
 echo "pip installing pathlib"
 pip install pathlib
+echo "pip install ds4drv"
+pip install ds4drv
+curl -o 50-ds4drv.rules https://raw.githubusercontent.com/naoki-mizuno/ds4drv/devel/udev/50-ds4drv.rules
+sudo cp udev/50-ds4drv.rules /etc/udev/rules.d/
+rm 50-ds4drv.rules
 
 #here we setup the git reposetory that we have made.
 echo "clonning the github repo"
@@ -110,7 +115,7 @@ sudo chmod 666 /dev/ttyUSB0
 cd
 cd swarm_ws/src
 git clone https://github.com/Slamtec/rplidar_ros.git
-cd ..
+
 catkin_make
 source devel/setup.bash
 git clone https://github.com/tu-darmstadt-ros-pkg/hector_slam.git
@@ -131,15 +136,13 @@ sudo chmod 777 arduino_make_upload.sh
 sudo chmod 777 start_up_script.sh
 
 
+
 echo 'include btcfg.txt' | sudo tee --append /boot/firmware/usercfg.txt
 
-btattach -B /dev/ttyAMA0 -P bcm -S 115200 -N &
+#btattach -B /dev/ttyAMA0 -P bcm -S 115200 -N &
 
 
 cronjob="@reboot ~/swarm_ws/start_up_script.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
-
-./swarm_ws/start_up_script.sh
-
 cronjob="@reboot ~/swarm_ws/bt_boot.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
