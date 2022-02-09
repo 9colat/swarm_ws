@@ -278,7 +278,7 @@ void wheel_speed_set(double input_vel_x, double input_omega, int tele_op){
     pwm_procent_left = int(map(goal_omega_left, 0, 100, 0, 255));
     setPWM(pwm_procent_right, pwm_procent_left);
   }
-  
+
   else if(tele_op == 2){//speed control with speed (PID) controller
     RGB_led_set("green");
     double vel_x_goal;
@@ -473,7 +473,7 @@ void setup() {
 }
 
 void loop() {
-  if(bool_tele_op_toggel == false){
+  if(bool_tele_op_toggel == 2){
     current_time = micros();
     double time_elapsed = double(current_time - previous_time)*pow(10,-6);
     speed_PID_controller(goal_omega_right, average_omega_right, last_error_right, goal_omega_left, average_omega_left, last_error_left, time_elapsed);
