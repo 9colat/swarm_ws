@@ -73,6 +73,7 @@ def callback_input_speed(data):
 
 def main():
     global path, folder_path, isfolder, number_of_files, seperator
+    print(isfolder)
     if isfolder:
         os.mkdir(folder_path)
     file_iterator()
