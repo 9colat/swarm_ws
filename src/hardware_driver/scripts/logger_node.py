@@ -74,7 +74,7 @@ def callback_input_speed(data):
 def main():
     global path, folder_path, isfolder, number_of_files, seperator
     print(isfolder)
-    if isfolder:
+    if isfolder == false:
         os.mkdir(folder_path)
     file_iterator()
     rospy.init_node('logger', anonymous=True)
