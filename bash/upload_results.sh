@@ -1,6 +1,8 @@
 #! /bin/bash
 
-nr=$1
-echo "log$nr.txt"
+#nr=$1
+#echo "log$nr.txt"
+let nr=$(ls -l | grep -v ^d | wc -l)-2
+
 
 scp ~/test_data/log$nr.txt nicoleg@192.168.0.9:/home/nicoleg/Documents
