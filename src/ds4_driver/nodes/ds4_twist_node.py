@@ -49,6 +49,7 @@ class StatusToTwist(object):
                 val = eval(expr, {}, input_vals)
                 setattr(vel_vec, k, scale * val)
 
+        to_pub.angular.x = 5
         self._pub.publish(to_pub)
 
 

@@ -49,7 +49,7 @@ const double a_2 = 1.72;
 const double b_2 = 22.88;
 const int change_over_point = 2;
 const int opper_lim = 255;
-bool bool_tele_op_toggel = true;
+int bool_tele_op_toggel;
 int period = 100;
 unsigned long time_now = 0;
 double encoder_counter_right = 0.0;   // this is the encoder counter for the right wheel
@@ -260,12 +260,14 @@ void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_
   setPWM(pwm_signal_r,pwm_signal_l);
 }
 
-void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
-  double vel_x_goal;
-  double goal_omega;
-
-  if (tele_op == true){
-    RGB_led_set("cyan");
+void wheel_speed_set(double input_vel_x, double input_omega, int tele_op){
+  if (tele_op == 0 || tele_op == 1){//keyboard tele-op or PS4 controller tele-op
+    if (tele_op == 0){ //keyboard tele-op setting indicator color
+      RGB_led_set("red");
+    }
+    if (tele_op == 1){ //PS4 controller tele-op setting indicator color
+      RGB_led_set("blue");
+    }
     // here we assume that the imput is for input_vel_x is between 0 - 1 and
     // input_omega is between 0 - 0.5
     vel_x_goal = input_vel_x * 75;
@@ -275,10 +277,12 @@ void wheel_speed_set(double input_vel_x, double input_omega, bool tele_op){
     pwm_procent_right = int(map(goal_omega_right, 0, 100, 0, 255));
     pwm_procent_left = int(map(goal_omega_left, 0, 100, 0, 255));
     setPWM(pwm_procent_right, pwm_procent_left);
-
   }
-  else if(tele_op == false){
+  
+  else if(tele_op == 2){//speed control with speed (PID) controller
     RGB_led_set("green");
+    double vel_x_goal;
+    double goal_omega;
     // here we assume that the imput gives a goal_omega =< 15 [rad/s]
     vel_x_goal = input_vel_x;
     goal_omega = input_omega;
@@ -313,15 +317,19 @@ void start_up_hi(std_msgs::Int16& num){
 }
 
 void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
-  cum_error_r = 0;
-  cum_error_l = 0;
   double goal_vel_x = cmd_goal.linear.x;
   double goal_omega = cmd_goal.angular.z;
   if (cmd_goal.angular.x == 0){ // here if this is true that means that the robot is being teleoperated
-    bool_tele_op_toggel = true;
+    bool_tele_op_toggel = 0;
   }
-  if (cmd_goal.angular.x > 0){
-    bool_tele_op_toggel = false;
+  if (cmd_goal.angular.x == 5){
+    bool_tele_op_toggel = 1;
+    goal_omega = cmd_goal.linear.y;
+  }
+  if (cmd_goal.angular.x == 90){
+    bool_tele_op_toggel = 2;
+    cum_error_r = 0;
+    cum_error_l = 0;
   }
   //if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
   //  bool_tele_op_toggel = !bool_tele_op_toggel;

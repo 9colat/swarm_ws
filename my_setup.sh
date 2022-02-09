@@ -76,6 +76,7 @@ echo "installing Teensy"
 cd
 curl -o 00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
 sudo cp 00-teensy.rules /etc/udev/rules.d/
+rm 00-teensy.rules
 curl -o TeensyduinoInstall.linuxaarch64 https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linuxaarch64
 chmod 755 TeensyduinoInstall.linuxaarch64
 ./TeensyduinoInstall.linuxaarch64 --dir=arduino-1.8.15
@@ -93,7 +94,7 @@ pip install pathlib
 echo "pip install ds4drv"
 pip install ds4drv
 curl -o 50-ds4drv.rules https://raw.githubusercontent.com/naoki-mizuno/ds4drv/devel/udev/50-ds4drv.rules
-sudo cp udev/50-ds4drv.rules /etc/udev/rules.d/
+sudo cp 50-ds4drv.rules /etc/udev/rules.d/
 rm 50-ds4drv.rules
 
 #here we setup the git reposetory that we have made.
