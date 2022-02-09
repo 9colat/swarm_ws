@@ -261,9 +261,12 @@ void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_
 }
 
 void wheel_speed_set(double input_vel_x, double input_omega, int tele_op){
+  if (tele_op == 100){
+    RGB_led_set("red");
+  }
   if (tele_op == 0 || tele_op == 1){//keyboard tele-op or PS4 controller tele-op
     if (tele_op == 0){ //keyboard tele-op setting indicator color
-      RGB_led_set("red");
+      RGB_led_set("purple");
     }
     if (tele_op == 1){ //PS4 controller tele-op setting indicator color
       RGB_led_set("blue");
@@ -330,6 +333,9 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
     bool_tele_op_toggel = 2;
     cum_error_r = 0;
     cum_error_l = 0;
+  }
+  else{
+    bool_tele_op_toggel = 100
   }
   //if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
   //  bool_tele_op_toggel = !bool_tele_op_toggel;
