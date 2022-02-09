@@ -76,6 +76,7 @@ def main():
     print(isfolder)
     if not isfolder:
         os.mkdir(folder_path)
+        print("making directory")
     file_iterator()
     rospy.init_node('logger', anonymous=True)
     #print(str(lidar_array))
