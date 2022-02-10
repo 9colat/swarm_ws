@@ -116,10 +116,10 @@ sudo chmod 666 /dev/ttyUSB0
 cd
 cd swarm_ws/src
 git clone https://github.com/Slamtec/rplidar_ros.git
-
 catkin_make
-source devel/setup.bash
+
 git clone https://github.com/tu-darmstadt-ros-pkg/hector_slam.git
+cd ..
 catkin_make
 source devel/setup.bash
 cd

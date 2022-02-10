@@ -261,6 +261,8 @@ void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_
 }
 
 void wheel_speed_set(double input_vel_x, double input_omega, int tele_op){
+  double vel_x_goal;
+  double goal_omega;
   if (tele_op == 100){
     RGB_led_set("red");
   }
@@ -284,8 +286,6 @@ void wheel_speed_set(double input_vel_x, double input_omega, int tele_op){
 
   else if(tele_op == 2){//speed control with speed (PID) controller
     RGB_led_set("green");
-    double vel_x_goal;
-    double goal_omega;
     // here we assume that the imput gives a goal_omega =< 15 [rad/s]
     vel_x_goal = input_vel_x;
     goal_omega = input_omega;
@@ -334,8 +334,8 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
     cum_error_r = 0;
     cum_error_l = 0;
   }
-  else{
-    bool_tele_op_toggel = 100
+  else if (cmd_goal.angular.x != 0 && cmd_goal.angular.x != 5 && cmd_goal.angular.x != 90){
+    bool_tele_op_toggel = 100;
   }
   //if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
   //  bool_tele_op_toggel = !bool_tele_op_toggel;
