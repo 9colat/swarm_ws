@@ -3,7 +3,7 @@
 nr=1
 #echo "log$nr.txt"
 echo "logger"
-rosrun hardware_driver logger_node.py ## should be replaced with the final launch command
+roslaunch swarm_robot_nav on_robot_w_PS4.launch ## should be replaced with the final launch command
 
 echo "sending"
 cd
