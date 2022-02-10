@@ -12,4 +12,5 @@ cd test_data
 
 
 
+
 scp ~/test_data/log$nr.txt ubuntu@192.168.0.100:/home/ubuntu/data
