@@ -37,7 +37,7 @@ input_speed = 0
 path = Path.home().joinpath("test_data", "log%s.txt")
 number_of_files = 0
 lidar_array = [0] * 360
-wheel_speed = [0] * 2
+wheel_speed = [0] * 4
 lidar_label = ",lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar"
 seperator = ","
 
@@ -62,6 +62,8 @@ def callback_wheel_speed(data):
     global wheel_speed
     wheel_speed[0] = data.x
     wheel_speed[1] = data.y
+    wheel_speed[2] = data.z
+    wheel_speed[3] = data.w
 
 
 def callback_input_speed(data):
@@ -72,10 +74,11 @@ def callback_input_speed(data):
 def main():
     global path, number_of_files, seperator
     file_iterator()
+    array_length = len(wheel_speed)
     rospy.init_node('logger', anonymous=True)
     #print(str(lidar_array))
     f = open(str(path) % number_of_files,"a")
-    f.write("Input speed"+seperator+"Right wheel speed"+seperator+"Left wheel speed"+"\n")
+    f.write("Right wheel speed"+seperator+"Left wheel speed"+seperator+"Input Omega Right"+seperator+"Input Linear Speed"+"\n")
     #f.write("Right wheel speed"+seperator+"Left wheel speed"+lidar_label+"\n")
     f.close()
     #rospy.Subscriber("chatter", String, callback)
@@ -88,10 +91,10 @@ def main():
         rospy.Subscriber("cmd_vel", Twist, callback_input_speed)
 
         f = open(str(path) % number_of_files,"a")
-        f.write(str(input_speed)+seperator)
-        for i in range(len(wheel_speed)-1):
+        #f.write(str(input_speed)+seperator)
+        for i in range(array_length-1):
             f.write(str(wheel_speed[i])+seperator)
-        f.write(str(wheel_speed[1])+"\n")
+        f.write(str(wheel_speed[array_length-1])+"\n")
         #for j in range(len(lidar_array)-1):
         #    f.write(str(lidar_array[j])+seperator)
         #f.write(str(lidar_array[359])+"\n")
