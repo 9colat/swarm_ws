@@ -307,12 +307,6 @@ void Estimate_position(){
     }
   }
  // Serial.println(x_est);
-  estimate_xyz.x=x_est;
-  estimate_xyz.y=y_est;
-  estimate_xyz.z=z_est;
-robot_pos_estimate.publish(&estimate_xyz);
-nh.spinOnce();
-delay(1000);
 
  
 

@@ -99,6 +99,10 @@ sudo bluetoothctl
 ```
 
 ```
+bluetoothctl connect D0:27:88:70:E1:D3
+```
+
+```
 pair D0:27:88:70:E1:D3
 ```
 

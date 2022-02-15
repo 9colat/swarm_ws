@@ -2,17 +2,9 @@
 #define Sample_Size 40 //100
 #define Sample_Time 87000
 #define Transient 0 //time until statistics start
-#include <ros.h>
-#include <geometry_msgs/Vector3.h>
 //#define PR
 
-ros::NodeHandle nh;
-geometry_msgs::Vector3 estimate_xyz;
-ros::Publisher robot_position_estimate("robot_position_estimate",&estimate_xyz);
-
-
 long int ID_POS_List[NUM_BEACONS][4] = {
-  //{ID, , ,}
   //{44529, 7825, 9999, 4286},
   {42867, 11700, 5999, 5577},
   {42928, 16244, 10150, 5577},  //only in old list
@@ -23,7 +15,7 @@ long int ID_POS_List[NUM_BEACONS][4] = {
   {44532, 26163, 9939, 5577},
   {44533, 26163, 3699, 5577},
   {44534, 31000, 6519, 5578},
-  //{44535, 35766, 10012, 5578}, //down
+  {44535, 35766, 10012, 5578},
   {44536, 35766, 3522, 5578},
   {44537, 40205, 11684, 3767},
   {44538, 40204, 4363, 3767},
@@ -45,7 +37,6 @@ long int ID_POS_List[NUM_BEACONS][4] = {
   //        {44535,  -3783,   35166,  5588},
   //        {44536,   2705,   35189,  5591}
 };
-
 
 enum State_Type {EscapeRec = 2, StartByteRec = 1, Idle = 0};
 enum State_Type State = Idle;
@@ -92,9 +83,6 @@ char* Lev_ptr;
 enum Byte_Type {Escape = 0x10, StartByte = 0x02, StopByte = 0x03};
 
 void setup() {
-  nh.getHardware()->setBaud(57600);
-    nh.initNode();
-    nh.advertise(robot_position_estimate);
   char inByte;
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
@@ -104,7 +92,7 @@ void setup() {
   Serial3.begin(115200);
   delay(3000);
 #ifdef PR
-  //Serial.println("Starting");
+  Serial.println("Starting");
 #endif
   for (int i = 0; i < NUM_BEACONS; i++)
   {
@@ -112,7 +100,7 @@ void setup() {
     Stored_List[i].Alive = 0; //-10000; //no valid measurement
     Stored_List[i].Dist = 0; //no valid measurement
   }
-  ////Serial.println("Starting");
+  //Serial.println("Starting");
 }
 
 bool compute_checksum()
@@ -122,6 +110,7 @@ bool compute_checksum()
   long sum2 = 0;
   int check1 = 0;
   int check2 = 0;
+
   for (i = 1; i < ByteCnt - 2; i++)
   {
     sum1 += (int)inBytes[i] & 0xFF;
@@ -160,16 +149,29 @@ void Extract_Data()
 
 void Store_distance()
 {
-  ////Serial.println("Store");
+  //Serial.println("Store");
   long int ID = (int)data_ptr->TxID_High;
   ID = 256 * ID + (int)data_ptr->TxID_Middle;
   ID = 256 * ID + (int)data_ptr->TxID_Low;
 
 
-  //  //Serial.print(SatCnt);
-  //  //Serial.print(",");
+  //  Serial.print(SatCnt);
+  //  Serial.print(",");
 
-  //compute measured distance
+  //compute measured distance#define NUM_BEACONS 13
+#define Sample_Size 40 //100
+#define Sample_Time 87000
+#define Transient 0 //time until statistics start
+//#define PR
+
+long int ID_POS_List[NUM_BEACONS][4] = {
+  //{44529, 7825, 9999, 4286},
+  {42867, 11700, 5999, 5577},
+  {42928, 16244, 10150, 5577},  //only in old list
+  {42929, 7824, 5726, 4286},
+  //{44529, 1999, 10677, 3531}, //bad quality
+  {44530, 2000, 4499, 3530},
+  {44531, 21369, 6534, 5578},
   double meas_dist = (double)data_ptr->TxID_time_High;
   meas_dist = 256 * meas_dist + (double)data_ptr->TxID_time_Low;
   meas_dist *= 0.342; //Speed of light in mm pr uS
@@ -190,7 +192,7 @@ void Store_distance()
       //test UNO
       //    int IDNo = random(3);
       //    ID = ID_POS_List[IDNo][0];
-      ////Serial.println(ID);
+      //Serial.println(ID);
       // if (ID == 44529 || ID == 42867 || ID == 42928)  //test UNO
     {
       Stored_List[i].Alive = 10; //valid for the next 6 measurements
@@ -208,38 +210,38 @@ void Store_distance()
   }
 
 #ifdef PR
-  //Serial.print(ID);
-  //Serial.print(",");
-  //Serial.print(":");
-  //Serial.print(x_est);
-  //Serial.print(',');
-  //Serial.print(y_est);
-  //Serial.print(',');
-  //Serial.print(z_est);
-  //Serial.print(',');
-  //Serial.print(Stat_cnt);
-  //Serial.print(',');
-  //Serial.print(meas_dist);
-  //Serial.print(',');
-  //Serial.print(SatCnt);
-  //Serial.println(";");
+  Serial.print(ID);
+  Serial.print(",");
+  Serial.print(":");
+  Serial.print(x_est);
+  Serial.print(',');
+  Serial.print(y_est);
+  Serial.print(',');
+  Serial.print(z_est);
+  Serial.print(',');
+  Serial.print(Stat_cnt);
+  Serial.print(',');
+  Serial.print(meas_dist);
+  Serial.print(',');
+  Serial.print(SatCnt);
+  Serial.println(";");
 #endif
 
   //  if (Stat_cnt > 10)
   //  {
-  //    //Serial.println("............");
-  //    //Serial.println(Stat_cnt);
-  //    //Serial.println(x_est);
+  //    Serial.println("............");
+  //    Serial.println(Stat_cnt);
+  //    Serial.println(x_est);
   //    Stored_Pos[0][Stat_cnt] = x_est;
   //    Stored_Pos[1][Stat_cnt] = y_est;
   //    Stored_Pos[2][Stat_cnt] = z_est;
-  //    //Serial.println(Stored_Pos[0][Stat_cnt]);
+  //    Serial.println(Stored_Pos[0][Stat_cnt]);
   //  }
 
 }
 
-void Estimate_position(){
-  ////Serial.println("hallo there");
+void Estimate_position()
+{
   SatCnt = 0;
   for (int i = 0; i < NUM_BEACONS; i++) {
     if (Stored_List[i].Alive > 0)
@@ -307,12 +309,6 @@ void Estimate_position(){
       }
     }
   }
- //Serial.println(x_est);
-
-
-
-
-
 }
 
 void GoTFSM()
@@ -344,7 +340,7 @@ void GoTFSM()
           State = Idle;
           if (Serial.available()) {  //if stop signal goto statistics state
             inByte = Serial.read();
-            ////Serial.println("stop received");
+            Serial.println("stop received");
             Stat_State = 2; //start waiting for matlab to fetch results
           }
           break;
@@ -382,9 +378,9 @@ void Compute_Stats()
 
   for (cnt = 0; cnt < Sample_Size + Transient; cnt++)
   {
-    //    //Serial.println(cnt);
-    //    //Serial.println(Stored_Pos[0][cnt]);
-    //    //Serial.println("--------------");
+    //    Serial.println(cnt);
+    //    Serial.println(Stored_Pos[0][cnt]);
+    //    Serial.println("--------------");
     if (Stored_Pos[0][cnt] > -1000)
     {
       no_of_samp++;
@@ -424,42 +420,34 @@ void Compute_Stats()
 
 
 void loop() {
-  nh.spinOnce();
   char inByte;
   switch (Stat_State) {
     case 0:
-      //Serial.println("main loop 0");
       SqSumX = 0; SqSumY = 0; SqSumZ = 0;
       SumX = 0; SumY = 0; SumZ = 0;
       Stat_cnt = 0;
-      //Serial.println("main loop 0 - 1");
       Init_Store();
-      //Serial.println("main loop 0 - 2");
       digitalWrite(13, LOW);
-      while (!Serial3.available()); //{delay(10); //Serial.println("wa");}
-      //Serial.println("main loop 0 - 3");
+      while (!Serial.available());// {delay(10); Serial.println("wa");}
       inByte = Serial.read();
       Tim = millis();
       Stat_State = 1;
-      ////Serial.println("St0 -> St1");
+      //Serial.println("St0 -> St1");
       break;
     case 1:
-      ////Serial.println("main loop 1");
       while (Serial3.available()) {  //test UNO
         GoTFSM();
       }
       //Store_distance();  //test UNO
       Estimate_position();
-
-      ////Serial.println("after estimate_pos funk");
       //if (millis()-Tim > Sample_Time) {
       //if (Stat_cnt > Sample_Size + Transient) {
       //      if (Serial.available()) {
       //        //while (Serial.available()) {
       //        inByte = Serial.read();
       //        Stat_State = 2; //start waiting for matlab to fetch results
-      //        ////Serial.println(Stat_cnt);
-      //        ////Serial.println("St1 -> St2");
+      //        //Serial.println(Stat_cnt);
+      //        //Serial.println("St1 -> St2");
       //        //}
       //      }
       digitalWrite(13, HIGH);
@@ -467,36 +455,31 @@ void loop() {
       delay(1);
       break;
     case 2:
-      //Serial.print("main loop 2");
       digitalWrite(13, LOW);
       //      while (!Serial.available());
       //      inByte = Serial.read();
       delay(100);
       Compute_Stats();
-      estimate_xyz.x=x_est;
-      estimate_xyz.y=y_est;
-      estimate_xyz.z=z_est;
-      robot_position_estimate.publish( &estimate_xyz );
-      delay(1000);
 
-      //Serial.print(":");
-      //      //Serial.print(sqrt(SqSumX)); //std in Xdir
-      //      //Serial.print(',');
-      //      //Serial.print(sqrt(SqSumY)); //variance in Ydir
-      //      //Serial.print(',');
-      //      //Serial.print(sqrt(SqSumZ)); //variance in Zdir
-      //      //Serial.print(',');
-      //Serial.print(x_est); //mean in Xdir
-      //Serial.print(',');
-      //Serial.print(y_est); //mean in Ydir
-      //Serial.print(',');
-      //Serial.print(z_est); //mean in Zdir
-      //      //Serial.print(',');
-      //      //Serial.print(sqrt(MinDist)); //Minimum distance
-      //      //Serial.print(',');
-      //      //Serial.print(sqrt(MaxDist)); //Maximum distance
-      //Serial.println(";");
+
+      Serial.print(":");
+      //      Serial.print(sqrt(SqSumX)); //std in Xdir
+      //      Serial.print(',');
+      //      Serial.print(sqrt(SqSumY)); //variance in Ydir
+      //      Serial.print(',');
+      //      Serial.print(sqrt(SqSumZ)); //variance in Zdir
+      //      Serial.print(',');
+      Serial.print(x_est); //mean in Xdir
+      Serial.print(',');
+      Serial.print(y_est); //mean in Ydir
+      Serial.print(',');
+      Serial.print(z_est); //mean in Zdir
+      //      Serial.print(',');
+      //      Serial.print(sqrt(MinDist)); //Minimum distance
+      //      Serial.print(',');
+      //      Serial.print(sqrt(MaxDist)); //Maximum distance
+      Serial.println(";");
       Stat_State = 0; //back to start state
-      ////Serial.println("St2 -> St0");
+      //Serial.println("St2 -> St0");
   }
 }
