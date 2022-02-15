@@ -49,6 +49,8 @@ const double a_2 = 1.72;
 const double b_2 = 22.88;
 const int change_over_point = 2;
 const int opper_lim = 255;
+double goal_vel_x;
+double temp_input_vel;
 int bool_tele_op_toggel;
 int period = 100;
 unsigned long time_now = 0;
@@ -246,6 +248,7 @@ void setPWM(int pwm_right, int pwm_left) {
 void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_r, double last_error_r, double goal_wheel_speed_l, double current_wheel_speed_l, double last_error_l, double elapsed_time){
   //double error_r = goal_wheel_speed_r - current_wheel_speed_r;
   previous_time = micros();
+  //temp_input_vel = goal_wheel_speed_r;
   error_r = goal_wheel_speed_r - current_wheel_speed_r;
   //double error_l = goal_wheel_speed_l - current_wheel_speed_l;
   error_l = goal_wheel_speed_l - current_wheel_speed_l;
@@ -263,6 +266,7 @@ void speed_PID_controller(double goal_wheel_speed_r, double current_wheel_speed_
 void wheel_speed_set(double input_vel_x, double input_omega, int tele_op){
   double vel_x_goal;
   double goal_omega;
+
   if (tele_op == 100){
     RGB_led_set("red");
   }
@@ -298,6 +302,7 @@ void wheel_speed_set(double input_vel_x, double input_omega, int tele_op){
     if(goal_omega_left > 15){
       goal_omega_left = 15;
     }
+    //temp_input_vel = goal_omega_right;
     speed_PID_controller(goal_omega_right, average_omega_right, last_error_right, goal_omega_left, average_omega_left, last_error_left, time_elapsed);
 
   }
@@ -461,7 +466,7 @@ void setup() {
   //nh.advertise(right_tick_pub);
   //nh.advertise(left_tick_pub);
   //nh.advertise(ankle_pub);
-  //nh.advertise(speed_pub);
+  nh.advertise(speed_pub);
   nh.advertise(IMU_data_acc);
   nh.advertise(IMU_data_gyro);
   nh.advertise(IMU_data_mag);
@@ -492,6 +497,11 @@ void loop() {
   if(millis() > time_now + period){
     time_now = millis();
 
+
+    /*wheel_speed.x = average_omega_right;
+    wheel_speed.y = average_omega_left;
+    wheel_speed.z = temp_input_vel;
+    wheel_speed.w = goal_vel_x;*/
     wheel_speed.x = average_omega_right;
     wheel_speed.y = average_omega_left;
     wheel_speed.z = error_r;
