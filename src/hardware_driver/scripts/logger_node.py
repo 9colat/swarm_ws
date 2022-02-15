@@ -35,6 +35,8 @@ input_speed = 0
 
 
 path = Path.home().joinpath("test_data", "log%s.txt")
+folder_path = str(Path.home().joinpath("test_data"))
+isfolder = os.path.isdir(folder_path)
 number_of_files = 0
 lidar_array = [0] * 360
 wheel_speed = [0] * 4
@@ -44,9 +46,9 @@ seperator = ","
 def file_iterator():
     global number_of_files
     number_of_files = 0
-    print("im finding out how many logs there are")
+    #print("im finding out how many logs there are")
     while os.path.exists(str(path) % number_of_files):
-        print("im running itorator")
+        #print("im running itorator")
         number_of_files = number_of_files + 1
 
 def callback(data):
@@ -54,7 +56,7 @@ def callback(data):
 
 def callback_lidar(data):#####
     global lidar_array
-    print("laser data recived")
+    #print("laser data recived")
     for i in range(len(data.ranges)):
         lidar_array[i] = data.ranges[i]
 
@@ -72,7 +74,11 @@ def callback_input_speed(data):
 
 
 def main():
-    global path, number_of_files, seperator
+    global path, folder_path, isfolder, number_of_files, seperator
+    print(isfolder)
+    if not isfolder:
+        os.mkdir(folder_path)
+        print("making directory")
     file_iterator()
     array_length = len(wheel_speed)
     rospy.init_node('logger', anonymous=True)

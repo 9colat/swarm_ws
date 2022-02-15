@@ -23,7 +23,7 @@ sudo apt install network-manager -y
 
 nmcli r wifi on
 
-sudo nmcli dev wifi connect testwifi
+sudo nmcli dev wifi connect testwifi1 password "ros123456789"
 
 echo "here ros is installing"
 echo 'deb-src http://ports.ubuntu.com/ubuntu-ports focal-security main restricted' | sudo tee --append /etc/apt/sources.list
@@ -76,6 +76,7 @@ echo "installing Teensy"
 cd
 curl -o 00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
 sudo cp 00-teensy.rules /etc/udev/rules.d/
+rm 00-teensy.rules
 curl -o TeensyduinoInstall.linuxaarch64 https://www.pjrc.com/teensy/td_155/TeensyduinoInstall.linuxaarch64
 chmod 755 TeensyduinoInstall.linuxaarch64
 ./TeensyduinoInstall.linuxaarch64 --dir=arduino-1.8.15
@@ -90,6 +91,11 @@ echo "installing pip"
 sudo apt install python3-pip -y
 echo "pip installing pathlib"
 pip install pathlib
+echo "pip install ds4drv"
+pip install ds4drv
+curl -o 50-ds4drv.rules https://raw.githubusercontent.com/naoki-mizuno/ds4drv/devel/udev/50-ds4drv.rules
+sudo cp 50-ds4drv.rules /etc/udev/rules.d/
+rm 50-ds4drv.rules
 
 #here we setup the git reposetory that we have made.
 echo "clonning the github repo"
@@ -102,8 +108,6 @@ catkin_init_workspace
 cd ..
 catkin_make
 echo "source $HOME/swarm_ws/devel/setup.bash" >> ~/.bashrc
-echo "export ROSCONSOLE_FORMAT='[\${severity}] - \${node}: [\${time}] \${message}'" >> ~/.bashrc
-
 source ~/.bashrc
 
 #here we setup the lidar
@@ -111,13 +115,13 @@ ls -l /dev | grep ttyUSB
 sudo chmod 666 /dev/ttyUSB0
 cd
 cd swarm_ws/src
-##git clone https://github.com/Slamtec/rplidar_ros.git
+git clone https://github.com/Slamtec/rplidar_ros.git
+catkin_make
+
+git clone https://github.com/tu-darmstadt-ros-pkg/hector_slam.git
 cd ..
-#catkin_make
-#source devel/setup.bash
-##git clone https://github.com/tu-darmstadt-ros-pkg/hector_slam.git
-#catkin_make
-#source devel/setup.bash
+catkin_make
+source devel/setup.bash
 cd
 
 
@@ -133,10 +137,13 @@ sudo chmod 777 arduino_make_upload.sh
 sudo chmod 777 start_up_script.sh
 
 
+
 echo 'include btcfg.txt' | sudo tee --append /boot/firmware/usercfg.txt
+
+#btattach -B /dev/ttyAMA0 -P bcm -S 115200 -N &
 
 
 cronjob="@reboot ~/swarm_ws/start_up_script.sh"
 (crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
-
-sudo reboot
+cronjob="@reboot ~/swarm_ws/bt_boot.sh"
+(crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -

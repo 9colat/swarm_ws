@@ -11,6 +11,12 @@
 <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
 
         <param name="/use_sim_time" value="false"/>
+
+<include file="$(find ds4_driver)/launch/ds4_twist.launch"/>
+<node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" output="screen">
+   <param name="port" value="/dev/ttyACM0" />
+   <param name="baud" value="9600"/>
+</node>
 <!--
 <node pkg="rviz" type="rviz" name="rviz"
   args="-d $(find hector_slam_launch)/rviz_cfg/mapping_demo.rviz"/>
@@ -24,6 +30,8 @@
   <arg name="map_size" default="2048"/>
 
   <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
+
+
 
     <!-- Frame names -->
     <param name="map_frame" value="map" />
@@ -78,5 +86,6 @@
 
 <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
+<node pkg="hardware_driver" type="logger_node.py" name="logger_node" output="screen" />
 
 </launch>
