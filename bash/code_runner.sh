@@ -1,5 +1,7 @@
 #! /bin/bash
 
+ip=$1
+
 #nr=1
 #echo "log$nr.txt"
 echo "logger"
@@ -13,4 +15,4 @@ let nr=$(ls -l | grep -v ^d | wc -l)-2
 
 
 
-scp ~/test_data/log$nr.txt ubuntu@192.168.0.100:/home/ubuntu/data
+scp ~/test_data/log$nr.txt ubuntu@192.168.0.$ip:/home/ubuntu/data
