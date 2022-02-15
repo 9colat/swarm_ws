@@ -339,7 +339,7 @@ void GoTFSM()
             //Stat_cnt++; //one more measurement for statistics -  moved to store_distance
           }
           State = Idle;
-          if (Serial.available()) {  //if stop signal goto statistics state
+          if (Serial3.available()) {  //if stop signal goto statistics state
             inByte = Serial.read();
             //Serial.println("stop received");
             Stat_State = 2; //start waiting for matlab to fetch results
@@ -436,23 +436,31 @@ void loop() {
       Serial.println("main loop 0 - 3");
       inByte = Serial.read();
       Tim = millis();
+      Serial.println("main loop 0 - 4");
+
       Stat_State = 1;
       //Serial.println("St0 -> St1");
+      Serial.println("main loop 0 - 5");
+
       break;
     case 1:
-      //Serial.println("main loop 1");
+      Serial.println("main loop 1");
       while (Serial3.available()) {  //test UNO
         GoTFSM();
       }
       //Store_distance();  //test UNO
+      Serial.println("main loop 1 - 1");
+
       Estimate_position();
-      //Serial.println("after estimate_pos funk");
+      Serial.println("main loop 1 - 2");
+
+      Serial.println("after estimate_pos funk");
       //if (millis()-Tim > Sample_Time) {
       //if (Stat_cnt > Sample_Size + Transient) {
       //      if (Serial.available()) {
       //        //while (Serial.available()) {
       //        inByte = Serial.read();
-      //        Stat_State = 2; //start waiting for matlab to fetch results
+              Stat_State = 2; //start waiting for matlab to fetch results
       //        //Serial.println(Stat_cnt);
       //        //Serial.println("St1 -> St2");
       //        //}
@@ -460,6 +468,7 @@ void loop() {
       digitalWrite(13, HIGH);
 
       delay(1);
+      
       break;
     case 2:
       Serial.print("main loop 2");

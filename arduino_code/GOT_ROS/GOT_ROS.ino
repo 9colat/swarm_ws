@@ -14,7 +14,7 @@ ros::Publisher robot_position_estimate("robot_position_estimate",&estimate_xyz);
 long int ID_POS_List[NUM_BEACONS][4] = {
   //{ID, , ,}
   //{44529, 7825, 9999, 4286},
-  {42867, 11700, 5999, 5577},
+  //{42867, 11700, 5999, 5577},
   {42928, 16244, 10150, 5577},  //only in old list
   {42929, 7824, 5726, 4286},
   //{44529, 1999, 10677, 3531}, //bad quality
@@ -92,7 +92,7 @@ char* Lev_ptr;
 enum Byte_Type {Escape = 0x10, StartByte = 0x02, StopByte = 0x03};
 
 void setup() {
-  nh.getHardware()->setBaud(57600);
+//  nh.getHardware()->setBaud(57600);
     nh.initNode();
     nh.advertise(robot_position_estimate);
   char inByte;
@@ -287,6 +287,8 @@ void Estimate_position(){
       //xc=xp/(1-lambda)-y(:,j)*lambda/(1-lambda); //from MATLAB
       else
       {
+        Serial.println(SatCnt);
+        delay(1000);
         x_est_new = x_est;
         y_est_new = y_est;
         z_est_new = z_est;
