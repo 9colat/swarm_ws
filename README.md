@@ -65,6 +65,14 @@ It will take some time, roughly around 90 minutes. Enjoy yourself.
 
 When you want to run the code with the Teensy/Arduino, then you have to run a set of commands in the terminal.
 
+```
+./swarm_ws/bash/code_runner.sh
+```
+
+
+
+
+--- out of data and debug stuff ---
 First, you need to start the ROS master:
 ```
 roscore

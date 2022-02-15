@@ -458,14 +458,14 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
   nh.subscribe(sub_cmd_vel);
   nh.subscribe(start_up);
-  nh.advertise(right_tick_pub);
-  nh.advertise(left_tick_pub);
-  nh.advertise(ankle_pub);
-  nh.advertise(speed_pub);
+  //nh.advertise(right_tick_pub);
+  //nh.advertise(left_tick_pub);
+  //nh.advertise(ankle_pub);
+  //nh.advertise(speed_pub);
   nh.advertise(IMU_data_acc);
   nh.advertise(IMU_data_gyro);
   nh.advertise(IMU_data_mag);
-  nh.advertise(measured_angle_pub);
+  //nh.advertise(measured_angle_pub);
 
 
   Wire.begin();
