@@ -29,6 +29,7 @@ git pull origin master
 catkin_make
 cd
 
+
 teensy_loader_cli --mcu=mk66fx1m0 -s /home/$USER/swarm_ws/arduino_code/${name}/build/teensy.avr.teensy36/${name}.ino.hex
 
 source ~/swarm_ws/devel/setup.bash
