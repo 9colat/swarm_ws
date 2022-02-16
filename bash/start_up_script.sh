@@ -17,6 +17,11 @@ if [ $# -gt 0 ]
         name=motor_control
     fi
 fi
+cd
+cd swarm_ws
+file=(git diff)
+
+if [$file ]
 
 #echo "å"|sudo -S /path/to/command
 #a visable command
