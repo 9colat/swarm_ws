@@ -19,6 +19,7 @@ if [ $# -gt 0 ]
 fi
 
 #echo "å"|sudo -S /path/to/command
+#a visable command
 echo "Here we go"
 sudo apt update -y
 sudo apt upgrade -y
@@ -28,7 +29,6 @@ cd swarm_ws/
 git pull origin master
 catkin_make
 cd
-
 
 teensy_loader_cli --mcu=mk66fx1m0 -s /home/$USER/swarm_ws/arduino_code/${name}/build/teensy.avr.teensy36/${name}.ino.hex
 
