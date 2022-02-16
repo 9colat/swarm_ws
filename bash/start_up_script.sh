@@ -2,27 +2,6 @@
 echo "Im starting"
 sleep 30
 
-if [ $# -eq 0 ]
-  then
-    name=motor_strait_driving
-fi
-if [ $# -gt 0 ]
-  then
-    if [$1 -eq 1]
-      then
-        name=motor_strait_driving
-    fi
-    if [$1 -eq 2]
-      then
-        name=motor_control
-    fi
-fi
-cd
-cd swarm_ws
-file=(git diff)
-
-if [$file ]
-
 #echo "å"|sudo -S /path/to/command
 #a visable command
 echo "Here we go"
