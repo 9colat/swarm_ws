@@ -136,6 +136,7 @@ cd swarm_ws
 sudo chmod 777 arduino_make_upload.sh
 sudo chmod 777 start_up_script.sh
 
+##sudo snap install hub-ctrl
 
 
 echo 'include btcfg.txt' | sudo tee --append /boot/firmware/usercfg.txt
