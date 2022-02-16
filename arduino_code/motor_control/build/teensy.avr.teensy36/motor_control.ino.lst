@@ -445,7 +445,7 @@ void ResetHandler(void)
      3b4:	e000e014 	.word	0xe000e014
      3b8:	0002bf1f 	.word	0x0002bf1f
      3bc:	20200000 	.word	0x20200000
-     3c0:	620cca01 	.word	0x620cca01
+     3c0:	620d3263 	.word	0x620d3263
      3c4:	4003e01c 	.word	0x4003e01c
      3c8:	5a94c3a5 	.word	0x5a94c3a5
      3cc:	4007f000 	.word	0x4007f000
