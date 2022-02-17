@@ -477,7 +477,7 @@ void loop() {
       //      inByte = Serial.read();
       delay(100);
       Compute_Stats();
-
+      
 
       Serial.print(":");
       //      Serial.print(sqrt(SqSumX)); //std in Xdir
