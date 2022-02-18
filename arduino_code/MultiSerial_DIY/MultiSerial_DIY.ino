@@ -1,43 +1,40 @@
-/*
-  Multiple Serial test
+#include <ros.h>
+#include <geometry_msgs/Vector3.h>
 
-  Receives from the main serial port, sends to the others.
-  Receives from serial port 1, sends to the main serial (Serial 0).
 
-  This example works only with boards with more than one serial like Arduino Mega, Due, Zero etc.
-
-  The circuit:
-  - any serial device attached to Serial port 1
-  - Serial Monitor open on Serial port 0
-
-  created 30 Dec 2008
-  modified 20 May 2012
-  by Tom Igoe & Jed Roach
-  modified 27 Nov 2015
-  by Arturo Guadalupi
-
-  This example code is in the public domain.
-
-  https://www.arduino.cc/en/Tutorial/BuiltInExamples/MultiSerialMega
-*/
+//Ros setup initialization
+ros::NodeHandle nh;
+geometry_msgs::Vector3 estimate_xyz;
+ros::Publisher robot_position_estimate("robot_position_estimate", &estimate_xyz);
 
 
 void setup() {
   // initialize both serial ports:
-  Serial.begin(9600);
-  Serial1.begin(9600);
+  nh.initNode();
+  nh.advertise(robot_position_estimate);
+  char inByte;
+  Serial.begin(19200);
+  Serial3.begin(115200);
 }
 
 void loop() {
+  nh.spinOnce();
+  char inByte;
+  robot_position_estimate.publish( &estimate_xyz );
+  int placeholder = 0;
+  estimate_xyz.x = placeholder;
+  estimate_xyz.y = placeholder;
+  estimate_xyz.z = placeholder;
+  delay(1000);
   // read from port 1, send to port 0:
-  if (Serial1.available()) {
-    int inByte = Serial1.read();
+  if (Serial3.available()) {
+    int inByte = Serial3.read();
     Serial.write(inByte);
   }
 
   // read from port 0, send to port 1:
   if (Serial.available()) {
     int inByte = Serial.read();
-    Serial1.write(inByte);
+    Serial3.write(inByte);
   }
 }
