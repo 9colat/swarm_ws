@@ -6,6 +6,9 @@ ros::NodeHandle  nh;
 geometry_msgs::Vector3 estimate_xyz;
 ros::Publisher robot_position_estimate("robot_position_estimate", &estimate_xyz);
 
+float EscapeByte = 0x10;
+float StartByte = 0x02;
+float StopByte = 0x03;
 
 void setup()
 {
@@ -21,12 +24,23 @@ void loop()
   robot_position_estimate.publish( &estimate_xyz );
 
   if (Serial3.available()) {
-    int inByte = Serial3.read();
+    char inByte = Serial3.read();
     estimate_xyz.x = inByte;
+    if (inByte == StartByte) {
+      Serial.print("Start");
+    }
+    if (inByte == StopByte) {
+      Serial.println("|Stop");
+      //      Serial.print(inByte, DEC);
+    }
+    else {
+      Serial.print("|");
+      Serial.print(inByte, DEC);
+     // Serial.print("|");
 
-  //  Serial.print(inByte, DEC);
+    }
   }
 
   nh.spinOnce();
-  delay(500);
+  //delay(500);
 }
