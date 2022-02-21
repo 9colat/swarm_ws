@@ -308,7 +308,7 @@ void Estimate_position(){
   }
  // Serial.println(x_est);
 
- 
+
 
 }
 
@@ -468,7 +468,7 @@ void loop() {
       digitalWrite(13, HIGH);
 
       delay(1);
-      
+
       break;
     case 2:
       Serial.print("main loop 2");
@@ -477,7 +477,7 @@ void loop() {
       //      inByte = Serial.read();
       delay(100);
       Compute_Stats();
-      
+
 
       Serial.print(":");
       //      Serial.print(sqrt(SqSumX)); //std in Xdir
