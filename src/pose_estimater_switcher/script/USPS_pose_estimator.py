@@ -20,10 +20,25 @@ class USPS_data:
         ts = datetime.timestamp(dt)
         index_of_data = self.id.index(id)
         self.distance[index_of_data] = distance
+        self.time[index_of_data] = ts
 
-    def pose_estimator(self, id):
+    def pose_estimator_henrik_method(self):
+        period = 1000
+        dt = datetime.now()
+        ts = datetime.timestamp(dt)
+        for i from 0 to range(self.distance):
+            if self.time[i] > 0:
+                if self.time[i] < ts+period:
+
+
+
+        #add sort array of the maybe sorted by the time elapsed since it was set
+        for
+        meas_dist = self.distance[id]
+
+
+    def pose_estimator_trilatertion(self):
         self.length
-
 
 def callback_pose_est(data):
     data.x
