@@ -83,7 +83,7 @@ void loop()
     else {
       Serial.print("|");
       Serial.print(inByte, DEC);
-     // Serial.print("|");
+      // Serial.print("|");
 
     }
   }
