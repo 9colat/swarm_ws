@@ -2,8 +2,13 @@
 import rospy
 from geometry_msgs.msg import Vector3
 from datetime import datetime
+import math
+
 old_time = datetime.now()
 old_time_timestamp = datetime.timestamp(dt)
+old_x = 16000.0
+old_y = 6000.0
+old_z = 300.0
 
 class USPS_data:
     def __init__(self):
@@ -16,14 +21,45 @@ class USPS_data:
         self.RSSI = [0,0,0,0,0,0,0,0,0,0,0]
 
     def updating_distance(self, id, distance):
+        global old_x, old_y, old_z
         dt = datetime.now()
         ts = datetime.timestamp(dt)
         index_of_data = self.id.index(id)
         self.distance[index_of_data] = distance
+        self.time[index_of_data] = ts
 
-    def pose_estimator(self, id):
+    def pose_estimator_henrik_method(self):
+        id_array = [0] * 11
+        x_array = [0] * 11
+        y_array = [0] * 11
+        z_array = [0] * 11
+        dist_array = [0] * 11
+        j = 0
+
+        period = 1000
+        dt = datetime.now()
+        ts = datetime.timestamp(dt)
+        for i in range(len(self.distance)):
+            if self.time[i] > 0:
+                if self.time[i] < ts+period:
+                    id_array[j] = self.id[i]
+                    x_array[j] = self.x[i]
+                    y_array[j] = self.y[i]
+                    z_array[j] = self.z[i]
+                    dist_array[j] = self.distance[i]
+                    j = j + 1
+
+        for k in range(j+1):
+            dp = math.sqrt(pow(old_x - x_array[k], 2) + pow(old_y - y_array[k], 2) + pow(old_z - z_array[k], 2))
+            alpha = (dp - self.distance[k])/(dp + 10)
+
+
+        #add sort array of the maybe sorted by the time elapsed since it was set
+
+
+
+    def pose_estimator_trilatertion(self):
         self.length
-
 
 def callback_pose_est(data):
     data.x
