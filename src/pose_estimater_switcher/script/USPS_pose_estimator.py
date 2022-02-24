@@ -5,10 +5,8 @@ from datetime import datetime
 import math
 
 old_time = datetime.now()
-old_time_timestamp = datetime.timestamp(dt)
-old_x = 16000.0
-old_y = 6000.0
-old_z = 300.0
+old_time_timestamp = datetime.timestamp(old_time)
+old_pose = [16000.0, 6000.0, 300.0]
 
 class USPS_data:
     def __init__(self):
@@ -21,7 +19,6 @@ class USPS_data:
         self.RSSI = [0,0,0,0,0,0,0,0,0,0,0]
 
     def updating_distance(self, id, distance):
-        global old_x, old_y, old_z
         dt = datetime.now()
         ts = datetime.timestamp(dt)
         index_of_data = self.id.index(id)
@@ -29,6 +26,7 @@ class USPS_data:
         self.time[index_of_data] = ts
 
     def pose_estimator_henrik_method(self):
+        global old_pose
         id_array = [0] * 11
         x_array = [0] * 11
         y_array = [0] * 11
@@ -50,12 +48,14 @@ class USPS_data:
                     j = j + 1
 
         for k in range(j+1):
-            dp = math.sqrt(pow(old_x - x_array[k], 2) + pow(old_y - y_array[k], 2) + pow(old_z - z_array[k], 2))
+            dp = math.sqrt(pow(old_pose[0] - x_array[k], 2) + pow(old_pose[1] - y_array[k], 2) + pow(old_pose[2] - z_array[k], 2))
             alpha = (dp - self.distance[k])/(dp + 10)
 
 
         #add sort array of the maybe sorted by the time elapsed since it was set
 
+
+        return
 
 
     def pose_estimator_trilatertion(self):
@@ -71,7 +71,7 @@ def callback_pose_est(data):
 def pose_estimator():
     w1 = USPS_data()
     w1.updating_distance(44533,59604)
-    print(w1.distance[w1.id.index(44532)])
+    print(w1.distance[w1.id.index(44533)])
     #i = [1,2,3]
     #print(i[1])
     #rospy.init_node('USPS_pose_estimator', anonymous=True)
