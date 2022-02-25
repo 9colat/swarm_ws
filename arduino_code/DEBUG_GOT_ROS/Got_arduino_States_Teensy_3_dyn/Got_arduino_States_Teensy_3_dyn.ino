@@ -256,9 +256,9 @@ void Estimate_position(){
         y_est_new = y_est + alfa * ((double)ID_POS_List[i][2] - y_est);
         z_est_new = z_est + alfa * ((double)ID_POS_List[i][3] - z_est);
 
-        double dist_new = (double)pow(x_est - x_est_new, 2);
-        dist_new += (double)pow(y_est - y_est_new, 2);
-        dist_new += (double)pow(z_est - z_est_new, 2);
+        double dist_new = (double)pow(x_est - x_est_new, 2);  // this should propebly have a sqrt() around every powers,
+        dist_new += (double)pow(y_est - y_est_new, 2);        // since that is how you would calculate distance.
+        dist_new += (double)pow(z_est - z_est_new, 2);        // the if statment should also be updated.
         if (dist_new > pow(0.2, 2))  //never step larger than 0.1 m to prevent rogue beacons
         //if (0)
         {
