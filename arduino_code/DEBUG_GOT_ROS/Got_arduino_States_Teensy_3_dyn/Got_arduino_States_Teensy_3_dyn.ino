@@ -8,7 +8,7 @@
 
 ros::NodeHandle nh;
 geometry_msgs::Vector3 estimate_xyz;
-ros::Publisher robot_pos_estimate("robot_position_estimate",&estimate_xyz);
+ros::Publisher robot_pos_estimate("robot_position_estimate", &estimate_xyz);
 
 
 long int ID_POS_List[NUM_BEACONS][4] = {
@@ -76,8 +76,8 @@ char* Lev_ptr;
 enum Byte_Type {Escape = 0x10, StartByte = 0x02, StopByte = 0x03};
 
 void setup() {
-    nh.initNode();
-    nh.advertise(robot_pos_estimate);
+  nh.initNode();
+  nh.advertise(robot_pos_estimate);
   char inByte;
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
@@ -221,7 +221,7 @@ void Store_distance()
 
 }
 
-void Estimate_position(){
+void Estimate_position() {
   //Serial.println("hallo there");
   SatCnt = 0;
   for (int i = 0; i < NUM_BEACONS; i++) {
@@ -260,11 +260,11 @@ void Estimate_position(){
         dist_new += (double)pow(y_est - y_est_new, 2);
         dist_new += (double)pow(z_est - z_est_new, 2);
         if (dist_new > pow(0.2, 2))  //never step larger than 0.1 m to prevent rogue beacons
-        //if (0)
+          //if (0)
         {
-          x_est_new = x_est + 0.2 * ((double)ID_POS_List[i][1] - x_est)/dp;
-          y_est_new = y_est + 0.2 * ((double)ID_POS_List[i][2] - y_est)/dp;
-          z_est_new = z_est + 0.2 * ((double)ID_POS_List[i][3] - z_est)/dp;
+          x_est_new = x_est + 0.2 * ((double)ID_POS_List[i][1] - x_est) / dp;
+          y_est_new = y_est + 0.2 * ((double)ID_POS_List[i][2] - y_est) / dp;
+          z_est_new = z_est + 0.2 * ((double)ID_POS_List[i][3] - z_est) / dp;
         }
       }
       //xc=xp/(1-lambda)-y(:,j)*lambda/(1-lambda); //from MATLAB
@@ -277,9 +277,9 @@ void Estimate_position(){
       if (z_est_new > 500)
         z_est_new = 500;
 
-//      double dist_new = (double)pow(x_est - x_est_new, 2);
-//      dist_new += (double)pow(y_est - y_est_new, 2);
-//      dist_new += (double)pow(z_est - z_est_new, 2);
+      //      double dist_new = (double)pow(x_est - x_est_new, 2);
+      //      dist_new += (double)pow(y_est - y_est_new, 2);
+      //      dist_new += (double)pow(z_est - z_est_new, 2);
 
       //if(dist_new<2e7)
       if (1)
@@ -290,7 +290,7 @@ void Estimate_position(){
       }
     }
   }
- // Serial.println(x_est);
+  // Serial.println(x_est);
 
 
 
@@ -444,7 +444,7 @@ void loop() {
       //      if (Serial.available()) {
       //        //while (Serial.available()) {
       //        inByte = Serial.read();
-              Stat_State = 2; //start waiting for matlab to fetch results
+      Stat_State = 2; //start waiting for matlab to fetch results
       //        //Serial.println(Stat_cnt);
       //        //Serial.println("St1 -> St2");
       //        //}

@@ -2,8 +2,6 @@
 #include <geometry_msgs/Vector3.h>
 #define NUM_BEACONS 13
 
-
-
 //Map of beacon posittions
 long int ID_POS_List[NUM_BEACONS][4] = {
   //{ID, , ,}
@@ -38,7 +36,7 @@ int ByteCnt;
 int SatCnt;
 int test_cnt = 0;
 bool cc;
-int Stat_cnt;
+
 
 typedef struct store  {
   long int  ID;
@@ -128,25 +126,11 @@ void Store_distance()
       Stored_List[i].Alive = Stored_List[i].Alive - 1; //discount old measurements
     //if (Stored_List[i].ID == ID )
     if (Stored_List[i].ID == ID && meas_dist < 20000 && lev > 2)  //test UNO <-
-
-
-      //test UNO
-      //    int IDNo = random(3);
-      //    ID = ID_POS_List[IDNo][0];
-      //Serial.println(ID);
-      // if (ID == 44529 || ID == 42867 || ID == 42928)  //test UNO
     {
       Stored_List[i].Alive = 10; //valid for the next 6 measurements
       Stored_List[i].Dist = meas_dist;
-      Stat_cnt++; //valid measurement received - moved from GoTFSM
 
-      //estimates stored for statistics - Transient removed in statistics
-      //      if (Stat_cnt > Transient)
-      //      {
-      //        Stored_Pos[0][Stat_cnt] = x_est;
-      //        Stored_Pos[1][Stat_cnt] = y_est;
-      //        Stored_Pos[2][Stat_cnt] = z_est;
-      //      }
+
     }
   }
 
@@ -160,27 +144,13 @@ void Store_distance()
   Serial.print(',');
   Serial.print(z_est);
   Serial.print(',');
-  Serial.print(Stat_cnt);
-  Serial.print(',');
   Serial.print(meas_dist);
   Serial.print(',');
   Serial.print(SatCnt);
   Serial.println(";");
 #endif
 
-  //  if (Stat_cnt > 10)
-  //  {
-  //    Serial.println("............");
-  //    Serial.println(Stat_cnt);
-  //    Serial.println(x_est);
-  //    Stored_Pos[0][Stat_cnt] = x_est;
-  //    Stored_Pos[1][Stat_cnt] = y_est;
-  //    Stored_Pos[2][Stat_cnt] = z_est;
-  //    Serial.println(Stored_Pos[0][Stat_cnt]);
-  //  }
-
 }
-
 
 void GoTFSM()
 {
@@ -206,13 +176,11 @@ void GoTFSM()
           {
             Extract_Data();
             Store_distance();
-            //Stat_cnt++; //one more measurement for statistics -  moved to store_distance
           }
           State = Idle;
           if (Serial3.available()) {  //if stop signal goto statistics state
             inByte = Serial.read();
-            //Serial.println("stop received");
-            //Stat_State = 2; //start waiting for matlab to fetch results
+      //      Stat_State = 2; //start waiting for matlab to fetch results
           }
           break;
         case Escape:
@@ -246,11 +214,6 @@ void loop()
 {
   char inByte = Serial3.read();
   /////////////
-  switch (State) {
-    case start_byte_recieved:
-      if (inByte == StartByte)
-      {}
-  }
 
   //////////////
 
@@ -260,10 +223,18 @@ void loop()
   robot_position_estimate.publish( &estimate_xyz );
 
   if (Serial3.available()) {
-    char inByte = Serial3.read();
-    estimate_xyz.x = inByte;
+    //char inByte = Serial3.read();
+    //estimate_xyz.x = inByte;
     if (inByte == StartByte) {
       Serial.print("Start");
+      GoTFSM();
+      struct store data;
+      estimate_xyz.x=data.ID;
+      estimate_xyz.y=data.Dist;
+      estimate_xyz.z=0;
+
+
+
     }
     if (inByte == StopByte) {
       Serial.println("|Stop");
