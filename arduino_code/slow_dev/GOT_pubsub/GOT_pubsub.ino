@@ -216,6 +216,30 @@ void loop()
   /////////////
 
   //////////////
+  bool esc_char = false;
+
+  while (Serial3.available()) {
+    char inByte = Serial3.read();
+    if (inByte == StartByte || inByte == StopByte || inByte == Escape) {
+      if (inByte == Escape) {
+        bool esc_char = true;
+      }
+      if (inByte == StartByte && esc_char == false) {
+        Serial.println(" ");
+        Serial.println("StartByte");
+      }
+      if (inByte == StopByte && esc_char == false) {
+        Serial.println("StopByte");
+      }
+    }
+    if (inByte != StartByte || inByte != StopByte || esc_char == true && inByte == 0x02 || inByte == 0x03 && esc_char == true) {
+      Serial.print(inByte, DEC);
+      Serial.print("|");
+      if (esc_char == true && inByte != StartByte || esc_char == true && inByte != StopByte ) {
+        esc_char = false;
+      }
+    }
+  }
 
 
 
@@ -233,7 +257,7 @@ void loop()
       estimate_xyz.y=data.Dist;
       estimate_xyz.z=0;
 
-
+/*
 
     }
     if (inByte == StopByte) {
@@ -244,7 +268,7 @@ void loop()
       Serial.print("|");
       Serial.print(inByte, DEC);
       // Serial.print("|");
-
+*/
     }
   }
 
