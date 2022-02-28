@@ -41,7 +41,7 @@ class USPS_data:
         ts = datetime.timestamp(dt)
         for i in range(len(self.distance)):
             if self.time[i] > 0:
-                if self.time[i] < ts+period:
+                if self.time[i] > ts-period:
                     id_array[j] = self.id[i]
                     x_array[j] = self.x[i]
                     y_array[j] = self.y[i]
@@ -136,10 +136,6 @@ class USPS_data:
             y_sort_array[3] = y_array[dist_array.index(dist_sort[2])]
             z_sort_array[3] = z_array[dist_array.index(dist_sort[2])]
 
-
-        print([x_sort_array[1]-x_sort_array[0],y_sort_array[1]-y_sort_array[0],z_sort_array[1]-z_sort_array[0]])
-        print([x_sort_array[2]-x_sort_array[1],y_sort_array[2]-y_sort_array[1],z_sort_array[2]-z_sort_array[1]])
-        print([x_sort_array[3]-x_sort_array[0],y_sort_array[3]-y_sort_array[0],z_sort_array[3]-z_sort_array[0]])
         m_1 = np.array([[x_sort_array[1]-x_sort_array[0],y_sort_array[1]-y_sort_array[0],z_sort_array[1]-z_sort_array[0]],[x_sort_array[2]-x_sort_array[1],y_sort_array[2]-y_sort_array[1],z_sort_array[2]-z_sort_array[1]],[x_sort_array[3]-x_sort_array[0],y_sort_array[3]-y_sort_array[0],z_sort_array[3]-z_sort_array[0]]])
         print(m_1)
         m_1t = m_1.transpose()
@@ -152,7 +148,7 @@ w1 = USPS_data()
 
 def callback_pose_est(data):
     global w1
-    w1.updating_distance(44533,17372)
+    w1.updating_distance(data.x,data.y)
     print("im in the callback")
 
 
@@ -164,17 +160,15 @@ def pose_estimator():
     w1.updating_distance(44538,3848)
     w1.pose_estimator_trilatertion()
     dist_sort = sorted(w1.distance, reverse=True)
-    print(dist_sort[-2])
-    print(w1.distance[-2])
     #print(w1.distance[self.id.index(44532)])
     #print(w1.pose_estimator_henrik_method())
     #i = [1,2,3]
     #print(i[1])
-    #rospy.init_node('USPS_pose_estimator', anonymous=True)
+    rospy.init_node('USPS_pose_estimator', anonymous=True)
 
-    #rospy.Subscriber("robot_position_estimate", Vector3, callback_pose_est)
+    rospy.Subscriber("robot_position_estimate", Vector3, callback_pose_est)
 
-    #rospy.spin()
+    rospy.spin()
 
 if __name__ == '__main__':
     pose_estimator()
