@@ -19,7 +19,6 @@ void loop() {
       }
       if (inByte == StartByte && esc_char == false) {
         Serial.print("start|");
-        //Serial.println("StartByte");
       }
       if (inByte == StopByte && esc_char == false) {
         //Serial.println("StopByte");
@@ -30,7 +29,7 @@ void loop() {
       }
     }
     if (inByte != StartByte && inByte != StopByte || esc_char == true && inByte == StartByte || inByte == StopByte && esc_char == true) {
-      Serial.print(inByte, DEC);
+      //Serial.print(inByte, DEC);
       Serial.print("|");
       if (esc_char == true && inByte != StartByte || esc_char == true && inByte != StopByte ) {
         esc_char = false;
