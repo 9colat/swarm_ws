@@ -27,7 +27,7 @@ long int ID_POS_List[NUM_BEACONS][4] = {
   {44536, 35766, 3522, 5578},
   {44537, 40205, 11684, 3767},
   {44538, 40204, 4363, 3767},
-  {44540, 16560, 3549, 5577} 
+  {44540, 16560, 3549, 5577}
 
   //        {44530,   1949,    1380,  3531},
   //        {44529,  -4257,    1368,  3532},
@@ -46,7 +46,7 @@ long int ID_POS_List[NUM_BEACONS][4] = {
   //        {44536,   2705,   35189,  5591}
 };
 
- 
+
 enum State_Type {EscapeRec = 2, StartByteRec = 1, Idle = 0};
 enum State_Type State = Idle;
 byte inBytes[25];
