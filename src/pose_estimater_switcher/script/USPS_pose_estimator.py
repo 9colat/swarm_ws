@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import rospy
 from geometry_msgs.msg import Vector3
+from custom_msgs.msg import odom_and_imu
 from datetime import datetime
 import numpy as np
 import math
@@ -190,10 +191,10 @@ def callback_distance(data):
     w1.updating_distance(data.x,data.y)
     #print("im in dist. the callback")
 
-def callback_imu_acc(data):
+def callback_odom_and_imu(data):
     global w1
-    w1.updating_acc(data.x,data.y,data.z)
-    #print("im in acc the callback")
+    w1.updating_acc(data.imu_acc.x,data.imu_acc.y,data.imu_acc.z)
+    print("im in acc the callback")
 
 
 def pose_estimator():
@@ -208,11 +209,11 @@ def pose_estimator():
     #print(w1.pose_estimator_henrik_method())
     #i = [1,2,3]
     #print(i[1])
-    #rospy.init_node('USPS_pose_estimator', anonymous=True)
-    #rospy.Subscriber("imu_acc", Vector3, callback_imu_acc)
+    rospy.init_node('USPS_pose_estimator', anonymous=True)
+    rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_odom_and_imu)
     #rospy.Subscriber("robot_position_estimate", Vector3, callback_distance)
 
-    #rospy.spin()
+    rospy.spin()
 
 if __name__ == '__main__':
     pose_estimator()
