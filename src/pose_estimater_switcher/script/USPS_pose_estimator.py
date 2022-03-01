@@ -27,6 +27,7 @@ class USPS_data:
         self.l = 0.229
 
 
+
     def pose_predict(self, time):
         for j in range(len(self.pose_est_stored[1])):
             self.pose_predict_from_pose[j] =  self.pose_est[j] + ((self.pose_est_stored[0][j]-self.pose_est_stored[1][j])/(self.time_i[0]-self.time_i[1])) * time + 1/2*((((self.pose_est_stored[0][j]-self.pose_est_stored[1][j])/(self.time_i[0]-self.time_i[1]))-((self.pose_est_stored[1][j]-self.pose_est_stored[2][j])/(self.time_i[1]-self.time_i[2])))/(self.time_i[0]-self.time_i[2]))*pow(time,2)
