@@ -95,7 +95,7 @@ void Extract_Data()
   //  {
   //    data_ptr = (data_type*) &inBytes[8 + i * NUM_BEACONS];
   //  }
-  data_ptr = (data_type*) &inBytes[8];
+  data_ptr = (data_type*) &inBytes[8]; //Quietime?
   Lev_ptr = (char*) &inBytes[5];
   ByteCnt = 0;
 }
@@ -225,14 +225,18 @@ void loop()
         bool esc_char = true;
       }
       if (inByte == StartByte && esc_char == false) {
-        Serial.println(" ");
-        Serial.println("StartByte");
+        Serial.print("start|");
+        //Serial.println("StartByte");
       }
       if (inByte == StopByte && esc_char == false) {
-        Serial.println("StopByte");
+        //Serial.println("StopByte");
+        Serial.print(inByte,DEC);
+        Serial.println("|stop");
+
+
       }
     }
-    if (inByte != StartByte || inByte != StopByte || esc_char == true && inByte == 0x02 || inByte == 0x03 && esc_char == true) {
+    if (inByte != StartByte && inByte != StopByte || esc_char == true && inByte == StartByte || inByte == StopByte && esc_char == true) {
       Serial.print(inByte, DEC);
       Serial.print("|");
       if (esc_char == true && inByte != StartByte || esc_char == true && inByte != StopByte ) {
@@ -240,6 +244,7 @@ void loop()
       }
     }
   }
+
 
 
 
