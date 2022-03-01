@@ -7,7 +7,6 @@ import math
 
 old_time = datetime.now()
 old_time_timestamp = datetime.timestamp(old_time)
-old_pose = [16000.0, 6000.0, 300.0]
 
 class USPS_data:
     def __init__(self):
@@ -18,6 +17,15 @@ class USPS_data:
         self.time = [0,0,0,0,0,0,0,0,0,0,0]
         self.distance = [0,0,0,0,0,0,0,0,0,0,0]
         self.RSSI = [0,0,0,0,0,0,0,0,0,0,0]
+        self.pose = [16000.0, 6000.0, 300.0]
+        self.acc = [0.0, 0.0, 0.0]
+        self.omega = [0.2, 0.4]
+        self.r = 0.04
+        self.l = 0.229
+
+
+
+
 
     def updating_distance(self, id, distance):
         dt = datetime.now()
@@ -26,8 +34,18 @@ class USPS_data:
         self.distance[index_of_data] = distance
         self.time[index_of_data] = ts
 
+    def updating_acc(self, acc_x, acc_y, acc_z):
+        self.acc[0] = acc_x
+        self.acc[1] = acc_y
+        self.acc[2] = acc_z
+
+
+    def velocity_cal(self):
+        v = self.omega[0] * self.r + self.omega[1] * self.r
+        return v
+
+
     def pose_estimator_henrik_method(self):
-        global old_pose
         id_array = [0] * 11
         x_array = [0] * 11
         y_array = [0] * 11
@@ -50,23 +68,23 @@ class USPS_data:
                     j = j + 1
 
         for k in range(j+1):
-            dp = math.sqrt(pow(old_pose[0] - x_array[k], 2) + pow(old_pose[1] - y_array[k], 2) + pow(old_pose[2] - z_array[k], 2))
+            dp = math.sqrt(pow(self.pose[0] - x_array[k], 2) + pow(self.pose[1] - y_array[k], 2) + pow(self.pose[2] - z_array[k], 2))
             alpha = (dp - self.distance[k])/(dp + 10)
-            pose_est[0] = old_pose[0] + alpha * x_array[k] - old_pose[0]
-            pose_est[1] = old_pose[1] + alpha * y_array[k] - old_pose[1]
-            pose_est[2] = old_pose[2] + alpha * z_array[k] - old_pose[2]
+            pose_est[0] = self.pose[0] + alpha * x_array[k] - self.pose[0]
+            pose_est[1] = self.pose[1] + alpha * y_array[k] - self.pose[1]
+            pose_est[2] = self.pose[2] + alpha * z_array[k] - self.pose[2]
 
-            dist_new = math.sqrt(pow(old_pose[0] - pose_est[0], 2) + pow(old_pose[1] - pose_est[1], 2) + pow(old_pose[2] - pose_est[2], 2))
+            dist_new = math.sqrt(pow(self.pose[0] - pose_est[0], 2) + pow(self.pose[1] - pose_est[1], 2) + pow(self.pose[2] - pose_est[2], 2))
 
             if dist_new <= 1:
-                pose_est[0] = old_pose[0] + 0.2 * (x_array[k] - pose_est[0])/dp
-                pose_est[1] = old_pose[1] + 0.2 * (y_array[k] - pose_est[1])/dp
-                pose_est[2] = old_pose[2] + 0.2 * (z_array[k] - pose_est[2])/dp
+                pose_est[0] = self.pose[0] + 0.2 * (x_array[k] - pose_est[0])/dp
+                pose_est[1] = self.pose[1] + 0.2 * (y_array[k] - pose_est[1])/dp
+                pose_est[2] = self.pose[2] + 0.2 * (z_array[k] - pose_est[2])/dp
 
         #add sort array of the maybe sorted by the time elapsed since it was set
-        old_pose[0] = pose_est[0]
-        old_pose[1] = pose_est[1]
-        old_pose[2] = pose_est[2]
+        self.pose[0] = pose_est[0]
+        self.pose[1] = pose_est[1]
+        self.pose[2] = pose_est[2]
 
         return pose_est
 
@@ -137,19 +155,35 @@ class USPS_data:
             z_sort_array[3] = z_array[dist_array.index(dist_sort[2])]
 
         m_1 = np.array([[x_sort_array[1]-x_sort_array[0],y_sort_array[1]-y_sort_array[0],z_sort_array[1]-z_sort_array[0]],[x_sort_array[2]-x_sort_array[1],y_sort_array[2]-y_sort_array[1],z_sort_array[2]-z_sort_array[1]],[x_sort_array[3]-x_sort_array[0],y_sort_array[3]-y_sort_array[0],z_sort_array[3]-z_sort_array[0]]])
-        print(m_1)
+        #print(m_1)
         m_1t = m_1.transpose()
         m_2 = np.array([[pow(x_sort_array[1],2)-pow(x_sort_array[0],2)+pow(y_sort_array[1],2)-pow(y_sort_array[0],2)+pow(z_sort_array[1],2)-pow(z_sort_array[0],2)],[pow(x_sort_array[2],2)-pow(x_sort_array[1],2)+pow(y_sort_array[2],2)-pow(y_sort_array[1],2)+pow(z_sort_array[2],2)-pow(z_sort_array[1],2)],[pow(x_sort_array[3],2)-pow(x_sort_array[0],2)+pow(y_sort_array[3],2)-pow(y_sort_array[0],2)+pow(z_sort_array[3],2)-pow(z_sort_array[0],2)]])
         m_pose = (1/2) * m_1t.dot(m_2)
-        print(m_pose)
+        #self.pose[0] = m_pose[0]
+        #self.pose[1] = m_pose[1]
+        #self.pose[2] = m_pose[2]
+        #print(m_pose)
+        return m_pose
+
+    def pose_prodictor(self, time):
+        pose_predict = [0,0,0]
+        pose_predict[0] = self.pose[0] + self.velocity_cal() * math.cos(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc[0] * pow(time,2)
+        pose_predict[1] = self.pose[1] + self.velocity_cal() * math.sin(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc[1] * pow(time,2)
+        pose_predict[2] = self.pose[2]
+        return pose_predict
 
 w1 = USPS_data()
 
 
-def callback_pose_est(data):
+def callback_distance(data):
     global w1
     w1.updating_distance(data.x,data.y)
-    print("im in the callback")
+    #print("im in dist. the callback")
+
+def callback_imu_acc(data):
+    global w1
+    w1.updating_acc(data.x,data.y,data.z)
+    #print("im in acc the callback")
 
 
 def pose_estimator():
@@ -157,18 +191,18 @@ def pose_estimator():
     w1.updating_distance(44531,23)
     w1.updating_distance(44532,64534)
     w1.updating_distance(44533,12312)
-    w1.updating_distance(44538,3848)
+    print(w1.pose_prodictor(39493))
     w1.pose_estimator_trilatertion()
     dist_sort = sorted(w1.distance, reverse=True)
     #print(w1.distance[self.id.index(44532)])
     #print(w1.pose_estimator_henrik_method())
     #i = [1,2,3]
     #print(i[1])
-    rospy.init_node('USPS_pose_estimator', anonymous=True)
+    #rospy.init_node('USPS_pose_estimator', anonymous=True)
+    #rospy.Subscriber("imu_acc", Vector3, callback_imu_acc)
+    #rospy.Subscriber("robot_position_estimate", Vector3, callback_distance)
 
-    rospy.Subscriber("robot_position_estimate", Vector3, callback_pose_est)
-
-    rospy.spin()
+    #rospy.spin()
 
 if __name__ == '__main__':
     pose_estimator()
