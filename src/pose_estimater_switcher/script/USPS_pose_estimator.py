@@ -17,11 +17,21 @@ class USPS_data:
         self.time = [0,0,0,0,0,0,0,0,0,0,0]
         self.distance = [0,0,0,0,0,0,0,0,0,0,0]
         self.RSSI = [0,0,0,0,0,0,0,0,0,0,0]
-        self.pose = [16000.0, 6000.0, 300.0]
-        self.acc = [0.0, 0.0, 0.0]
-        self.omega = [0.2, 0.4]
+        self.pose_est = [16000.0, 6000.0, 300.0]
+        self.pose_est_stored = [[16000.0, 6000.0, 380.0],[16000.0, 6000.0, 310.0],[16000.0, 6000.0, 360.0]]
+        self.pose_predict_from_pose = [0.0, 0.0, 0.0]
+        self.time_i = [3.0, 2.0, 1.0]
+        self.acc_meas = [0.0, 0.0, 0.0]
+        self.omega = [0.0, 0.0]
         self.r = 0.04
         self.l = 0.229
+
+
+
+    def pose_predict(self, time):
+        for j in range(len(self.pose_est_stored[1])):
+            self.pose_predict_from_pose[j] =  self.pose_est[j] + ((self.pose_est_stored[0][j]-self.pose_est_stored[1][j])/(self.time_i[0]-self.time_i[1])) * time + 1/2*((((self.pose_est_stored[0][j]-self.pose_est_stored[1][j])/(self.time_i[0]-self.time_i[1]))-((self.pose_est_stored[1][j]-self.pose_est_stored[2][j])/(self.time_i[1]-self.time_i[2])))/(self.time_i[0]-self.time_i[2]))*pow(time,2)
+        return self.pose_predict_from_pose
 
 
 
@@ -35,9 +45,9 @@ class USPS_data:
         self.time[index_of_data] = ts
 
     def updating_acc(self, acc_x, acc_y, acc_z):
-        self.acc[0] = acc_x
-        self.acc[1] = acc_y
-        self.acc[2] = acc_z
+        self.acc_meas[0] = acc_x
+        self.acc_meas[1] = acc_y
+        self.acc_meas[2] = acc_z
 
 
     def velocity_cal(self):
@@ -50,7 +60,7 @@ class USPS_data:
         x_array = [0] * 11
         y_array = [0] * 11
         z_array = [0] * 11
-        pose_est = [0,0,0]
+        pose_esti = [0,0,0]
         dist_array = [0] * 11
         j = 0
 
@@ -82,9 +92,9 @@ class USPS_data:
                 pose_est[2] = self.pose[2] + 0.2 * (z_array[k] - pose_est[2])/dp
 
         #add sort array of the maybe sorted by the time elapsed since it was set
-        self.pose[0] = pose_est[0]
-        self.pose[1] = pose_est[1]
-        self.pose[2] = pose_est[2]
+        self.pose_est[0] = pose_esti[0]
+        self.pose_est[1] = pose_esti[1]
+        self.pose_est[2] = pose_esti[2]
 
         return pose_est
 
@@ -165,12 +175,12 @@ class USPS_data:
         #print(m_pose)
         return m_pose
 
-    def pose_prodictor(self, time):
-        pose_predict = [0,0,0]
-        pose_predict[0] = self.pose[0] + self.velocity_cal() * math.cos(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc[0] * pow(time,2)
-        pose_predict[1] = self.pose[1] + self.velocity_cal() * math.sin(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc[1] * pow(time,2)
-        pose_predict[2] = self.pose[2]
-        return pose_predict
+    def measured_model_imu_and_odometry(self, time):
+        pose_predict_meas = [0,0,0]
+        pose_predict_meas[0] = self.pose[0] + self.velocity_cal() * math.cos(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc_meas[0] * pow(time,2)
+        pose_predict_meas[1] = self.pose[1] + self.velocity_cal() * math.sin(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc_meas[1] * pow(time,2)
+        pose_predict_meas[2] = self.pose[2]
+        return pose_predict_meas
 
 w1 = USPS_data()
 
@@ -191,7 +201,7 @@ def pose_estimator():
     w1.updating_distance(44531,23)
     w1.updating_distance(44532,64534)
     w1.updating_distance(44533,12312)
-    print(w1.pose_prodictor(39493))
+    print(w1.pose_predict(10))
     w1.pose_estimator_trilatertion()
     dist_sort = sorted(w1.distance, reverse=True)
     #print(w1.distance[self.id.index(44532)])
