@@ -2,6 +2,7 @@
 import rospy
 from geometry_msgs.msg import Vector3
 from custom_msgs.msg import odom_and_imu
+from custom_msgs.msg import USPS_msgs
 from datetime import datetime
 import numpy as np
 import math
@@ -42,19 +43,22 @@ class USPS_data:
 
     def pose_updater(self):
         for i in range(len(self.pose_est_stored)-1,0,-1):
-            for j in range(len(self.pose_est_stored[i]):
+            for j in range(len(self.pose_est_stored[i])):
                 self.pose_est_stored[i][j] = self.pose_est_stored[i-1][j]
-        for k in range(len(self.pose_est_stored[0]):
+        for k in range(len(self.pose_est_stored[0])):
             self.pose_est_stored[0][k] = self.pose_est[k]
 
 
 
-    def updating_distance(self, id, distance):
+    def updating_distance(self, id, rssi, distance):
         dt = datetime.now()
         ts = datetime.timestamp(dt)
         index_of_data = self.id.index(id)
         self.distance[index_of_data] = distance
+        self.RSSI[index_of_data] = rssi
         self.time[index_of_data] = ts
+        print("im working")
+
 
     def omega_update(self, omega_right, omega_left):
         self.omega[0] = omega_right
@@ -208,8 +212,8 @@ w1 = USPS_data()
 
 def callback_distance(data):
     global w1
-    w1.updating_distance(data.x,data.y)
-    #print("im in dist. the callback")
+    w1.updating_distance(data.ID, data.RSSI, data.distance)
+    print("im in dist. the callback")
 
 def callback_odom_and_imu(data):
     global w1
@@ -220,22 +224,19 @@ def callback_odom_and_imu(data):
 
 def pose_estimator():
     global w1
-    w1.updating_distance(44531,23)
-    w1.updating_distance(44532,64534)
-    w1.updating_distance(44533,12312)
-    print(w1.pose_predict(10))
-    w1.pose_estimator_trilatertion()
-    dist_sort = sorted(w1.distance, reverse=True)
+    #print(w1.pose_predict(10))
+    #w1.pose_estimator_trilatertion()
+    #dist_sort = sorted(w1.distance, reverse=True)
     #print(w1.distance[self.id.index(44532)])
     #print(w1.pose_estimator_henrik_method())
     #i = [1,2,3]
     #print(i[1])
     rospy.init_node('USPS_pose_estimator', anonymous=True)
-    rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_odom_and_imu)
-    #rospy.Subscriber("robot_position_estimate", Vector3, callback_distance)
-    while not rospy.is_shutdown():
-        print(w1.measured_model_imu_and_odometry())
-        #rospy.spin()
+    #rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_odom_and_imu)
+    rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
+    #while not rospy.is_shutdown():
+        #print(w1.measured_model_imu_and_odometry())
+    rospy.spin()
 
 if __name__ == '__main__':
     pose_estimator()
