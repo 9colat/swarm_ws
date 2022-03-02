@@ -5,7 +5,7 @@ enum Byte_Type {Escape = 0x10, StartByte = 0x2, StopByte = 0x3};
 enum State_Type {EscapeRec = 2, StartByteRec = 1, idle = 0};
 enum State_Type State = idle;
 int ByteCnt;
-byte inBytes[25];
+int inBytes[25];
 bool cc;
 
 
@@ -45,7 +45,7 @@ void data_saver_switch() {
   char inByte = Serial3.read();
   switch (State) {
     case idle:
-      Serial.print("state: idle");
+      //Serial.print("state: idle");
       if (inByte == StartByte)
         State = StartByteRec;
       //Serial.print("state set: StartByteRec");
@@ -81,46 +81,20 @@ void data_saver_switch() {
           inBytes[ByteCnt++] = inByte;
           //Serial.print("state: default");
           Serial.print((int)inByte);
-
       }
       break;
     case EscapeRec:
       Serial.print("state: EscapeRec");
       State = StartByteRec;
       inBytes[ByteCnt++] = (char)(inByte - 0x20);
-
   }
 }
-
 
 
 void loop() {
   bool esc_char = false;
   while (Serial3.available()) {
     data_saver_switch();
-    /*  char inByte = Serial3.read();
-      if (inByte == StartByte || inByte == StopByte || inByte == Escape)
-      {
-        if (inByte == Escape) {
-          bool esc_char = true;
-        }
-        if (inByte == StartByte && esc_char == false) {
-          Serial.print("start|");
-        }
-        if (inByte == StopByte && esc_char == false) {
-          Serial.println("|stop");
-        }
-      }
-      else if ((inByte != StartByte && inByte != StopByte) || (esc_char == true && inByte == StartByte || inByte == StopByte))
-      {
-        Serial.print(inByte, DEC);
-        Serial.print("|");
-        //  if ((esc_char == true && inByte != StartByte) || (esc_char == true && inByte != StopByte) ) {
-        esc_char = false;
-      } else
-      {
-        Serial.print("ERROR");
-      } */
   }
 
 
