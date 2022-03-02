@@ -51,7 +51,7 @@ void loop()
         for (int i=0; (stop_byte_recieved == false && start_byte_recieved == true); i++) {
           inByteArray[i] = inByte;
           Serial.print("|");
-          Serial.print(i, DEC);
+          Serial.print(inByte, DEC);
           Serial.println(" ");
 
         }

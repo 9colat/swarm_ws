@@ -11,27 +11,21 @@ void setup()
   Serial.begin(19200);
   Serial3.begin(115200);
 }
-
+/*
 void inByte_segmenter(int inByte_array)
 {
 
-  for (int i = 0; i < inByte_array; i++) {
-    if (i==Escape){
-      Serial.println(" ");
-      Serial.print("escape:");
-//      Serial.print(i++);
-      Serial.println(" ");
-    }else{
-    Serial.print("|");
-    Serial.print(buf[i], DEC);
+
+
+
 }
     /*packet_length
       Serial.print("|length: ");
       Serial.print(packet_length,DEC);
       Serial.println("|");
     */
-  }
-}
+  //}
+
 
 void loop()
 {
@@ -39,24 +33,17 @@ void loop()
 
   while (Serial3.available()) {
     char inByte = Serial3.read();
-    if (inByte == StartByte || inByte == StopByte || inByte == Escape)
-    {
-      if (inByte == Escape) {
-        bool esc_char = true;
-      }
-      if (inByte == StartByte && esc_char == false) {
-        //Serial.print("start|");
-        //  start_byte_recieved=true;
-        //  inByte_array[]==Serial3readBytesUntil(StopByte);
-        int inByte_array = Serial3.readBytesUntil('0x2', buf, BUFFER_SIZE);
+    if (inByte!=0x3){
+        int inByte_array = Serial3.readBytesUntil(StartByte, buf, BUFFER_SIZE);
+        for (int i = 0; i < inByte_array; i++) {
 
-        //Serial.print("length: ");
-        //Serial.println(buf[0],HEX);//propebly 0 or 1
-        //  Serial.println(" ");
-        inByte_segmenter(inByte_array);
+        Serial.print("|");
+        Serial.print((int)buf[i]);
       }
       Serial.println(" ");
     }
+
+        //inByte_segmenter(inByte_array);
     if (inByte == StopByte && esc_char == false) {
       //Serial.println("|stop");
     }
