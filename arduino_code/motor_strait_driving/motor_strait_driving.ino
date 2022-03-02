@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "I2Cdev.h"
 #include "MPU9250.h"
+#include "BMP180.h"
 #include <ros.h>
 #include <Wire.h>
 #include <math.h>
@@ -99,6 +100,8 @@ float wheel_radius = 0.04;           // needs to be updated and use the right un
 int16_t accel_X, accel_Y, accel_Z, tmp, gyro_X, gyro_Y, gyro_Z, mx, my, mz;
 long publisher_timer;
 MPU9250 accelgyro;
+//BMP180 Barometer;
+//float temperature;
 int mag_x_cal = -20; //magnetometer callibration in x direction
 int mag_y_cal = -6; //magnetometer callibration in y direction
 int hi;
@@ -357,10 +360,11 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
 
 void imu_collection() {
   accelgyro.getMotion9(&accel_X, &accel_Y, &accel_Z, &gyro_X, &gyro_Y, &gyro_Z, &mx, &my, &mz);
-
+  //temperature = Barometer.bmp180GetTemperature(Barometer.bmp180ReadUT());
   data_measured_odom_and_imu.imu_acc.x = accel_X;
   data_measured_odom_and_imu.imu_acc.y = accel_Y;
   data_measured_odom_and_imu.imu_acc.z = accel_Z;
+  //data_measured_odom_and_imu.temp = temperature;
   //IMU_data_acc.publish(&imu_acc);
 
   imu_gyro.x = gyro_X;
@@ -482,6 +486,7 @@ void setup() {
   //Wire.write(0);     // set to zero (wakes up the MPU-6050)
   //Wire.endTransmission(true);
   accelgyro.initialize();
+  //Barometer.init();
 
 
 }
@@ -514,9 +519,9 @@ void loop() {
     wheel_speed.z = cum_error_r;
     wheel_speed.w = cum_error_l;*/
     imu_collection();
-    data_measured_odom_and_imu.omega_right.data = average_omega_right;
-    data_measured_odom_and_imu.omega_left.data = average_omega_left;
-    odom_and_IMU_pub.publish(&data_measured_odom_and_imu)
+    data_measured_odom_and_imu.omega_right = average_omega_right;
+    data_measured_odom_and_imu.omega_left = average_omega_left;
+    odom_and_IMU_pub.publish(&data_measured_odom_and_imu);
     speed_pub.publish(&wheel_speed);
   }
   nh.spinOnce();

@@ -8,6 +8,7 @@ import math
 
 old_time = datetime.now()
 old_time_timestamp = datetime.timestamp(old_time)
+time_measured = 0
 
 class USPS_data:
     def __init__(self):
@@ -26,15 +27,25 @@ class USPS_data:
         self.omega = [0.0, 0.0]
         self.r = 0.04
         self.l = 0.229
+        self.callibration_factor_acc = 1
+        #self.time_unit_convertion_factor = 1
 
 
 
     def pose_predict(self, time):
         for j in range(len(self.pose_est_stored[1])):
             self.pose_predict_from_pose[j] =  self.pose_est[j] + ((self.pose_est_stored[0][j]-self.pose_est_stored[1][j])/(self.time_i[0]-self.time_i[1])) * time + 1/2*((((self.pose_est_stored[0][j]-self.pose_est_stored[1][j])/(self.time_i[0]-self.time_i[1]))-((self.pose_est_stored[1][j]-self.pose_est_stored[2][j])/(self.time_i[1]-self.time_i[2])))/(self.time_i[0]-self.time_i[2]))*pow(time,2)
+        for i in range(len(self.time_i)-1,0,-1):
+            self.time_i[i] = self.time_i[i-1]
+        self.time_i[0] = time
         return self.pose_predict_from_pose
 
-
+    def pose_updater(self):
+        for i in range(len(self.pose_est_stored)-1,0,-1):
+            for j in range(len(self.pose_est_stored[i]):
+                self.pose_est_stored[i][j] = self.pose_est_stored[i-1][j]
+        for k in range(len(self.pose_est_stored[0]):
+            self.pose_est_stored[0][k] = self.pose_est[k]
 
 
 
@@ -44,6 +55,10 @@ class USPS_data:
         index_of_data = self.id.index(id)
         self.distance[index_of_data] = distance
         self.time[index_of_data] = ts
+
+    def omega_update(self, omega_right, omega_left):
+        self.omega[0] = omega_right
+        self.omega[1] = omega_left
 
     def updating_acc(self, acc_x, acc_y, acc_z):
         self.acc_meas[0] = acc_x
@@ -176,11 +191,16 @@ class USPS_data:
         #print(m_pose)
         return m_pose
 
-    def measured_model_imu_and_odometry(self, time):
+    def measured_model_imu_and_odometry(self):
+        global time_measured
+        dt = datetime.now()
+        old_time_measured = time_measured
+        time_measured = datetime.timestamp(dt)
+        time = time_measured - old_time_measured
         pose_predict_meas = [0,0,0]
-        pose_predict_meas[0] = self.pose[0] + self.velocity_cal() * math.cos(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc_meas[0] * pow(time,2)
-        pose_predict_meas[1] = self.pose[1] + self.velocity_cal() * math.sin(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc_meas[1] * pow(time,2)
-        pose_predict_meas[2] = self.pose[2]
+        pose_predict_meas[0] = self.pose_est[0] + self.velocity_cal() * math.cos(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc_meas[0] * pow(time,2)
+        pose_predict_meas[1] = self.pose_est[1] + self.velocity_cal() * math.sin(((self.l*(self.omega[0] - self.omega[1])* self.r)/2)*time)*time + 1/2 * self.acc_meas[1] * pow(time,2)
+        pose_predict_meas[2] = self.pose_est[2]
         return pose_predict_meas
 
 w1 = USPS_data()
@@ -193,8 +213,9 @@ def callback_distance(data):
 
 def callback_odom_and_imu(data):
     global w1
-    w1.updating_acc(data.imu_acc.x,data.imu_acc.y,data.imu_acc.z)
-    print("im in acc the callback")
+    w1.updating_acc(w1.callibration_factor_acc*data.imu_acc.x,w1.callibration_factor_acc*data.imu_acc.y,w1.callibration_factor_acc*data.imu_acc.z)
+    w1.omega_update(data.omega_right, data.omega_left)
+    #print("im in acc and odom the callback")
 
 
 def pose_estimator():
@@ -212,8 +233,9 @@ def pose_estimator():
     rospy.init_node('USPS_pose_estimator', anonymous=True)
     rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_odom_and_imu)
     #rospy.Subscriber("robot_position_estimate", Vector3, callback_distance)
-
-    rospy.spin()
+    while not rospy.is_shutdown():
+        print(w1.measured_model_imu_and_odometry())
+        #rospy.spin()
 
 if __name__ == '__main__':
     pose_estimator()
