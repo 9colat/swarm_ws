@@ -3,3 +3,4 @@
 geometry_msgs/Vector3 imu_acc
 float64 omega_right
 float64 omega_left
+float64 temp

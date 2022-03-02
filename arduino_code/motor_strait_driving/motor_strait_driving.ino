@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "I2Cdev.h"
 #include "MPU9250.h"
+#include "BMP180.h"
 #include <ros.h>
 #include <Wire.h>
 #include <math.h>
@@ -99,6 +100,8 @@ float wheel_radius = 0.04;           // needs to be updated and use the right un
 int16_t accel_X, accel_Y, accel_Z, tmp, gyro_X, gyro_Y, gyro_Z, mx, my, mz;
 long publisher_timer;
 MPU9250 accelgyro;
+//BMP180 Barometer;
+//float temperature;
 int mag_x_cal = -20; //magnetometer callibration in x direction
 int mag_y_cal = -6; //magnetometer callibration in y direction
 int hi;
@@ -123,6 +126,8 @@ geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
 ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
 ros::Publisher measured_angle_pub("measured_angle", &data_measured_angle);
+custom_msgs::odom_and_imu data_measured_odom_and_imu = custom_msgs::odom_and_imu();
+ros::Publisher odom_and_IMU_pub("odometry_and_IMU", &data_measured_odom_and_imu);
 
 
 //-----Functions-----//
@@ -355,26 +360,27 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
 
 void imu_collection() {
   accelgyro.getMotion9(&accel_X, &accel_Y, &accel_Z, &gyro_X, &gyro_Y, &gyro_Z, &mx, &my, &mz);
-
-  imu_acc.x = accel_X;
-  imu_acc.y = accel_Y;
-  imu_acc.z = accel_Z;
-  IMU_data_acc.publish(&imu_acc);
+  //temperature = Barometer.bmp180GetTemperature(Barometer.bmp180ReadUT());
+  data_measured_odom_and_imu.imu_acc.x = accel_X;
+  data_measured_odom_and_imu.imu_acc.y = accel_Y;
+  data_measured_odom_and_imu.imu_acc.z = accel_Z;
+  //data_measured_odom_and_imu.temp = temperature;
+  //IMU_data_acc.publish(&imu_acc);
 
   imu_gyro.x = gyro_X;
   imu_gyro.y = gyro_Y;
   imu_gyro.z = gyro_Z;
-  IMU_data_gyro.publish(&imu_gyro);
+  //IMU_data_gyro.publish(&imu_gyro);
   // data from the magnetometer that is calibrated and turned into a heading
   imu_mag.x = mx;
   imu_mag.y = my;
   imu_mag.z = mz;
-  IMU_data_mag.publish(&imu_mag);
+  //IMU_data_mag.publish(&imu_mag);
   measured_angle = atan2(my - mag_y_cal, mx - mag_x_cal) * 180 / pi;
   data_measured_angle.x = mx;
   data_measured_angle.y = reference_angle;
   data_measured_angle.z = measured_angle;
-  measured_angle_pub.publish(&data_measured_angle);
+  //measured_angle_pub.publish(&data_measured_angle);
 
 }
 
@@ -471,7 +477,7 @@ void setup() {
   nh.advertise(IMU_data_acc);
   nh.advertise(IMU_data_gyro);
   nh.advertise(IMU_data_mag);
-  //nh.advertise(measured_angle_pub);
+  nh.advertise(odom_and_IMU_pub);
 
 
   Wire.begin();
@@ -480,6 +486,7 @@ void setup() {
   //Wire.write(0);     // set to zero (wakes up the MPU-6050)
   //Wire.endTransmission(true);
   accelgyro.initialize();
+  //Barometer.init();
 
 
 }
@@ -511,6 +518,10 @@ void loop() {
     wheel_speed.y = error_l;
     wheel_speed.z = cum_error_r;
     wheel_speed.w = cum_error_l;*/
+    imu_collection();
+    data_measured_odom_and_imu.omega_right = average_omega_right;
+    data_measured_odom_and_imu.omega_left = average_omega_left;
+    odom_and_IMU_pub.publish(&data_measured_odom_and_imu);
     speed_pub.publish(&wheel_speed);
   }
   nh.spinOnce();
