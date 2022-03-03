@@ -24,12 +24,13 @@ class USPS_data:
         self.pose_est = [16000.0, 6000.0, 300.0]
         self.pose_est_stored = [[16000.0, 6000.0, 380.0],[16000.0, 6000.0, 310.0],[16000.0, 6000.0, 360.0]]
         self.pose_predict_from_pose = [0.0, 0.0, 0.0]
+        self.pose_meas_beacon = [0.0, 0.0, 0.0]
         self.time_i = [3.0, 2.0, 1.0]
         self.acc_meas = [0.0, 0.0, 0.0]
         self.omega = [0.0, 0.0]
         self.r = 0.04
         self.l = 0.229
-        self.callibration_factor_acc = [1, 1, 1]
+        self.callibration_factor_acc = 1.0
         self.floor_corection_array = [[0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0]]
         self.floor_corection = [0.0,0.0,0.0]
         #self.time_unit_convertion_factor = 1
@@ -100,23 +101,23 @@ class USPS_data:
                     j = j + 1
 
         for k in range(j+1):
-            dp = math.sqrt(pow(self.pose[0] - x_array[k], 2) + pow(self.pose[1] - y_array[k], 2) + pow(self.pose[2] - z_array[k], 2))
+            dp = math.sqrt(pow(self.pose_est[0] - x_array[k], 2) + pow(self.pose_est[1] - y_array[k], 2) + pow(self.pose_est[2] - z_array[k], 2))
             alpha = (dp - self.distance[k])/(dp + 10)
-            pose_est[0] = self.pose[0] + alpha * x_array[k] - self.pose[0]
-            pose_est[1] = self.pose[1] + alpha * y_array[k] - self.pose[1]
-            pose_est[2] = self.pose[2] + alpha * z_array[k] - self.pose[2]
+            pose_est[0] = self.pose_est[0] + alpha * x_array[k] - self.pose_est[0]
+            pose_est[1] = self.pose_est[1] + alpha * y_array[k] - self.pose_est[1]
+            pose_est[2] = self.pose_est[2] + alpha * z_array[k] - self.pose_est[2]
 
-            dist_new = math.sqrt(pow(self.pose[0] - pose_est[0], 2) + pow(self.pose[1] - pose_est[1], 2) + pow(self.pose[2] - pose_est[2], 2))
+            dist_new = math.sqrt(pow(self.pose_est[0] - pose_est[0], 2) + pow(self.pose_est[1] - pose_est[1], 2) + pow(self.pose_est[2] - pose_est[2], 2))
 
             if dist_new <= 1:
-                pose_est[0] = self.pose[0] + 0.2 * (x_array[k] - pose_est[0])/dp
-                pose_est[1] = self.pose[1] + 0.2 * (y_array[k] - pose_est[1])/dp
-                pose_est[2] = self.pose[2] + 0.2 * (z_array[k] - pose_est[2])/dp
+                pose_est[0] = self.pose_est[0] + 0.2 * (x_array[k] - pose_est[0])/dp
+                pose_est[1] = self.pose_est[1] + 0.2 * (y_array[k] - pose_est[1])/dp
+                pose_est[2] = self.pose_est[2] + 0.2 * (z_array[k] - pose_est[2])/dp
 
         #add sort array of the maybe sorted by the time elapsed since it was set
-        self.pose_est[0] = pose_esti[0]
-        self.pose_est[1] = pose_esti[1]
-        self.pose_est[2] = pose_esti[2]
+        self.pose_meas_beacon[0] = pose_esti[0]
+        self.pose_meas_beacon[1] = pose_esti[1]
+        self.pose_meas_beacon[2] = pose_esti[2]
 
         return pose_est
 
@@ -220,17 +221,20 @@ def callback_distance(data):
 def callback_odom_and_imu(data):
     global w1, iteriator
     if iteriator < 10:
-        w1.updating_acc(w1.callibration_factor_acc[0]*data.imu_acc.x,w1.callibration_factor_acc[1]*data.imu_acc.y,w1.callibration_factor_acc[2]*data.imu_acc.z)
+        w1.updating_acc(data.imu_acc.x, data.imu_acc.y, data.imu_acc.z)
         w1.omega_update(data.omega_right, data.omega_left)
         for j in range(len(w1.floor_corection)):
             w1.floor_corection_array[j][iteriator] = w1.acc_meas[j]
             w1.floor_corection[j] = w1.floor_corection_array[j][iteriator]/(iteriator+1)
-        print(w1.floor_corection_array)
+            w1.updating_acc(0, 0, 0)
         iteriator += 1
     if iteriator >= 10:
-        w1.updating_acc((w1.callibration_factor_acc[0]*data.imu_acc.x) - w1.floor_corection[0],(w1.callibration_factor_acc[1]*data.imu_acc.y) - w1.floor_corection[1],(w1.callibration_factor_acc[2]*data.imu_acc.z) - w1.floor_corection[2])
+        if iteriator == 10:
+            w1.callibration_factor_acc = 9.81/math.sqrt(pow(w1.floor_corection[0],2)+pow(w1.floor_corection[1],2)+pow(w1.floor_corection[2],2))
+            iteriator += 1
+        w1.updating_acc((w1.callibration_factor_acc*data.imu_acc.x) - w1.floor_corection[0],(w1.callibration_factor_acc*data.imu_acc.y) - w1.floor_corection[1],(w1.callibration_factor_acc*data.imu_acc.z) - w1.floor_corection[2])
         w1.omega_update(data.omega_right, data.omega_left)
-    #print("im in acc and odom the callback")
+    print(w1.acc_meas)
 
 def pose_estimator():
     global w1
@@ -243,7 +247,7 @@ def pose_estimator():
     #i = [1,2,3]
     #print(i[1])
     rospy.init_node('USPS_pose_estimator', anonymous=True)
-    #rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_odom_and_imu)
+    rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_odom_and_imu)
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():

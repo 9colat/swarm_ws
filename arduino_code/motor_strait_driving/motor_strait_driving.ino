@@ -56,7 +56,7 @@ const int opper_lim = 255;
 double goal_vel_x;
 double temp_input_vel;
 int bool_tele_op_toggel;
-int period = 100;
+int period = 1000;
 unsigned long time_now = 0;
 double encoder_counter_right = 0.0;   // this is the encoder counter for the right wheel
 double encoder_counter_left = 0.0;    // this is the encoder counter for the left wheel
