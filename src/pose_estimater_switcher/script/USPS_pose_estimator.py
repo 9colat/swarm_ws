@@ -11,6 +11,7 @@ old_time = datetime.now()
 old_time_timestamp = datetime.timestamp(old_time)
 time_measured = 0
 iteriator = 0
+penis = [0,0,0]
 
 class USPS_data:
     def __init__(self):
@@ -31,7 +32,7 @@ class USPS_data:
         self.r = 0.04
         self.l = 0.229
         self.callibration_factor_acc = 1.0
-        self.floor_corection_array = [[0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0]]
+        self.floor_corection_array = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]
         self.floor_corection = [0.0,0.0,0.0]
         #self.time_unit_convertion_factor = 1
 
@@ -71,6 +72,7 @@ class USPS_data:
         self.acc_meas[0] = acc_x
         self.acc_meas[1] = acc_y
         self.acc_meas[2] = acc_z
+        #print(self.acc_meas[0],self.acc_meas[1],self.acc_meas[2])
 
 
     def velocity_cal(self):
@@ -219,22 +221,31 @@ def callback_distance(data):
     #print(data.distance)
 
 def callback_odom_and_imu(data):
-    global w1, iteriator
+    global w1, iteriator, penis
     if iteriator < 10:
         w1.updating_acc(data.imu_acc.x, data.imu_acc.y, data.imu_acc.z)
         w1.omega_update(data.omega_right, data.omega_left)
         for j in range(len(w1.floor_corection)):
             w1.floor_corection_array[j][iteriator] = w1.acc_meas[j]
-            w1.floor_corection[j] = w1.floor_corection_array[j][iteriator]/(iteriator+1)
-            w1.updating_acc(0, 0, 0)
+            penis[j] += w1.floor_corection_array[j][iteriator]
+            print(iteriator)
+        w1.updating_acc(0, 0, 0)
+
+        #print(len(w1.floor_corection_array[0]))
+        #print(data.imu_acc.x, data.imu_acc.y, data.imu_acc.z)
         iteriator += 1
     if iteriator >= 10:
         if iteriator == 10:
+            for pe in range(len(penis)):
+                w1.floor_corection[pe] = penis[pe]/10
+            #print(w1.floor_corection)
             w1.callibration_factor_acc = 9.81/math.sqrt(pow(w1.floor_corection[0],2)+pow(w1.floor_corection[1],2)+pow(w1.floor_corection[2],2))
             iteriator += 1
-        w1.updating_acc((w1.callibration_factor_acc*data.imu_acc.x) - w1.floor_corection[0],(w1.callibration_factor_acc*data.imu_acc.y) - w1.floor_corection[1],(w1.callibration_factor_acc*data.imu_acc.z) - w1.floor_corection[2])
+            #print(w1.callibration_factor_acc)
+        w1.updating_acc(w1.callibration_factor_acc*(data.imu_acc.x - w1.floor_corection[0]),w1.callibration_factor_acc*(data.imu_acc.y - w1.floor_corection[1]),w1.callibration_factor_acc*(data.imu_acc.z - w1.floor_corection[2]))
         w1.omega_update(data.omega_right, data.omega_left)
     print(w1.acc_meas)
+    #print(w1.acc_meas)
 
 def pose_estimator():
     global w1
