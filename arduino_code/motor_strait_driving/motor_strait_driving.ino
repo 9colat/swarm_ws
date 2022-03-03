@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include "I2Cdev.h"
 #include "MPU9250.h"
-#include "BMP180.h"
+#include <Adafruit_BMP280.h>
 #include <ros.h>
 #include <Wire.h>
 #include <math.h>
@@ -15,7 +15,9 @@
 #include <geometry_msgs/Twist.h>
 #include <custom_msgs/odom_and_imu.h>
 
-
+Adafruit_BMP280 bmp; // use I2C interface
+Adafruit_Sensor *bmp_temp = bmp.getTemperatureSensor();
+Adafruit_Sensor *bmp_pressure = bmp.getPressureSensor();
 double error_l;
 double error_r;
 
@@ -100,8 +102,7 @@ float wheel_radius = 0.04;           // needs to be updated and use the right un
 int16_t accel_X, accel_Y, accel_Z, tmp, gyro_X, gyro_Y, gyro_Z, mx, my, mz;
 long publisher_timer;
 MPU9250 accelgyro;
-//BMP180 Barometer;
-//float temperature;
+float temperature;
 int mag_x_cal = -20; //magnetometer callibration in x direction
 int mag_y_cal = -6; //magnetometer callibration in y direction
 int hi;
@@ -360,12 +361,15 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
 
 void imu_collection() {
   accelgyro.getMotion9(&accel_X, &accel_Y, &accel_Z, &gyro_X, &gyro_Y, &gyro_Z, &mx, &my, &mz);
-  //temperature = Barometer.bmp180GetTemperature(Barometer.bmp180ReadUT());
   data_measured_odom_and_imu.imu_acc.x = accel_X;
   data_measured_odom_and_imu.imu_acc.y = accel_Y;
   data_measured_odom_and_imu.imu_acc.z = accel_Z;
-  //data_measured_odom_and_imu.temp = temperature;
   //IMU_data_acc.publish(&imu_acc);
+  sensors_event_t temp_event;
+  bmp_temp->getEvent(&temp_event);
+  temperature = temp_event.temperature;
+
+  data_measured_odom_and_imu.temp = temperature;
 
   imu_gyro.x = gyro_X;
   imu_gyro.y = gyro_Y;
@@ -450,6 +454,7 @@ ros::Subscriber<std_msgs::Int16> start_up("stat_up_done", &start_up_hi);
 
 void setup() {
   nh.initNode();
+  Serial.begin(9600);
   pinMode(RGB_led_green, OUTPUT);
   pinMode(RGB_led_blue, OUTPUT);
   pinMode(RGB_led_red, OUTPUT);
@@ -478,20 +483,26 @@ void setup() {
   nh.advertise(IMU_data_gyro);
   nh.advertise(IMU_data_mag);
   nh.advertise(odom_and_IMU_pub);
+  unsigned status;
+  status = bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID);
+  if (!status) {
+    nh.loginfo("Could not find a valid BMP280 sensor, check wiring");
+  }
 
-
-  Wire.begin();
-  //Wire.beginTransmission(MPU_addr);
-  //Wire.write(0x6B);  // PWR_MGMT_1 register
-  //Wire.write(0);     // set to zero (wakes up the MPU-6050)
-  //Wire.endTransmission(true);
   accelgyro.initialize();
-  //Barometer.init();
-
-
+  bmp.setSampling(Adafruit_BMP280::MODE_FORCED,     /* Operating Mode. */
+                  Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                  Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                  Adafruit_BMP280::FILTER_X16,      /* Filtering. */
+                  Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
+  bmp_temp->printSensorDetails();
 }
 
+
+
+
 void loop() {
+  int i = 0;
   if(bool_tele_op_toggel == 2){
     current_time = micros();
     double time_elapsed = double(current_time - previous_time)*pow(10,-6);
