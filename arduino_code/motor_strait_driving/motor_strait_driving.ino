@@ -13,11 +13,11 @@
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Quaternion.h>
 #include <geometry_msgs/Twist.h>
-#include <custom_msgs/odom_and_imu.h>
+//#include <custom_msgs/odom_and_imu.h>
 
-Adafruit_BMP280 bmp; // use I2C interface
-Adafruit_Sensor *bmp_temp = bmp.getTemperatureSensor();
-Adafruit_Sensor *bmp_pressure = bmp.getPressureSensor();
+//Adafruit_BMP280 bmp; // use I2C interface
+//Adafruit_Sensor *bmp_temp = bmp.getTemperatureSensor();
+//Adafruit_Sensor *bmp_pressure = bmp.getPressureSensor();
 double error_l;
 double error_r;
 
@@ -127,8 +127,8 @@ geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
 ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
 ros::Publisher measured_angle_pub("measured_angle", &data_measured_angle);
-custom_msgs::odom_and_imu data_measured_odom_and_imu = custom_msgs::odom_and_imu();
-ros::Publisher odom_and_IMU_pub("odometry_and_IMU", &data_measured_odom_and_imu);
+//custom_msgs::odom_and_imu data_measured_odom_and_imu = custom_msgs::odom_and_imu();
+//ros::Publisher odom_and_IMU_pub("odometry_and_IMU", &data_measured_odom_and_imu);
 
 
 //-----Functions-----//
@@ -361,15 +361,15 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
 
 void imu_collection() {
   accelgyro.getMotion9(&accel_X, &accel_Y, &accel_Z, &gyro_X, &gyro_Y, &gyro_Z, &mx, &my, &mz);
-  data_measured_odom_and_imu.imu_acc.x = accel_X;
-  data_measured_odom_and_imu.imu_acc.y = accel_Y;
-  data_measured_odom_and_imu.imu_acc.z = accel_Z;
+  //data_measured_odom_and_imu.imu_acc.x = accel_X;
+  //data_measured_odom_and_imu.imu_acc.y = accel_Y;
+  //data_measured_odom_and_imu.imu_acc.z = accel_Z;
   //IMU_data_acc.publish(&imu_acc);
-  sensors_event_t temp_event;
-  bmp_temp->getEvent(&temp_event);
-  temperature = temp_event.temperature;
+  //sensors_event_t temp_event;
+  //bmp_temp->getEvent(&temp_event);
+  //temperature = temp_event.temperature;
 
-  data_measured_odom_and_imu.temp = temperature;
+  //data_measured_odom_and_imu.temp = temperature;
 
   imu_gyro.x = gyro_X;
   imu_gyro.y = gyro_Y;
@@ -482,20 +482,20 @@ void setup() {
   nh.advertise(IMU_data_acc);
   nh.advertise(IMU_data_gyro);
   nh.advertise(IMU_data_mag);
-  nh.advertise(odom_and_IMU_pub);
-  unsigned status;
-  status = bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID);
-  if (!status) {
-    nh.loginfo("Could not find a valid BMP280 sensor, check wiring");
-  }
+  //nh.advertise(odom_and_IMU_pub);
+  //unsigned status;
+  //status = bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID);
+  //if (!status) {
+  //  nh.loginfo("Could not find a valid BMP280 sensor, check wiring");
+  //}
 
-  accelgyro.initialize();
-  bmp.setSampling(Adafruit_BMP280::MODE_FORCED,     /* Operating Mode. */
-                  Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
-                  Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
-                  Adafruit_BMP280::FILTER_X16,      /* Filtering. */
-                  Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
-  bmp_temp->printSensorDetails();
+  //accelgyro.initialize();
+  //bmp.setSampling(Adafruit_BMP280::MODE_FORCED,     /* Operating Mode. */
+  //                Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
+  //                Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
+  //                Adafruit_BMP280::FILTER_X16,      /* Filtering. */
+  //                Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
+  //bmp_temp->printSensorDetails();
 }
 
 
@@ -529,10 +529,10 @@ void loop() {
     wheel_speed.y = error_l;
     wheel_speed.z = cum_error_r;
     wheel_speed.w = cum_error_l;*/
-    imu_collection();
-    data_measured_odom_and_imu.omega_right = average_omega_right;
-    data_measured_odom_and_imu.omega_left = average_omega_left;
-    odom_and_IMU_pub.publish(&data_measured_odom_and_imu);
+    //imu_collection();
+    //data_measured_odom_and_imu.omega_right = average_omega_right;
+    //data_measured_odom_and_imu.omega_left = average_omega_left;
+    //odom_and_IMU_pub.publish(&data_measured_odom_and_imu);
     speed_pub.publish(&wheel_speed);
   }
   nh.spinOnce();
