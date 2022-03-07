@@ -52,9 +52,9 @@ void data_colector() {
       if (inByte == StopByte && esc_char == false) {
         //Serial.println("|stop");
         start_up = false;
-        int output[i]
+        int output[i];
         for (int j = 0;j<i;j++){
-          output[j] = inByte_array[j]
+          output[j] = inByte_array[j];
         }
         seperator(output);
       }

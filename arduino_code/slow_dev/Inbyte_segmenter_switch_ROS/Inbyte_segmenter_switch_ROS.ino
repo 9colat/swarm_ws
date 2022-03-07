@@ -45,48 +45,50 @@ void data_saver_switch() {
   char inByte = Serial3.read();
   switch (State) {
     case idle:
-      //Serial.print("state: idle");
+      // Serial.print("state: idle");
       if (inByte == StartByte)
         State = StartByteRec;
-      //Serial.print("state set: StartByteRec");
-
       break;
-    case StartByteRec:
-      switch (inByte) {
-        case StartByte:
-          Serial.print("state: Startbyte");
-          ByteCnt = 0;
-          State = idle;
-          break;
-        case StopByte:
-          //We finished now publish and/or data extract
-          Serial.println("Finished");
-          cc = compute_checksum();
-          if (cc == true)
-          {
-            Serial.println(" CC is true ");
-          }
-          if (cc == false)
-          {
-            Serial.println(" CC is false ");
-          }
-          break;
+    case StartByteRec: {
+        switch (inByte) {
+          case StartByte:
+            Serial.print("state: Startbyte");
+            int Length = Serial3.read();
+            Serial.print(Length,DEC);
+            ByteCnt = 0;
+            State = idle;
+            break;
+          case StopByte:
+            //We finished now publish and/or data extract
+            Serial.println("Finished");
+            cc = compute_checksum();
+            if (cc == true)
+            {
+              Serial.println(" CC is true ");
+            }
+            if (cc == false)
+            {
+              Serial.println(" CC is false ");
+            }
+            break;
 
-        case Escape:
-          State = EscapeRec;
-          //Serial.print("state: Escape");
+          case Escape:
+            State = EscapeRec;
+            //Serial.print("state: Escape");
 
-          break;
-        default:
-          inBytes[ByteCnt++] = inByte;
-          //Serial.print("state: default");
-          Serial.print((int)inByte);
+            break;
+          default:
+            inBytes[ByteCnt++] = inByte;
+            //Serial.print("state: default");
+            Serial.print(inByte, DEC);
+        }
+        break;
       }
-      break;
     case EscapeRec:
-      Serial.print("state: EscapeRec");
+      //Serial.print("state: EscapeRec");
       State = StartByteRec;
       inBytes[ByteCnt++] = (char)(inByte - 0x20);
+      break;
   }
 }
 
