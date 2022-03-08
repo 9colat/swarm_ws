@@ -57,7 +57,7 @@ class USPS_data:
         dt = datetime.now()
         ts = datetime.timestamp(dt)
         index_of_data = self.id.index(id)
-        print(index_of_data)
+        #print(index_of_data)
         self.distance[index_of_data] = distance
         self.RSSI[index_of_data] = rssi
         self.time[index_of_data] = ts
@@ -269,7 +269,7 @@ def pose_estimator():
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():
-        #w1.pose_estimator_henrik_method()
+        w1.pose_estimator_henrik_method()
 
         rate.sleep()
 
