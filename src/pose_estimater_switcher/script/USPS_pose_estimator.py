@@ -223,7 +223,8 @@ w1 = USPS_data()
 
 def callback_distance(data):
     global w1
-    w1.updating_distance(data.ID, data.RSSI, data.distance)
+    if data.ID in w1.id:
+        w1.updating_distance(data.ID, data.RSSI, data.distance)
     #print(data.distance)
 
 def callback_odom_and_imu(data):
