@@ -252,6 +252,7 @@ def callback_odom_and_imu(data):
 def pose_estimator():
     global w1
 
+
     #print(w1.pose_predict(10))
     #w1.pose_estimator_trilatertion()
     #dist_sort = sorted(w1.distance, reverse=True)
@@ -264,7 +265,7 @@ def pose_estimator():
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():
-        #print(w1.measured_model_imu_and_odometry())
+        print(w1.pose_estimator_henrik_method())
 
         rate.sleep()
 
