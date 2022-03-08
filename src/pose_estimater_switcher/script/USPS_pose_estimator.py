@@ -223,6 +223,7 @@ w1 = USPS_data()
 def callback_distance(data):
     global w1
     if data.ID in w1.id:
+        print(data.ID, ": ", data.distance)
         w1.updating_distance(data.ID, data.RSSI, data.distance)
     #print(data.distance)
 
@@ -269,7 +270,7 @@ def pose_estimator():
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():
-        w1.pose_estimator_henrik_method()
+        #w1.pose_estimator_henrik_method()
 
         rate.sleep()
 
