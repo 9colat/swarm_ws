@@ -1,5 +1,7 @@
+//-----Libraries-----//
 #include <ros.h>
-#include <geometry_msgs/Vector3.h>
+#include <std_msgs/Int32.h>
+#include <custom_msgs/USPS_msgs.h>
 
 enum Byte_Type {Escape = 0x10, StartByte = 0x2, StopByte = 0x3};
 enum State_Type {EscapeRec = 2, StartByteRec = 1, idle = 0};
@@ -8,10 +10,21 @@ int ByteCnt;
 unsigned char inBytes[100];
 bool cc;
 
+ros::NodeHandle nh;
+
+custom_msgs::USPS_msgs beacon_data = custom_msgs::USPS_msgs();
+ros::Publisher beacon_data_pub("beacon_data", &beacon_data);
+
+int hex_to_useable_data_test(int x, int y, int z){
+  int data = x + y * 256 + z * pow(256, 2);
+  return data;
+}
 
 void setup() {
-  Serial.begin(19200);
+  //Serial.begin(19200);
   Serial3.begin(115200);
+  nh.initNode();
+  nh.advertise(beacon_data_pub);
 }
 bool compute_checksum()
 {
@@ -45,13 +58,13 @@ void seperator(unsigned char array_input[], int lgt) {
   for (int i = 0; i < array_input[7]; i++) {
     if (array_input[i * 6 + 12] != 255 && array_input[i * 6 + 13] != 255) {
 
-      Serial.println("seperator: ");
-      Serial.println(array_input[7]);
+      //Serial.println("seperator: ");
+      //Serial.println(array_input[7]);
       beacon_data.ID = hex_to_useable_data_test(array_input[i*6+9],array_input[i*6+10],array_input[i*6+11]);
       beacon_data.RSSI = hex_to_useable_data_test(array_input[i*6+8],0,0);
       beacon_data.distance = 0.343 * hex_to_useable_data_test(array_input[i*6+12],array_input[i*6+13],0);
       beacon_data_pub.publish(&beacon_data);
-       nh.spinOnce();
+
     }
   }
 }
@@ -116,8 +129,8 @@ void data_saver_switch() {
           inBytes[ByteCnt++] = inByte;
           //Serial.print("state: default");
         }
-          Serial.print(inBytes[ByteCnt-1], DEC);
-          Serial.print("|");
+          //Serial.print(inBytes[ByteCnt-1], DEC);
+          //Serial.print("|");
 
       }
       break;
@@ -158,6 +171,7 @@ void loop() {
       {
         Serial.print("ERROR");
       } */
+      nh.spinOnce();
   }
 
 

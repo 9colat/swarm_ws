@@ -133,8 +133,8 @@ sudo snap install arduino-cli
 sudo apt install teensy-loader-cli -y
 cd
 cd swarm_ws
-sudo chmod 777 arduino_make_upload.sh
-sudo chmod 777 start_up_script.sh
+##sudo chmod 777 arduino_make_upload.sh
+##sudo chmod 777 start_up_script.sh
 
 ##sudo snap install hub-ctrl
 
