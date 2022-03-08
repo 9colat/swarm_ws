@@ -58,7 +58,7 @@ class USPS_data:
         dt = datetime.now()
         ts = datetime.timestamp(dt)
         index_of_data = self.id.index(id)
-        print(index_of_data)
+        #print(index_of_data)
         self.distance[index_of_data] = distance
         self.RSSI[index_of_data] = rssi
         self.time[index_of_data] = ts
@@ -83,12 +83,12 @@ class USPS_data:
 
 
     def pose_estimator_henrik_method(self):
-        id_array = [0] * 11
-        x_array = [0] * 11
-        y_array = [0] * 11
-        z_array = [0] * 11
+        id_array = [0] * len(self.id)
+        x_array = [0] * len(self.id)
+        y_array = [0] * len(self.id)
+        z_array = [0] * len(self.id)
         pose_esti = [0,0,0]
-        dist_array = [0] * 11
+        dist_array = [0] * len(self.id)
         j = 0
 
         period = 1000
@@ -104,26 +104,30 @@ class USPS_data:
                     dist_array[j] = self.distance[i]
                     j = j + 1
 
-        for k in range(j+1):
+        for k in range(j):
             dp = math.sqrt(pow(self.pose_est[0] - x_array[k], 2) + pow(self.pose_est[1] - y_array[k], 2) + pow(self.pose_est[2] - z_array[k], 2))
-            alpha = (dp - self.distance[k])/(dp + 10)
-            pose_est[0] = self.pose_est[0] + alpha * x_array[k] - self.pose_est[0]
-            pose_est[1] = self.pose_est[1] + alpha * y_array[k] - self.pose_est[1]
-            pose_est[2] = self.pose_est[2] + alpha * z_array[k] - self.pose_est[2]
+            #print("dp: ",dp)
+            #print("calculated: ",])
+            alpha = (dp - dist_array[k])/(dp + 10)
+            #print("Alpha: ", alpha)
+            pose_esti[0] = self.pose_est[0] + alpha * x_array[k] - self.pose_est[0]
+            pose_esti[1] = self.pose_est[1] + alpha * y_array[k] - self.pose_est[1]
+            pose_esti[2] = self.pose_est[2] + alpha * z_array[k] - self.pose_est[2]
+            #print(pose_esti[0])
 
-            dist_new = math.sqrt(pow(self.pose_est[0] - pose_est[0], 2) + pow(self.pose_est[1] - pose_est[1], 2) + pow(self.pose_est[2] - pose_est[2], 2))
+            dist_new = math.sqrt(pow(self.pose_est[0] - pose_esti[0], 2) + pow(self.pose_est[1] - pose_esti[1], 2) + pow(self.pose_est[2] - pose_esti[2], 2))
 
             if dist_new <= 1:
-                pose_est[0] = self.pose_est[0] + 0.2 * (x_array[k] - pose_est[0])/dp
-                pose_est[1] = self.pose_est[1] + 0.2 * (y_array[k] - pose_est[1])/dp
-                pose_est[2] = self.pose_est[2] + 0.2 * (z_array[k] - pose_est[2])/dp
+                pose_esti[0] = self.pose_est[0] + 0.2 * (x_array[k] - pose_esti[0])/dp
+                pose_esti[1] = self.pose_est[1] + 0.2 * (y_array[k] - pose_esti[1])/dp
+                pose_esti[2] = self.pose_est[2] + 0.2 * (z_array[k] - pose_esti[2])/dp
 
         #add sort array of the maybe sorted by the time elapsed since it was set
         self.pose_meas_beacon[0] = pose_esti[0]
         self.pose_meas_beacon[1] = pose_esti[1]
         self.pose_meas_beacon[2] = pose_esti[2]
-
-        return pose_est
+        print(pose_esti)
+        return pose_esti
 
 
     def pose_estimator_trilatertion(self):
@@ -265,7 +269,7 @@ def pose_estimator():
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():
-        print(w1.pose_estimator_henrik_method())
+        w1.pose_estimator_henrik_method()
 
         rate.sleep()
 
