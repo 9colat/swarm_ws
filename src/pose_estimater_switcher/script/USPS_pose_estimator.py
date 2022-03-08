@@ -54,9 +54,11 @@ class USPS_data:
 
 
     def updating_distance(self, id, rssi, distance):
+
         dt = datetime.now()
         ts = datetime.timestamp(dt)
         index_of_data = self.id.index(id)
+        print(index_of_data)
         self.distance[index_of_data] = distance
         self.RSSI[index_of_data] = rssi
         self.time[index_of_data] = ts
