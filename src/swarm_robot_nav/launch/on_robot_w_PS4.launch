@@ -15,12 +15,10 @@
 <include file="$(find ds4_driver)/launch/ds4_twist.launch"/>
 <node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" output="screen">
    <param name="port" value="/dev/ttyACM0" />
-   <param name="baud" value="9600"/>
-</node>
-<node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" output="screen">
    <param name="port" value="/dev/ttyACM1" />
    <param name="baud" value="9600"/>
 </node>
+
 <!--
 <node pkg="rviz" type="rviz" name="rviz"
   args="-d $(find hector_slam_launch)/rviz_cfg/mapping_demo.rviz"/>
