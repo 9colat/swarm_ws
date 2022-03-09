@@ -148,29 +148,6 @@ void data_saver_switch() {
 void loop() {
   while (Serial3.available()) {
     data_saver_switch();
-    /*  char inByte = Serial3.read();
-      if (inByte == StartByte || inByte == StopByte || inByte == Escape)
-      {
-        if (inByte == Escape) {
-          bool esc_char = true;
-        }
-        if (inByte == StartByte && esc_char == false) {
-          Serial.print("start|");
-        }
-        if (inByte == StopByte && esc_char == false) {
-          Serial.println("|stop");
-        }
-      }
-      else if ((inByte != StartByte && inByte != StopByte) || (esc_char == true && inByte == StartByte || inByte == StopByte))
-      {
-        Serial.print(inByte, DEC);
-        Serial.print("|");
-        //  if ((esc_char == true && inByte != StartByte) || (esc_char == true && inByte != StopByte) ) {
-        esc_char = false;
-      } else
-      {
-        Serial.print("ERROR");
-      } */
       nh.spinOnce();
   }
 

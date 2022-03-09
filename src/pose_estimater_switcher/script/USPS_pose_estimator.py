@@ -11,7 +11,7 @@ old_time = datetime.now()
 old_time_timestamp = datetime.timestamp(old_time)
 time_measured = 0
 iteriator = 0
-penis = [0,0,0]
+local_corection_array = [0,0,0]
 
 class USPS_data:
     def __init__(self):
@@ -228,13 +228,13 @@ def callback_distance(data):
     #print(data.distance)
 
 def callback_odom_and_imu(data):
-    global w1, iteriator, penis
+    global w1, iteriator, local_corection_array
     if iteriator < 10:
         w1.updating_acc(data.imu_acc.x, data.imu_acc.y, data.imu_acc.z)
         w1.omega_update(data.omega_right, data.omega_left)
         for j in range(len(w1.floor_corection)):
             w1.floor_corection_array[j][iteriator] = w1.acc_meas[j]
-            penis[j] += w1.floor_corection_array[j][iteriator]
+            local_corection_array[j] += w1.floor_corection_array[j][iteriator]
             print(iteriator)
         w1.updating_acc(0, 0, 0)
 
@@ -243,8 +243,8 @@ def callback_odom_and_imu(data):
         iteriator += 1
     if iteriator >= 10:
         if iteriator == 10:
-            for pe in range(len(penis)):
-                w1.floor_corection[pe] = penis[pe]/10
+            for l in range(len(local_corection_array)):
+                w1.floor_corection[l] = local_corection_array[l]/10
             #print(w1.floor_corection)
             w1.callibration_factor_acc = 9.81/math.sqrt(pow(w1.floor_corection[0],2)+pow(w1.floor_corection[1],2)+pow(w1.floor_corection[2],2))
             iteriator += 1
