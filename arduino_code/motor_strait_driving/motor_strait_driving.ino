@@ -13,7 +13,7 @@
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Quaternion.h>
 #include <geometry_msgs/Twist.h>
-//#include <custom_msgs/odom_and_imu.h>
+#include <custom_msgs/odom_and_imu.h>
 
 //Adafruit_BMP280 bmp; // use I2C interface
 //Adafruit_Sensor *bmp_temp = bmp.getTemperatureSensor();
@@ -127,8 +127,8 @@ geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
 ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
 ros::Publisher measured_angle_pub("measured_angle", &data_measured_angle);
-//custom_msgs::odom_and_imu data_measured_odom_and_imu = custom_msgs::odom_and_imu();
-//ros::Publisher odom_and_IMU_pub("odometry_and_IMU", &data_measured_odom_and_imu);
+custom_msgs::odom_and_imu data_measured_odom_and_imu = custom_msgs::odom_and_imu();
+ros::Publisher odom_and_IMU_pub("odometry_and_IMU", &data_measured_odom_and_imu);
 
 
 //-----Functions-----//
@@ -361,9 +361,9 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
 
 void imu_collection() {
   accelgyro.getMotion9(&accel_X, &accel_Y, &accel_Z, &gyro_X, &gyro_Y, &gyro_Z, &mx, &my, &mz);
-  //data_measured_odom_and_imu.imu_acc.x = accel_X;
-  //data_measured_odom_and_imu.imu_acc.y = accel_Y;
-  //data_measured_odom_and_imu.imu_acc.z = accel_Z;
+  data_measured_odom_and_imu.imu_acc.x = accel_X;
+  data_measured_odom_and_imu.imu_acc.y = accel_Y;
+  data_measured_odom_and_imu.imu_acc.z = accel_Z;
   //IMU_data_acc.publish(&imu_acc);
   //sensors_event_t temp_event;
   //bmp_temp->getEvent(&temp_event);
@@ -371,14 +371,14 @@ void imu_collection() {
 
   //data_measured_odom_and_imu.temp = temperature;
 
-  imu_gyro.x = gyro_X;
-  imu_gyro.y = gyro_Y;
-  imu_gyro.z = gyro_Z;
+  data_measured_odom_and_imu.imu_gyro.x = gyro_X;
+  data_measured_odom_and_imu.imu_gyro.y = gyro_Y;
+  data_measured_odom_and_imu.imu_gyro.z = gyro_Z;
   //IMU_data_gyro.publish(&imu_gyro);
   // data from the magnetometer that is calibrated and turned into a heading
-  imu_mag.x = mx;
-  imu_mag.y = my;
-  imu_mag.z = mz;
+  data_measured_odom_and_imu.imu_mag.x = mx;
+  data_measured_odom_and_imu.imu_mag.y = my;
+  data_measured_odom_and_imu.imu_mag.z = mz;
   //IMU_data_mag.publish(&imu_mag);
   measured_angle = atan2(my - mag_y_cal, mx - mag_x_cal) * 180 / pi;
   data_measured_angle.x = mx;
@@ -532,7 +532,7 @@ void loop() {
     //imu_collection();
     //data_measured_odom_and_imu.omega_right = average_omega_right;
     //data_measured_odom_and_imu.omega_left = average_omega_left;
-    //odom_and_IMU_pub.publish(&data_measured_odom_and_imu);
+    odom_and_IMU_pub.publish(&data_measured_odom_and_imu);
     speed_pub.publish(&wheel_speed);
   }
   nh.spinOnce();

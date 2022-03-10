@@ -221,7 +221,7 @@ w1 = USPS_data()
 def callback_distance(data):
     global w1
     if data.ID in w1.id:
-        print(data.ID, ": ", data.distance)
+        #print(data.ID, ": ", data.distance)
         w1.updating_distance(data.ID, data.RSSI, data.distance)
     #print(data.distance)
 
