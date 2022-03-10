@@ -15,5 +15,5 @@ fi
 
 cd
 cd swarm_ws
-git commit -m "auto upload from arduino maker"
-git push origin master
+#git commit -m "auto upload from arduino maker"
+# git push origin master
