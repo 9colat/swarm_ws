@@ -80,8 +80,9 @@ class USPS_data:
 
 
     def pose_estimator_henrik_method(self):
+        print("hello there")
         id_array = [0] * len(self.id)
-        beacon_coor = [[0] * len(self.id), [0]*3]
+        beacon_coor = [[0]*3]*len(self.id)
         pose_esti = [0,0,0]
         dist_array = [0] * len(self.id)
         j = 0
@@ -100,7 +101,7 @@ class USPS_data:
 
         for k in range(j):
             for q in range(3):
-                m = dist_array[k] * (self.pose_est[q]-beacon_coor[k][q])/abs(sqrt(pow(self.pose_est[0],2)+pow(self.pose_est[1],2)+pow(self.pose_est[2],2))-sqrt(pow(beacon_coor[k][0],2)+pow(beacon_coor[k][1],2)+pow(beacon_coor[k][2],2)))
+                m = dist_array[k] * (self.pose_est[q]-beacon_coor[k][q])/abs(math.sqrt(pow(self.pose_est[0],2)+pow(self.pose_est[1],2)+pow(self.pose_est[2],2))-math.sqrt(pow(beacon_coor[k][0],2)+pow(beacon_coor[k][1],2)+pow(beacon_coor[k][2],2)))
                 pose_esti[q] = beacon_coor[k][q] + m
             #dp = mathpose_esti[0] = .sqrt(pow(self.pose_est[0] - x_array[k], 2) + pow(self.pose_est[1] - y_array[k], 2) + pow(self.pose_est[2] - z_array[k], 2))
             #print("dp: ",dp)
@@ -120,9 +121,9 @@ class USPS_data:
             #    pose_esti[2] = self.pose_est[2] + 0.2 * (z_array[k] - pose_esti[2])/dp
 
         #add sort array of the maybe sorted by the time elapsed since it was set
-        #self.pose_meas_beacon[0] = pose_esti[0]
-        #self.pose_meas_beacon[1] = pose_esti[1]
-        #self.pose_meas_beacon[2] = pose_esti[2]
+        self.pose_est[0] = pose_esti[0]
+        self.pose_est[1] = pose_esti[1]
+        self.pose_est[2] = pose_esti[2]
         print(pose_esti)
         return pose_esti
 
@@ -268,8 +269,9 @@ def pose_estimator():
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():
+        #print("ola ")
         w1.pose_estimator_henrik_method()
-
+        #print("somewhat ")
         rate.sleep()
 
 if __name__ == '__main__':
