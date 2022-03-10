@@ -4,7 +4,7 @@
 <node pkg="pose_estimater_switcher" type="USPS_pose_estimator.py" name="USPS_pose_estimator" output="screen">
 </node>
 
-<node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" output="screen">
+<node pkg="rosserial_python" type="serial_node.py" name="rosserial_python">
    <param name="port" value="$(arg port)" />
 <!--   <param name="baud" value="9600"/> -->
 </node>
