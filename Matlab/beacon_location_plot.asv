@@ -1,7 +1,7 @@
 close all
 rosshutdown
 rosinit
-sub = rossubscriber('/USPS_pose_estimator','geometry_msgs/Pose')%,'DataFormat','struct');
+sub = rossubscriber('/USPS_pose_estimator','geometry_msgs/Pose','DataFormat','struct');
 f1 = figure;
 old_x = 0;
 old_y = 0;

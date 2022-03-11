@@ -1,11 +1,37 @@
 #!/usr/bin/env python3
 import rospy
 from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Pose
 from custom_msgs.msg import odom_and_imu
 from custom_msgs.msg import USPS_msgs
 from datetime import datetime
 import numpy as np
 import math
+import time
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from mpl_toolkits.mplot3d import Axes3D
+
+fig = plt.figure(figsize=(6,6))
+
+ax = fig.add_subplot(111, projection='3d')
+
+
+
+def plotter(x, y, z):
+    global w1
+    ax.clear()
+    ax.set_title("Potentiometer Reading Live Plot")
+    ax.set_xlabel("X - I have a bad feeling about this")
+    ax.set_ylabel("Y - Hello there")
+    ax.set_zlabel("z - General kenobi")
+
+    for i in range(len(w1.id)):
+        ax.scatter(w1.x[i],w1.y[i],w1.z[i],c="red")
+    ax.scatter(x,y,z,c="blue")
+
+
+
 
 old_time = datetime.now()
 old_time_timestamp = datetime.timestamp(old_time)
@@ -124,6 +150,11 @@ class USPS_data:
         self.pose_est[0] = pose_esti[0]
         self.pose_est[1] = pose_esti[1]
         self.pose_est[2] = pose_esti[2]
+        USPS_pose = Pose()
+        USPS_pose.position.x = pose_esti[0]
+        USPS_pose.position.y = pose_esti[1]
+        USPS_pose.position.z = pose_esti[2]
+        USPS_pub.publish(USPS_pose)
         print(pose_esti)
         return pose_esti
 
@@ -257,6 +288,7 @@ def pose_estimator():
     global w1
 
 
+
     #print(w1.pose_predict(10))
     #w1.pose_estimator_trilatertion()
     #dist_sort = sorted(w1.distance, reverse=True)
@@ -267,10 +299,16 @@ def pose_estimator():
     rospy.init_node('USPS_pose_estimator', anonymous=True)
     rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_odom_and_imu)
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
+    USPS_pub = rospy.Publisher('USPS_pose_est', Pose, queue_size=10)
     rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():
         #print("ola ")
         w1.pose_estimator_henrik_method()
+
+        #plotter(i,1,1)
+        #print(i)
+
+
         #print("somewhat ")
         rate.sleep()
 
