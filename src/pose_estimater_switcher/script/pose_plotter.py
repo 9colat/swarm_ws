@@ -37,6 +37,8 @@ def animate(i):
     ax1.scatter(x, y)
     ax2.scatter(beacon_x,beacon_y,beacon_z,c='r')
     ax2.scatter(x, y, z, c='b')
+    for i, txt in enumerate(beacon_id):
+        ax2.annotate(txt,(beacon_x[i],beacon_y[i],beacon_z[i]))
     #ax.tight_layout()
 
 ani = FuncAnimation(plt.gcf(), animate, interval=1000)
