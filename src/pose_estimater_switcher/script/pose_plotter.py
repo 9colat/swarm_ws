@@ -26,22 +26,36 @@ index = count()
 
 def animate(i):
     data = pd.read_csv(path)
-    x = data["x - coordinate"]
-    y = data["y - coordinate"]
-    z = data["z - coordinate"]
+    x = data["x"]
+    y = data["y"]
+    z = data["z"]
 
+    ax1.clear()
+    ax2.clear()
 
-
-    ax1.cla()
-    ax2.cla()
+    ax1.set_title("2d plot")
+    ax1.set_xlabel("X - I have a bad feeling about this")
+    ax1.set_ylabel("Y - Hello there")
+    ax2.set_title("3d plot")
+    ax2.set_xlabel("X - I have a bad feeling about this")
+    ax2.set_ylabel("Y - Hello there")
+    ax2.set_zlabel("z - General kenobi")
+    #print('x: ',x,',y: ',y)
     ax1.scatter(x, y)
     ax2.scatter(beacon_x,beacon_y,beacon_z,c='r')
     ax2.scatter(x, y, z, c='b')
-    for i, txt in enumerate(beacon_id):
-        ax2.annotate(txt,(beacon_x[i],beacon_y[i],beacon_z[i]))
+    for i in range(len(beacon_id)):
+        label = '%d' % (beacon_id[i])
+        ax2.text(beacon_x[i],beacon_y[i],beacon_z[i],label)
+        #ax2.annotate(,())
+    ax1.set_xlim(0,45000)
+    ax1.set_ylim(0,12000)
+    ax2.set_xlim(0,45000)
+    ax2.set_ylim(0,12000)
+    ax2.set_zlim(0,6000)
     #ax.tight_layout()
 
-ani = FuncAnimation(plt.gcf(), animate, interval=1000)
+ani = FuncAnimation(plt.gcf(), animate, interval=500)
 
-plt.tight_layout()
+#plt.tight_layout()
 plt.show()

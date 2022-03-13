@@ -8,7 +8,7 @@ from geometry_msgs.msg import Pose
 
 
 path = Path.home().joinpath("test_data", "pose.csv")
-fieldnames = ["x - coordinate", "y - coordinate", "z - coordinate"]
+fieldnames = ["x", "y", "z"]
 pose_est = [0] * 4
 seperator = ","
 
@@ -23,9 +23,9 @@ def callback_pose_log(data):
 
         if write_once:
             info = {
-                "x - coordinate": data.position.x,
-                "y - coordinate": data.position.y,
-                "z - coordinate": data.position.z
+                "x": data.position.x,
+                "y": data.position.y,
+                "z": data.position.z
             }
 
             csv_writer.writerow(info)

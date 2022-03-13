@@ -12,25 +12,6 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 
-fig = plt.figure(figsize=(6,6))
-
-ax = fig.add_subplot(111, projection='3d')
-
-
-
-def plotter(x, y, z):
-    global w1
-    ax.clear()
-    ax.set_title("Potentiometer Reading Live Plot")
-    ax.set_xlabel("X - I have a bad feeling about this")
-    ax.set_ylabel("Y - Hello there")
-    ax.set_zlabel("z - General kenobi")
-
-    for i in range(len(w1.id)):
-        ax.scatter(w1.x[i],w1.y[i],w1.z[i],c="red")
-    ax.scatter(x,y,z,c="blue")
-
-
 
 
 old_time = datetime.now()
