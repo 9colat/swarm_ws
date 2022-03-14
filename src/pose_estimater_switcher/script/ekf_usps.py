@@ -11,12 +11,8 @@ from filterpy.kalman import ExtendedKalmanFilter
 from filterpy.common import Q_discrete_white_noise
 
 
-rotated_matrix = [[0, -1],[1, 0]]
-mag_y_calibrated = 0
-mag_y_calibrated = 0
-pi = 3.141593
-delta_time = 0
-old_time = 0
+
+
 
 class USPS_data:
     def __init__(self):
@@ -63,7 +59,10 @@ class IMU_data:
         self.pi = 3.141593
         self.delta_time = 0
         self.old_time = 0
-
+        self.velocity = 0
+        self.current_heading = 0
+        self.heading = 0
+        self.position = 0
 
 
     def updating_imu(self, imu_acc, imu_gyro, imu_mag):
@@ -71,6 +70,12 @@ class IMU_data:
         self.imu_gyro = imu_gyro
         self.imu_mag = imu_mag
 
+        self.velocity = imu_acc[0] * delta_time
+        self.current_heading = (math.atan2(imu_mag[0] - mag_y_calibrated, imu_mag[1] - mag_x_calibrated) * 180 / pi) * delta_time
+        self.heading = rotated_matrix * current_heading * imu_gyro[2] * delta_time
+        self.position = velocity * heading * delta_time
+
+        print(velocity)
         #print(self.imu_acc)
         #print("im working")
 
@@ -94,6 +99,7 @@ def callback_distance(data): #from the beacon
 
 
 
+
 w1 = USPS_data()
 imu = IMU_data()
 ekf_filter = ExtendedKalmanFilter(5, 3) # number of state vectors - position (x,y), velocity(x), heading(x,y'); measurement variables - mag_x, mag_y, beacon distance
@@ -105,21 +111,20 @@ ekf_filter = ExtendedKalmanFilter(5, 3) # number of state vectors - position (x,
 
 def main():
 
-    global ekf_filter, imu, w1, old_time, delta_time, x, velocity, heading, current_heading, position
+    global ekf_filter, imu, w1
 
     imu.updating_imu([1,1,1],[2,2,2],[3,3,3])
+    imu.using_imu_data([1,1,1],[2,2,2],[3,3,3])
+
+
     #x=1
     #while True:
-    current_time = time.time()
-    delta_time = time.time() - current_time
+    #current_time = time.time()
+    #delta_time = time.time() - current_time
 
 #        x+1
 
-    velocity = imu_acc[0] * delta_time
-    print(velocity)
-    current_heading = (math.atan2(imu_mag[0] - mag_y_calibrated, imu_mag[1] - mag_x_calibrated) * 180 / pi) * delta_time
-    heading = rotated_matrix * current_heading * imu_gyro[2] * delta_time
-    position = velocity * heading * delta_time
+
     #ekf_filter.x = np.array([[2.], [0.]])       # initial state (location and velocity)
     #ekf_filter.F = np.array([[1.,1.], [0.,1.]])    # state transition matrix
     #ekf_filter.H = np.array([[1.,0.]])    # Measurement function
