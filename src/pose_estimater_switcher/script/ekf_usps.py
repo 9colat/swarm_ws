@@ -12,6 +12,12 @@ from filterpy.common import Q_discrete_white_noise
 
 
 
+# constants
+rotated_matrix_1straw = [0.0, -1.0]
+rotated_matrix_2ndraw = [1.0, 0.0]
+mag_x_calibrated = 0.0
+mag_y_calibrated = 0.0
+pi = 3.141593
 
 
 class USPS_data:
@@ -50,34 +56,41 @@ class USPS_data:
 
 class IMU_data:
     def __init__(self):
-        self.imu_acc = [0]*3
-        self.imu_gyro = [0]*3
-        self.imu_mag = [0]*3
-        self.rotated_matrix = [[0, -1],[1, 0]]
-        self.mag_x_calibrated = 0
-        self.mag_y_calibrated = 0
-        self.pi = 3.141593
-        self.delta_time = 0
+        self.imu_acc = [0.0]*3
+        self.imu_gyro = [0.0]*3
+        self.imu_mag = [0.0]*3
         self.old_time = 0
-        self.velocity = 0
-        self.current_heading = 0
-        self.heading = 0
-        self.position = 0
+        self.old_heading = [0.0]*2
+        self.position = [0.0]*3
+        self.velocity = 0.0
+        self.heading = [0.0]*2
 
 
     def updating_imu(self, imu_acc, imu_gyro, imu_mag):
+        global imu_collected
         self.imu_acc = imu_acc
         self.imu_gyro = imu_gyro
         self.imu_mag = imu_mag
+        imu_collected.using_imu_data(imu_acc, imu_gyro, imu_mag)
 
-        self.velocity = imu_acc[0] * delta_time
-        self.current_heading = (math.atan2(imu_mag[0] - mag_y_calibrated, imu_mag[1] - mag_x_calibrated) * 180 / pi) * delta_time
-        self.heading = rotated_matrix * current_heading * imu_gyro[2] * delta_time
-        self.position = velocity * heading * delta_time
 
-        print(velocity)
-        #print(self.imu_acc)
-        #print("im working")
+    def using_imu_data(self):
+        delta_time = time.time() - self.old_time
+        self.old_time = time.time()
+
+        self.velocity = self.imu_acc[0] * delta_time
+        self.old_heading = (math.atan2(self.imu_mag[0] - mag_y_calibrated, self.imu_mag[1] - mag_x_calibrated) * 180 / pi) * delta_time
+
+        for x in range(len(self.old_heading)):
+            self.heading[x] = rotated_matrix[x] * self.old_heading[x] * self.imu_gyro[2] * delta_time
+            self.position[x] = self.velocity * self.heading[x] * delta_time
+
+
+
+        return position, velocity, heading
+
+
+
 
 # ROS collection
 def callback_imu(data): #from the beacon
@@ -113,19 +126,16 @@ def main():
 
     global ekf_filter, imu, w1
 
-    imu.updating_imu([1,1,1],[2,2,2],[3,3,3])
-    imu.using_imu_data([1,1,1],[2,2,2],[3,3,3])
-
+    imu.updating_imu([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
+    imu.using_imu_data([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
 
     #x=1
     #while True:
-    #current_time = time.time()
-    #delta_time = time.time() - current_time
 
 #        x+1
 
 
-    #ekf_filter.x = np.array([[2.], [0.]])       # initial state (location and velocity)
+    ekf_filter.x = np.array([[2.], [0.]])       # initial state (location and velocity)
     #ekf_filter.F = np.array([[1.,1.], [0.,1.]])    # state transition matrix
     #ekf_filter.H = np.array([[1.,0.]])    # Measurement function
     #ekf_filter.P *= 1000.                 # covariance matrix
