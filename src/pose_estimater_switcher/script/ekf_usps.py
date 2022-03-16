@@ -13,8 +13,7 @@ from filterpy.common import Q_discrete_white_noise
 
 
 # constants
-rotated_matrix_1straw = [0.0, -1.0]
-rotated_matrix_2ndraw = [1.0, 0.0]
+rotated_matrix = [[0.0, -1.0], [1.0, 0.0]]
 mag_x_calibrated = 0.0
 mag_y_calibrated = 0.0
 pi = 3.141593
@@ -55,23 +54,30 @@ class USPS_data:
 
 
 class IMU_data:
+
     def __init__(self):
         self.imu_acc = [0.0]*3
         self.imu_gyro = [0.0]*3
         self.imu_mag = [0.0]*3
-        self.old_time = 0
+        self.old_time = 0.0
         self.old_heading = [0.0]*2
         self.position = [0.0]*3
-        self.velocity = 0.0
+        self.velocity = [0.0]
         self.heading = [0.0]*2
+        self.input = [0.0, 0.0]
+        self.x_state = [0.0, 0.0, 0.0]
 
 
     def updating_imu(self, imu_acc, imu_gyro, imu_mag):
-        global imu_collected
         self.imu_acc = imu_acc
         self.imu_gyro = imu_gyro
         self.imu_mag = imu_mag
-        imu_collected.using_imu_data(imu_acc, imu_gyro, imu_mag)
+        self.using_imu_data()
+        self.input_model()
+
+
+    def input_model(self):
+        self.input = np.transpose([self.imu_acc[0], self.imu_gyro[2]])
 
 
     def using_imu_data(self):
@@ -79,15 +85,20 @@ class IMU_data:
         self.old_time = time.time()
 
         self.velocity = self.imu_acc[0] * delta_time
-        self.old_heading = (math.atan2(self.imu_mag[0] - mag_y_calibrated, self.imu_mag[1] - mag_x_calibrated) * 180 / pi) * delta_time
+        #self.old_heading = (math.atan2(self.imu_mag[0] - mag_y_calibrated, self.imu_mag[1] - mag_x_calibrated) * 180 / pi) * delta_time
 
-        for x in range(len(self.old_heading)):
-            self.heading[x] = rotated_matrix[x] * self.old_heading[x] * self.imu_gyro[2] * delta_time
+        #for x in range(len(self.old_heading)):
+        for x in range(len(self.heading)):
+
+            self.heading[x] = rotated_matrix[x] * self.heading[x] * self.imu_gyro[2] * delta_time
             self.position[x] = self.velocity * self.heading[x] * delta_time
 
+        self.state_model()
 
 
-        return position, velocity, heading
+    def state_model(self):
+        self.x_state = np.transpose([np.transpose(self.position), self.velocity, np.transpose(self.heading)])
+
 
 
 
@@ -111,11 +122,9 @@ def callback_distance(data): #from the beacon
 
 
 
-
-
 w1 = USPS_data()
 imu = IMU_data()
-ekf_filter = ExtendedKalmanFilter(5, 3) # number of state vectors - position (x,y), velocity(x), heading(x,y'); measurement variables - mag_x, mag_y, beacon distance
+
 
 
 
@@ -124,10 +133,10 @@ ekf_filter = ExtendedKalmanFilter(5, 3) # number of state vectors - position (x,
 
 def main():
 
-    global ekf_filter, imu, w1
 
-    imu.updating_imu([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
-    imu.using_imu_data([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
+    ekf_filter = ExtendedKalmanFilter(5, 3) # number of state vectors - position (x,y), velocity(x), heading(x,y'); measurement variables - mag_x, mag_y, beacon distance
+    while 1:
+        imu.updating_imu([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
 
     #x=1
     #while True:
@@ -135,7 +144,7 @@ def main():
 #        x+1
 
 
-    ekf_filter.x = np.array([[2.], [0.]])       # initial state (location and velocity)
+        ekf_filter.x = imu.x_state     # initial state (location and velocity)
     #ekf_filter.F = np.array([[1.,1.], [0.,1.]])    # state transition matrix
     #ekf_filter.H = np.array([[1.,0.]])    # Measurement function
     #ekf_filter.P *= 1000.                 # covariance matrix
@@ -154,6 +163,6 @@ def main():
     # do something with the output
     #x = ekf_filter.x
     #do_something_amazing(x) #output function
-
+        print(imu.x_state)
 if __name__ == '__main__':
     main()
