@@ -13,7 +13,7 @@ from filterpy.common import Q_discrete_white_noise
 
 
 # constants
-rotated_matrix = np.array([[0.0, 1.0], [-1.0, 0.0]])
+rotated_matrix = np.array([[0.0, -1.0], [1.0, 0.0]])
 mag_x_calibrated = 0.0
 mag_y_calibrated = 0.0
 pi = 3.141593
@@ -100,7 +100,7 @@ class IMU_data:
         #for x in range(len(self.old_heading)):
         for x in range(len(self.heading)):
 
-            self.heading[x] = rotated_matrix[x] * self.heading[x] * self.imu_gyro[2] * delta_time
+            self.heading[x] = rotated_matrix[[x],[x]] * self.heading[x] * self.imu_gyro[2] * delta_time
             self.position[x] = self.velocity * self.heading[x] * delta_time
 
         self.state_model()
@@ -145,9 +145,8 @@ def main():
 
 
     ekf_filter = ExtendedKalmanFilter(5, 3) # number of state vectors - position (x,y), velocity(x), heading(x,y'); measurement variables - mag_x, mag_y, beacon distance
-    while 1:
-        imu.updating_imu([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
-
+    imu.updating_imu([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
+    print(rotated_matrix)
     #x=1
     #while True:
 
@@ -175,6 +174,6 @@ def main():
     # do something with the output
     #x = ekf_filter.x
     #do_something_amazing(x) #output function # ?
-    print(rotated_matrix)
+    #print(rotated_matrix)
 if __name__ == '__main__':
     main()
