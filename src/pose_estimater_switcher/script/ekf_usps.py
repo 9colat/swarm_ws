@@ -13,7 +13,7 @@ from filterpy.common import Q_discrete_white_noise
 
 
 # constants
-rotated_matrix = [[0.0, 1.0], [-1.0, 0.0]]
+rotated_matrix = np.array([[0.0, 1.0], [-1.0, 0.0]])
 mag_x_calibrated = 0.0
 mag_y_calibrated = 0.0
 pi = 3.141593
@@ -56,16 +56,26 @@ class USPS_data:
 class IMU_data:
 
     def __init__(self):
-        self.imu_acc = [[0.0]*3]
-        self.imu_gyro = [[0.0]*3]
-        self.imu_mag = [[0.0]*3]
-        self.old_time = [0.0]
-        self.old_heading = [[0.0]*2]
-        self.position = [[0.0]*3]
-        self.velocity = [0.0]
-        self.heading = [[0.0]*2]
-        self.input = [0.0, 0.0]
-        self.x_state = [0.0, 0.0, 0.0]
+        np.array([1,1,3,0,1]).reshape(-1,1)
+        self.imu_acc = np.array([0.0]*3).reshape(-1,1)
+        self.imu_gyro = np.array([0.0]*3).reshape(-1,1)
+        self.imu_mag = np.array([0.0]*3).reshape(-1,1)
+        self.old_time = 0.0
+        self.heading = np.array([0.0]*2).reshape(-1,1)
+        self.position = np.array([0.0]*3).reshape(-1,1)
+        self.velocity = 0.0
+        self.input = np.array([0.0]*2)
+        self.x_state = np.array([0.0]*3)
+        #self.imu_acc = [[0.0]*3]
+        #self.imu_gyro = [[0.0]*3]
+        #self.imu_mag = [[0.0]*3]
+        #self.old_time = 0.0
+        #self.old_heading = [[0.0]*2]
+        #self.position = [[0.0]*3]
+        #self.velocity = [0.0]
+        #self.heading = [[0.0]*2]
+        #self.input = [0.0, 0.0]
+        #self.x_state = [0.0, 0.0, 0.0]
 
 
     def updating_imu(self, imu_acc, imu_gyro, imu_mag):
@@ -90,8 +100,8 @@ class IMU_data:
         #for x in range(len(self.old_heading)):
         for x in range(len(self.heading)):
 
-            self.heading[x[x]] = rotated_matrix[x[x]] * self.heading[x[x]] * self.imu_gyro[2] * delta_time
-            self.position[x[x]] = self.velocity * self.heading[x[x]] * delta_time
+            self.heading[x] = rotated_matrix[x] * self.heading[x] * self.imu_gyro[2] * delta_time
+            self.position[x] = self.velocity * self.heading[x] * delta_time
 
         self.state_model()
 
@@ -143,26 +153,28 @@ def main():
 
 #        x+1
 
-
-        ekf_filter.x = imu.x_state     # initial state (location and velocity)
-    #ekf_filter.F = np.array([[1.,1.], [0.,1.]])    # state transition matrix
-    #ekf_filter.H = np.array([[1.,0.]])    # Measurement function
-    #ekf_filter.P *= 1000.                 # covariance matrix
-    #ekf_filter.R = 5                      # state uncertainty
-    #ekf_filter.Q = Q_discrete_white_noise(2, dt, .1) # process uncertainty
-
     #while not rospy.is_shutdown():
     #    rospy.Subscriber("imu_data", odom_and_imu, callback_imu)
     #    rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     #    rate.sleep()
 
+
+    #ekf_filter.x = imu.x_state     # initial state (location and velocity)
+    #ekf_filter.F = np.array([[1.,1.], [0.,1.]])    # state transition matrix
+    #ekf_filter.H = np.array([[1.,0.]])    # Measurement function - this is where we should pass beacons and IMU data
+    #ekf_filter.P *= 1000.                 # covariance matrix
+    #ekf_filter.R = 5                      # state uncertainty
+    #ekf_filter.Q = Q_discrete_white_noise(2, dt, .1) # process uncertainty
+
+
+
     #while True:
     #ekf_filter.predict()
-    #ekf_filter.update(get_some_measurement()) #input function
+    #ekf_filter.update(get_some_measurement()) #input function - using_imu_data()?
 
     # do something with the output
     #x = ekf_filter.x
-    #do_something_amazing(x) #output function
-        print(imu.x_state)
+    #do_something_amazing(x) #output function # ?
+    print(rotated_matrix)
 if __name__ == '__main__':
     main()
