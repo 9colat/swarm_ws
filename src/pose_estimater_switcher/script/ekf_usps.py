@@ -107,7 +107,10 @@ class IMU_data:
 
 
     def state_model(self):
+        global current_state
         self.x_state = np.transpose([np.transpose(self.position), self.velocity, np.transpose(self.heading)])
+        current_state = self.x_state
+        return current_state
 
 
 
@@ -146,7 +149,7 @@ def main():
 
     ekf_filter = ExtendedKalmanFilter(5, 3) # number of state vectors - position (x,y), velocity(x), heading(x,y'); measurement variables - mag_x, mag_y, beacon distance
     imu.updating_imu([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
-    print(rotated_matrix)
+    print(current_state)
     #x=1
     #while True:
 
