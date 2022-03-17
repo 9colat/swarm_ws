@@ -13,7 +13,7 @@ from filterpy.common import Q_discrete_white_noise
 
 
 # constants
-rotated_matrix = [[0.0, -1.0], [1.0, 0.0]]
+rotated_matrix = [[0.0, 1.0], [-1.0, 0.0]]
 mag_x_calibrated = 0.0
 mag_y_calibrated = 0.0
 pi = 3.141593
@@ -56,14 +56,14 @@ class USPS_data:
 class IMU_data:
 
     def __init__(self):
-        self.imu_acc = [0.0]*3
-        self.imu_gyro = [0.0]*3
-        self.imu_mag = [0.0]*3
-        self.old_time = 0.0
-        self.old_heading = [0.0]*2
-        self.position = [0.0]*3
+        self.imu_acc = [[0.0]*3]
+        self.imu_gyro = [[0.0]*3]
+        self.imu_mag = [[0.0]*3]
+        self.old_time = [0.0]
+        self.old_heading = [[0.0]*2]
+        self.position = [[0.0]*3]
         self.velocity = [0.0]
-        self.heading = [0.0]*2
+        self.heading = [[0.0]*2]
         self.input = [0.0, 0.0]
         self.x_state = [0.0, 0.0, 0.0]
 
@@ -90,8 +90,8 @@ class IMU_data:
         #for x in range(len(self.old_heading)):
         for x in range(len(self.heading)):
 
-            self.heading[x] = rotated_matrix[x] * self.heading[x] * self.imu_gyro[2] * delta_time
-            self.position[x] = self.velocity * self.heading[x] * delta_time
+            self.heading[x[x]] = rotated_matrix[x[x]] * self.heading[x[x]] * self.imu_gyro[2] * delta_time
+            self.position[x[x]] = self.velocity * self.heading[x[x]] * delta_time
 
         self.state_model()
 
