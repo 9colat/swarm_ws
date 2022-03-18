@@ -91,18 +91,24 @@ class IMU_data:
 
 
     def using_imu_data(self):
+        global local_position, local_velocity, local_heading
         delta_time = time.time() - self.old_time
         self.old_time = time.time()
 
         self.velocity = self.imu_acc[0] * delta_time
         #self.old_heading = (math.atan2(self.imu_mag[0] - mag_y_calibrated, self.imu_mag[1] - mag_x_calibrated) * 180 / pi) * delta_time
 
-        #for x in range(len(self.old_heading)):
-        for x in range(len(self.heading)):
+        #for x in range(2):
+        #for x in range(len(self.heading)):
+        self.heading = np.dot(rotated_matrix,self.heading) * self.imu_gyro[2] * delta_time
+        #self.heading[x] = rotated_matrix[[x],[x]] * self.heading[x] * self.imu_gyro[2] * delta_time
+        self.position = np.dot(self.velocity,self.heading) * delta_time
+        #print(rotated_matrix[[x],[x]])
 
-            self.heading[x] = rotated_matrix[[x],[x]] * self.heading[x] * self.imu_gyro[2] * delta_time
-            self.position[x] = self.velocity * self.heading[x] * delta_time
-
+        local_position = self.position
+        local_velocity = self.velocity
+        local_heading = self.heading
+        return local_position, local_velocity, local_heading
         self.state_model()
 
 
@@ -149,7 +155,11 @@ def main():
 
     ekf_filter = ExtendedKalmanFilter(5, 3) # number of state vectors - position (x,y), velocity(x), heading(x,y'); measurement variables - mag_x, mag_y, beacon distance
     imu.updating_imu([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
-    print(current_state)
+    print(local_position)
+    #print(local_velocity)
+    #print(local_heading)
+    #print(current_state)
+    #print(rotated_matrix[1])
     #x=1
     #while True:
 
