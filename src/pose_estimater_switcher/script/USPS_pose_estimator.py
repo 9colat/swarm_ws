@@ -8,10 +8,6 @@ from datetime import datetime
 import numpy as np
 import math
 import time
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from mpl_toolkits.mplot3d import Axes3D
-
 
 
 old_time = datetime.now()
@@ -19,6 +15,8 @@ old_time_timestamp = datetime.timestamp(old_time)
 time_measured = 0
 iteriator = 0
 local_corection_array = [0,0,0]
+
+USPS_pub = rospy.Publisher('USPS_pose_est', Pose, queue_size=10)
 
 class USPS_data:
     def __init__(self):
@@ -108,8 +106,15 @@ class USPS_data:
 
         for k in range(j):
             for q in range(3):
-                m = dist_array[k] * (self.pose_est[q]-beacon_coor[k][q])/abs(math.sqrt(pow(self.pose_est[0],2)+pow(self.pose_est[1],2)+pow(self.pose_est[2],2))-math.sqrt(pow(beacon_coor[k][0],2)+pow(beacon_coor[k][1],2)+pow(beacon_coor[k][2],2)))
+                m = dist_array[k] * (self.pose_est[q]-beacon_coor[k][q])/abs(math.sqrt(pow(self.pose_est[0]-beacon_coor[k][0],2)+pow(self.pose_est[1]-beacon_coor[k][1],2)+pow(self.pose_est[2]-beacon_coor[k][2],2)))#-math.sqrt(pow(beacon_coor[k][0],2)+pow(beacon_coor[k][1],2)+pow(beacon_coor[k][2],2)))
+                print((self.pose_est[q]-beacon_coor[k][q]))
+                print("self.pose_est[q]: ",self.pose_est[q])
+                print("beacon_coor[k][q]: ",beacon_coor[k][q])
+                #print("m: ",m)
+                #print("|o-l|: ", abs(math.sqrt(pow(self.pose_est[0],2)+pow(self.pose_est[1],2)+pow(self.pose_est[2],2))-math.sqrt(pow(beacon_coor[k][0],2)+pow(beacon_coor[k][1],2)+pow(beacon_coor[k][2],2))))
                 pose_esti[q] = beacon_coor[k][q] + m
+
+            #dist_new = math.sqrt(pow(self.pose_est[0] - pose_esti[0],2)+pow(self.pose_est[1] - pose_esti[1],2)+pow(self.pose_est[2] - pose_esti[2],2))
             #dp = mathpose_esti[0] = .sqrt(pow(self.pose_est[0] - x_array[k], 2) + pow(self.pose_est[1] - y_array[k], 2) + pow(self.pose_est[2] - z_array[k], 2))
             #print("dp: ",dp)
             #print("calculated: ",])
@@ -123,9 +128,12 @@ class USPS_data:
             #dist_new = math.sqrt(pow(self.pose_est[0] - pose_esti[0], 2) + pow(self.pose_est[1] - pose_esti[1], 2) + pow(self.pose_est[2] - pose_esti[2], 2))
 
             #if dist_new <= 1:
-            #    pose_esti[0] = self.pose_est[0] + 0.2 * (x_array[k] - pose_esti[0])/dp
-            #    pose_esti[1] = self.pose_est[1] + 0.2 * (y_array[k] - pose_esti[1])/dp
-            #    pose_esti[2] = self.pose_est[2] + 0.2 * (z_array[k] - pose_esti[2])/dp
+            #    for c in range(len(pose_esti)):
+            #        pose_esti[c] = beacon_coor[k][c] + 0.2 * m
+
+                #pose_esti[0] = self.pose_est[0] + 0.2 * (x_array[k] - pose_esti[0])/dp
+                #pose_esti[1] = self.pose_est[1] + 0.2 * (y_array[k] - pose_esti[1])/dp
+                #pose_esti[2] = self.pose_est[2] + 0.2 * (z_array[k] - pose_esti[2])/dp
 
         #add sort array of the maybe sorted by the time elapsed since it was set
         self.pose_est[0] = pose_esti[0]
@@ -136,7 +144,7 @@ class USPS_data:
         USPS_pose.position.y = pose_esti[1]
         USPS_pose.position.z = pose_esti[2]
         USPS_pub.publish(USPS_pose)
-        print(pose_esti)
+        #print(pose_esti)
         return pose_esti
 
 
@@ -280,7 +288,6 @@ def pose_estimator():
     rospy.init_node('USPS_pose_estimator', anonymous=True)
     rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_odom_and_imu)
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
-    USPS_pub = rospy.Publisher('USPS_pose_est', Pose, queue_size=10)
     rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():
         #print("ola ")

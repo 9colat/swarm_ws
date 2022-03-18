@@ -26,36 +26,40 @@ index = count()
 
 def animate(i):
     data = pd.read_csv(path)
-    x = data["x"]
-    y = data["y"]
-    z = data["z"]
+    df = pd.DataFrame(data)
+    isempty = df.empty
+    print('Is the DataFrame empty :', isempty)
+    if not isempty:
+        x = data["x"]
+        y = data["y"]
+        z = data["z"]
 
-    ax1.clear()
-    ax2.clear()
+        ax1.clear()
+        ax2.clear()
 
-    ax1.set_title("2d plot")
-    ax1.set_xlabel("X - I have a bad feeling about this")
-    ax1.set_ylabel("Y - Hello there")
-    ax2.set_title("3d plot")
-    ax2.set_xlabel("X - I have a bad feeling about this")
-    ax2.set_ylabel("Y - Hello there")
-    ax2.set_zlabel("z - General kenobi")
-    #print('x: ',x,',y: ',y)
-    ax1.scatter(x, y)
-    ax2.scatter(beacon_x,beacon_y,beacon_z,c='r')
-    ax2.scatter(x, y, z, c='b')
-    for i in range(len(beacon_id)):
-        label = '%d' % (beacon_id[i])
-        ax2.text(beacon_x[i],beacon_y[i],beacon_z[i],label)
-        #ax2.annotate(,())
-    ax1.set_xlim(0,45000)
-    ax1.set_ylim(0,12000)
-    ax2.set_xlim(0,45000)
-    ax2.set_ylim(0,12000)
-    ax2.set_zlim(0,6000)
+        ax1.set_title("2d plot")
+        ax1.set_xlabel("X - I have a bad feeling about this")
+        ax1.set_ylabel("Y - Hello there")
+        ax2.set_title("3d plot")
+        ax2.set_xlabel("X - I have a bad feeling about this")
+        ax2.set_ylabel("Y - Hello there")
+        ax2.set_zlabel("z - General kenobi")
+        #print('x: ',x,',y: ',y)
+        ax1.scatter(x, y)
+        ax2.scatter(beacon_x,beacon_y,beacon_z,c='r')
+        ax2.scatter(x, y, z, c='b')
+        for i in range(len(beacon_id)):
+            label = '%d' % (beacon_id[i])
+            ax2.text(beacon_x[i],beacon_y[i],beacon_z[i],label)
+            #ax2.annotate(,())
+        ax1.set_xlim(0,45000)
+        ax1.set_ylim(0,12000)
+        ax2.set_xlim(0,45000)
+        ax2.set_ylim(0,12000)
+        ax2.set_zlim(0,6000)
     #ax.tight_layout()
 
-ani = FuncAnimation(plt.gcf(), animate, interval=500)
+ani = FuncAnimation(plt.gcf(), animate, interval=1000)
 
 #plt.tight_layout()
 plt.show()
