@@ -61,7 +61,7 @@ class IMU_data:
         self.imu_gyro = np.array([0.0]*3).reshape(-1,1)
         self.imu_mag = np.array([0.0]*3).reshape(-1,1)
         self.old_time = 0.0
-        self.heading = np.array([0.0]*2).reshape(-1,1)
+        self.heading = np.array([1.0]*2).reshape(-1,1)
         self.position = np.array([0.0]*3).reshape(-1,1)
         self.velocity = 0.0
         self.input = np.array([0.0]*2)
@@ -108,15 +108,18 @@ class IMU_data:
         local_position = self.position
         local_velocity = self.velocity
         local_heading = self.heading
-        return local_position, local_velocity, local_heading
         self.state_model()
+        return local_position, local_velocity, local_heading
+
 
 
     def state_model(self):
         global current_state
         self.x_state = np.transpose([np.transpose(self.position), self.velocity, np.transpose(self.heading)])
         current_state = self.x_state
+        print(current_state)
         return current_state
+
 
 
 
@@ -155,10 +158,10 @@ def main():
 
     ekf_filter = ExtendedKalmanFilter(5, 3) # number of state vectors - position (x,y), velocity(x), heading(x,y'); measurement variables - mag_x, mag_y, beacon distance
     imu.updating_imu([1.0,1.0,1.0],[2.0,2.0,2.0],[3.0,3.0,3.0])
-    print(local_position)
+    #print(local_position)
     #print(local_velocity)
     #print(local_heading)
-    #print(current_state)
+
     #print(rotated_matrix[1])
     #x=1
     #while True:
