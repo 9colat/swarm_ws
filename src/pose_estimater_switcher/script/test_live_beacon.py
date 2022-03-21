@@ -1,17 +1,30 @@
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-from mpl_toolkits.mplot3d import Axes3D
+import rospy
 import numpy as np
 import math
 import random
+import csv
 from estimator_function import Pose_Calculator
 from custom_msgs.msg import USPS_msgs
 
 PC = Pose_Calculator(-1,-1,-1)
+path = Path.home().joinpath("test_data", "pose.csv")
+fieldnames = ["x", "y", "z"]
+with open(path,'w') as csv_file:
+    csv_writer = csv.DictWriter(csv_file,fieldnames=fieldnames)
+    csv_writer.writeheader()
 
 def callback_distance(data):
     global PC
     pose_meas_beacon = PC.pose_estimator(data.ID, data.distance)
+        with open(path, 'a') as csv_file:
+            csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            info = {
+                "x": pose_meas_beacon[0],
+                "y": pose_meas_beacon[1],
+                "z": pose_meas_beacon[2]
+            }
+
+            csv_writer.writerow(info)
     print(pose_meas_beacon)
 
 
