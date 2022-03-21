@@ -95,12 +95,12 @@ class IMU_data:
         delta_time = time.time() - self.old_time
         self.old_time = time.time()
 
-        self.velocity = self.imu_acc[0] * delta_time
+        self.velocity = self.velocity + self.imu_acc[0] * delta_time
         #self.old_heading = (math.atan2(self.imu_mag[0] - mag_y_calibrated, self.imu_mag[1] - mag_x_calibrated) * 180 / pi) * delta_time
 
         #for x in range(2):
         #for x in range(len(self.heading)):
-        self.heading = np.dot(rotated_matrix,self.heading) * self.imu_gyro[2] * delta_time
+        self.heading = self.heading + np.dot(rotated_matrix,self.heading) * self.imu_gyro[2] * delta_time
         #self.heading[x] = rotated_matrix[[x],[x]] * self.heading[x] * self.imu_gyro[2] * delta_time
         self.position = np.dot(self.velocity,self.heading) * delta_time
         #print(rotated_matrix[[x],[x]])
