@@ -5,11 +5,12 @@ from geometry_msgs.msg import Pose
 from custom_msgs.msg import odom_and_imu
 from custom_msgs.msg import USPS_msgs
 from datetime import datetime
+from estimator_function import Pose_Calculator
 import numpy as np
 import math
 import time
 
-
+PC = Pose_Calculator()
 old_time = datetime.now()
 old_time_timestamp = datetime.timestamp(old_time)
 time_measured = 0
@@ -240,11 +241,12 @@ w1 = USPS_data()
 
 
 def callback_distance(data):
-    global w1
-    if data.ID in w1.id:
+    global w1, PC
+    pose_meas_beacon = PC.pose_estimator(data.ID, data.distance)
+    #if data.ID in w1.id:
         #print(data.ID, ": ", data.distance)
-        w1.updating_distance(data.ID, data.RSSI, data.distance)
-    #print(data.distance)
+        #w1.updating_distance(data.ID, data.RSSI, data.distance)
+    print(pose_meas_beacon)
 
 def callback_odom_and_imu(data):
     global w1, iteriator, local_corection_array
