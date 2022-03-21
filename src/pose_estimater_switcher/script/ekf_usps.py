@@ -113,7 +113,7 @@ class USPS_data:
 
     self.measurement = pow(np.linalg.norm(self.position - BEACON), 2)
     self.measurement_estimated = pow((np.linalg.norm(self.predicted_position - BEACON), 2)
-    measurement_difference = self.measurement - self.measurement_estimated
+    estimation_difference = self.measurement - self.measurement_estimated
 
     B_index=rem(i,3)+1;
     Beacon=Beacons(:,B_index);
@@ -121,7 +121,7 @@ class USPS_data:
     #ye=norm(e_states(1:2,i+1)-Beacon)^2;
     #yd=y-ye;
     H=HdNum(Beacon(1),Beacon(2),e_states(1,i),e_states(2,i));
-    
+
 
     S=H*P*H'+R;
     K=P*H'*inv(S);
