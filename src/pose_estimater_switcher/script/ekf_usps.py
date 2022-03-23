@@ -46,23 +46,23 @@ class EKF:
         self.floor_corection = np.array([0.0,0.0,0.0])
 
         # self stuff for IMU
-        self.imu_acc = np.array([0.0]*3).reshape(-1,1)
-        self.imu_gyro = np.array([0.0]*3).reshape(-1,1)
-        self.imu_mag = np.array([0.0]*3).reshape(-1,1)
+        self.imu_acc = np.array([[0.0]*3])
+        self.imu_gyro = np.array([[0.0]*3])
+        self.imu_mag = np.array([[0.0]*3])
         self.old_time = time.time() / 1000
         self.predicted_old_time = time.time() / 1000
-        self.heading = np.array([1.0]*2).reshape(-1,1)
-        self.position = np.array([0.0]*2).reshape(-1,1)
+        self.heading = np.array([[0.0]*2])
+        self.position = np.array([[0.0]*2])
         self.velocity = 0.0
-        self.predicted_heading = np.array([1.0]*2).reshape(-1,1)
-        self.predicted_position = np.array([0.0]*2).reshape(-1,1)
+        self.predicted_heading = np.array([[0.0]*2])
+        self.predicted_position = np.array([[0.0]*2])
         self.predicted_velocity = 0.0
-        self.input = np.array([0.0]*2)
-        self.x_state = np.array([0.0]*3)
-        self.x_state_predicted = np.array([0.0]*3)
+        self.input = np.array([[0.0]*2])
+        self.x_state = np.array([[0.0]*5])
+        self.x_state_predicted = np.array([[0.0]*5])
         self.measurement = 0.0
         self.measurement_estimated = 0.0
-        self.H = 0.0
+        self.H = np.array([0.0]*5)
 
 
 
@@ -71,7 +71,6 @@ class EKF:
         self.distance[index_of_data] = distance
         self.RSSI[index_of_data] = rssi
         self.count[index_of_data] = 3
-        self.extended_kalman_filter(id)
 
     def updating_imu(self, imu_acc, imu_gyro, imu_mag):
         self.imu_acc = imu_acc
@@ -87,9 +86,10 @@ class EKF:
         delta_time = time.time()/1000 - self.old_time
         self.old_time = time.time()/1000
 
-        self.position = self.position + np.dot(self.velocity,self.heading) * delta_time
+        self.position = self.position + np.dot(self.velocity, self.heading) * delta_time
         self.velocity = self.velocity + self.imu_acc[0] * delta_time
-        self.heading = self.heading + np.dot(rotated_matrix,self.heading) * self.imu_gyro[2] * delta_time
+        self.heading = self.heading + np.dot(rotated_matrix, np.transpose(self.heading)) * self.imu_gyro[2] * delta_time
+
         self.state_model()
 
 
@@ -101,7 +101,7 @@ class EKF:
 
         self.predicted_position = self.predicted_position + np.dot(self.predicted_velocity,self.predicted_heading) * delta_time
         self.predicted_velocity = self.predicted_velocity + self.imu_acc[0] * delta_time
-        self.predicted_heading = self.predicted_heading + np.dot(rotated_matrix,self.heading) * self.imu_gyro[2] * delta_time
+        self.predicted_heading = self.predicted_heading + np.dot(rotated_matrix, np.transpose(self.predicted_heading)) * self.imu_gyro[2] * delta_time
         self.predicted_state_model()
 
 
@@ -111,11 +111,11 @@ class EKF:
 
     def state_model(self):
         self.x_state = np.transpose([np.transpose(self.position), self.velocity, np.transpose(self.heading)])
-        self.extended_kalman_filter()
+
 
     def predicted_state_model(self):
         self.x_state_predicted = np.transpose([np.transpose(self.predicted_position), self.predicted_velocity, np.transpose(self.predicted_heading)])
-        self.extended_kalman_filter()
+
 
 
     def extended_kalman_filter(self, id=44531):
@@ -123,30 +123,41 @@ class EKF:
         current_beacon = self.id.index(id)
         delta_time = time.time()/1000 - self.old_time
         self.old_time = time.time()/1000
-        R = 1.0
+        R = 0.1
         P = np.identity(5)
         # jacobians
-        F = [[1,0,delta_time*self.heading[0],delta_time*self.velocity,0],
-             [0,1,delta_time*self.heading[1],0,delta_time*self.velocity],
+        F = np.array([[1,0,delta_time*self.heading[0][0],delta_time*self.velocity,0],
+             [0,1,delta_time*self.heading[0][1],0,delta_time*self.velocity],
              [0,0,1,0,0],
              [0,0,0,1,-delta_time*self.imu_gyro[2]],
-             [0,0,0,delta_time*self.imu_gyro[2],1]]
-        H_magnetometer = [[0,0,0,self.imu_mag[0],self.imu_mag[1]],
-                          [0,0,0,self.imu_mag[1],-self.imu_mag[0]]]
-        H_distance = [-2 * np.absolute(self.x[current_beacon] - self.position[0]) * np.sign(self.x[current_beacon] - self.position[0]), -2 * np.absolute(self.y[current_beacon] - self.position[1]) * np.sign(self.y[current_beacon] - self.position[1]),0,0,0]
-        BEACON = np.array([self.x[current_beacon], self.y[current_beacon]]).reshape(-1,1)
+             [0,0,0,delta_time*self.imu_gyro[2],1]])
+        H_magnetometer = np.array([[0,0,0,self.imu_mag[0],self.imu_mag[1]],
+                          [0,0,0,self.imu_mag[1],-self.imu_mag[0]]])
+        self.H = np.array([-2 * np.absolute(self.x[current_beacon] - self.predicted_position[0][0]) * np.sign(self.x[current_beacon] - self.predicted_position[0][0]), -2 * np.absolute(self.y[current_beacon] - self.predicted_position[0][1]) * np.sign(self.y[current_beacon] - self.predicted_position[0][1]),0,0,0])
+        BEACON = np.array([[self.x[current_beacon]], [self.y[current_beacon]]])
 
         self.measurement = pow(np.linalg.norm(self.position - BEACON), 2)
         self.measurement_estimated = pow(np.linalg.norm(self.predicted_position - BEACON), 2)
         estimation_difference = self.measurement - self.measurement_estimated
-        self.H = pow(self.x[current_beacon] - self.position[0], 2) + pow(self.y[current_beacon] - self.position[1], 2)
-        S = np.dot(np.dot(self.H, P),np.transpose(self.H)) + R
-        K = np.dot(np.dot(P, np.transpose(self.H)),np.linalg.inv(S))
 
-        self.predicted_position = self.predicted_position + np.dot(K, estimation_difference)
-        self.predicted_velocity = self.predicted_velocity + np.dot(K, estimation_difference)
-        self.predicted_heading = self.predicted_heading + np.dot(K, estimation_difference)
-        P = (np.identity(5) - np.dot(np.dot(K, self.H)), P)
+        S = np.dot(np.dot(self.H, P), np.transpose([self.H])) + R
+        K = P * np.transpose([self.H]) * pow(S, -1)
+
+
+        #print(len(np.array([[1.0]*2])) , len(np.array([[1.0]*2])[0]))
+        #print("H: ", len(self.H))
+        #print("P: ", P)
+        #print("Transposed H: ", self.H.T)
+
+
+        #S=H*P*H'+R;
+        #K=P*H'*inv(S);
+        #e_states(:,i+1)=e_states(:,i+1)+K*yd;
+        #P=(eye(5)-K*H)*P;
+        #self.predicted_position = self.predicted_position + np.dot(K, estimation_difference)
+        #self.predicted_velocity = self.predicted_velocity + np.dot(K, estimation_difference)
+        #self.predicted_heading = self.predicted_heading + np.dot(K, estimation_difference)
+        #P = (np.identity(5) - np.dot(np.dot(K, self.H)), P)
 
         return self.measurement
 
@@ -183,18 +194,19 @@ def main():
     test_array = [0.0]*n
 
     for x in range(n):
-        w1.updating_imu([1.0,0.0,0.0],[0.0,0.0,2.0],[1.0,1.0,0.0])
+        w1.updating_imu([11.0,50.0,20.0],[10.0,50.0,2.0],[12.0,41.0,5.0])
         w1.updating_distance(44531, 1, 10000)
+
         #print(w1.measurement)
         #print(w1.measurement_estimated)
         test_array[x] = w1.extended_kalman_filter()
         plt.scatter(test_array[x],x)
-        print(w1.x_state_predicted)
+        #print(w1.x_state_predicted)
         #time.sleep(1)
     #t = np.arange(0., 5., 0.2)
     # red dashes, blue squares and green triangles
 
-    plt.xlim([499327316-100, 499327316+100])
+    #plt.xlim([499327316-100, 499327316+100])
     #print(test_array[n-1])
     plt.show()
 
