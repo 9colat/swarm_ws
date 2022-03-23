@@ -119,12 +119,12 @@ std_msgs::Float32 angle_of_wheel;
 ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
 geometry_msgs::Quaternion wheel_speed;
 ros::Publisher speed_pub("speed_and_tick", &wheel_speed);
-geometry_msgs::Vector3 imu_acc = geometry_msgs::Vector3();
-ros::Publisher IMU_data_acc("imu_acc", &imu_acc);
-geometry_msgs::Vector3 imu_gyro = geometry_msgs::Vector3();
-ros::Publisher IMU_data_gyro("imu_gyro", &imu_gyro);
-geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
-ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
+//geometry_msgs::Vector3 imu_acc = geometry_msgs::Vector3();
+//ros::Publisher IMU_data_acc("imu_acc", &imu_acc);
+//geometry_msgs::Vector3 imu_gyro = geometry_msgs::Vector3();
+// IMU_data_gyro("imu_gyro", &imu_gyro);
+//geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
+//ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
 ros::Publisher measured_angle_pub("measured_angle", &data_measured_angle);
 custom_msgs::odom_and_imu data_measured_odom_and_imu = custom_msgs::odom_and_imu();
@@ -450,7 +450,7 @@ void RGB_led_set(const String& color) {
 
 // Subscribers //
 ros::Subscriber<geometry_msgs::Twist> sub_cmd_vel("cmd_vel", &cmd_velocity);
-ros::Subscriber<std_msgs::Int16> start_up("stat_up_done", &start_up_hi);
+//ros::Subscriber<std_msgs::Int16> start_up("stat_up_done", &start_up_hi);
 
 void setup() {
   nh.initNode();
@@ -474,15 +474,15 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(left_encoder_a), encoder_count_chage_left, CHANGE);
   attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
   nh.subscribe(sub_cmd_vel);
-  nh.subscribe(start_up);
+  //nh.subscribe(start_up);
   //nh.advertise(right_tick_pub);
   //nh.advertise(left_tick_pub);
   //nh.advertise(ankle_pub);
   nh.advertise(speed_pub);
-  nh.advertise(IMU_data_acc);
-  nh.advertise(IMU_data_gyro);
-  nh.advertise(IMU_data_mag);
-  //nh.advertise(odom_and_IMU_pub);
+//  nh.advertise(IMU_data_acc);
+//  nh.advertise(IMU_data_gyro);
+//  nh.advertise(IMU_data_mag);
+ nh.advertise(odom_and_IMU_pub);
   //unsigned status;
   //status = bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID);
   //if (!status) {
