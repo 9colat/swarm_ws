@@ -7,6 +7,7 @@ import time
 from datetime import datetime
 import numpy as np
 import math
+import random
 #from autograd import jacobian
 import matplotlib.pyplot as plt
 
@@ -46,23 +47,24 @@ class EKF:
         self.floor_corection = np.array([0.0,0.0,0.0])
 
         # self stuff for IMU
-        self.imu_acc = np.array([[0.0]*3])
-        self.imu_gyro = np.array([[0.0]*3])
-        self.imu_mag = np.array([[0.0]*3])
+        self.imu_acc = np.array([[0.0, 0.0, 0.0]]).T
+        self.imu_gyro = np.array([[0.0, 0.0, 0.2]]).T
+        self.imu_mag = np.array([[0.0, 0.0, 0.0]]).T
         self.old_time = time.time() / 1000
         self.predicted_old_time = time.time() / 1000
-        self.heading = np.array([[0.0]*2])
-        self.position = np.array([[0.0]*2])
-        self.velocity = 0.0
-        self.predicted_heading = np.array([[0.0]*2])
-        self.predicted_position = np.array([[0.0]*2])
+        self.heading = np.array([[1.0, 0.0]]).T
+        self.position = np.array([[0.0, 0.0]]).T
+        self.velocity = 1.0
+        self.predicted_heading = np.array([[0.0, 0.0]]).T
+        self.predicted_position = np.array([[0.0, 0.0]]).T
         self.predicted_velocity = 0.0
-        self.input = np.array([[0.0]*2])
-        self.x_state = np.array([[0.0]*5])
-        self.x_state_predicted = np.array([[0.0]*5])
+        self.input = np.array([[0.0, 0.0]])
+        self.x_state = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
+        self.state_predicted = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         self.measurement = 0.0
         self.measurement_estimated = 0.0
         self.H = np.array([0.0]*5)
+        self.F = np.array([0.0]*5)
 
 
 
@@ -76,92 +78,84 @@ class EKF:
         self.imu_acc = imu_acc
         self.imu_gyro = imu_gyro
         self.imu_mag = imu_mag
-        self.using_imu_data()
-        self.prediction_model()
-        self.input_model()
 
 
+    #def input_model(self):
+    #    self.input = np.transpose([self.imu_acc[0], self.imu_gyro[2]])
 
-    def using_imu_data(self):
-        delta_time = time.time()/1000 - self.old_time
-        self.old_time = time.time()/1000
 
+    def extended_kalman_filter(self, id, delta_time):
+
+        #beacons
+        current_beacon = self.id.index(id)
+        BEACON = np.array([[self.x[current_beacon]], [self.y[current_beacon]]])
+
+        #time
+        #delta_time = time.time()/1000 - self.old_time
+        #self.old_time = time.time()/1000
+
+        #noise
+        R = 0.01
+        P = np.identity(5)
+        Q = 100 * np.identity(5)
+
+
+        #setup
+
+        # state
         self.position = self.position + np.dot(self.velocity, self.heading) * delta_time
         self.velocity = self.velocity + self.imu_acc[0] * delta_time
-        self.heading = self.heading + np.dot(rotated_matrix, np.transpose(self.heading)) * self.imu_gyro[2] * delta_time
-
-        self.state_model()
+        self.heading = self.heading + np.dot(rotated_matrix, self.heading) * self.imu_gyro[2] * delta_time
 
 
-
-
-    def prediction_model(self):
-        delta_time = time.time()/1000 - self.predicted_old_time
-        self.predicted_old_time = time.time()/1000
-
-        self.predicted_position = self.predicted_position + np.dot(self.predicted_velocity,self.predicted_heading) * delta_time
+        # predicted state
+        self.predicted_position = self.predicted_position + np.dot(self.predicted_velocity, self.predicted_heading) * delta_time
         self.predicted_velocity = self.predicted_velocity + self.imu_acc[0] * delta_time
-        self.predicted_heading = self.predicted_heading + np.dot(rotated_matrix, np.transpose(self.predicted_heading)) * self.imu_gyro[2] * delta_time
-        self.predicted_state_model()
+        self.predicted_heading = self.predicted_heading + np.dot(rotated_matrix, self.predicted_heading) * self.imu_gyro[2] * delta_time
 
+        self.state_predicted = np.transpose([np.array([self.predicted_position[0], self.predicted_position[1], self.predicted_velocity, self.predicted_heading[0], self.predicted_heading[1]])])
 
-
-    def input_model(self):
-        self.input = np.transpose([self.imu_acc[0], self.imu_gyro[2]])
-
-    def state_model(self):
-        self.x_state = np.transpose([np.transpose(self.position), self.velocity, np.transpose(self.heading)])
-
-
-    def predicted_state_model(self):
-        self.x_state_predicted = np.transpose([np.transpose(self.predicted_position), self.predicted_velocity, np.transpose(self.predicted_heading)])
-
-
-
-    def extended_kalman_filter(self, id=44531):
-
-        current_beacon = self.id.index(id)
-        delta_time = time.time()/1000 - self.old_time
-        self.old_time = time.time()/1000
-        R = 0.1
-        P = np.identity(5)
         # jacobians
-        F = np.array([[1,0,delta_time*self.heading[0][0],delta_time*self.velocity,0],
-             [0,1,delta_time*self.heading[0][1],0,delta_time*self.velocity],
+        self.F = np.array([[1,0,delta_time*self.predicted_heading[0],delta_time*self.predicted_velocity,0],
+             [0,1,delta_time*self.predicted_heading[1],0,delta_time*self.predicted_velocity],
              [0,0,1,0,0],
              [0,0,0,1,-delta_time*self.imu_gyro[2]],
              [0,0,0,delta_time*self.imu_gyro[2],1]])
+
+
         H_magnetometer = np.array([[0,0,0,self.imu_mag[0],self.imu_mag[1]],
                           [0,0,0,self.imu_mag[1],-self.imu_mag[0]]])
-        self.H = np.array([-2 * np.absolute(self.x[current_beacon] - self.predicted_position[0][0]) * np.sign(self.x[current_beacon] - self.predicted_position[0][0]), -2 * np.absolute(self.y[current_beacon] - self.predicted_position[0][1]) * np.sign(self.y[current_beacon] - self.predicted_position[0][1]),0,0,0])
-        BEACON = np.array([[self.x[current_beacon]], [self.y[current_beacon]]])
 
-        self.measurement = pow(np.linalg.norm(self.position - BEACON), 2)
+
+        self.H = np.array([-2 * np.absolute(self.x[current_beacon] - self.predicted_position[0]) * np.sign(self.x[current_beacon] - self.predicted_position[0]), -2 * np.absolute(self.y[current_beacon] - self.predicted_position[1]) * np.sign(self.y[current_beacon] - self.predicted_position[1]),0,0,0])
+
+
+
+        #remember to remove noise after you are finished with debugging
+        # measurements
+        self.measurement = pow(np.linalg.norm(self.position - BEACON), 2) + random.random()
         self.measurement_estimated = pow(np.linalg.norm(self.predicted_position - BEACON), 2)
         estimation_difference = self.measurement - self.measurement_estimated
 
+        # kalman magic
+        P = np.dot(self.F, np.dot(P, np.transpose([self.F]))) + Q
         S = np.dot(np.dot(self.H, P), np.transpose([self.H])) + R
         K = P * np.transpose([self.H]) * pow(S, -1)
+        print("here", K)
+        self.state_predicted = self.state_predicted + np.dot(K, estimation_difference)
+        print(self.state_predicted)
+        # output update
+        #self.position[0] = self.state_predicted[0]
+        #self.position[1] = self.state_predicted[1]
+        #self.velocity = self.state_predicted[2]
+        #self.heading[0] = self.state_predicted[3]
+        #self.heading[1] = self.state_predicted[4]
+
+        #covariance update
+        P = np.identity(5) - np.dot(np.dot(K, self.H), P)
 
 
-        #print(len(np.array([[1.0]*2])) , len(np.array([[1.0]*2])[0]))
-        #print("H: ", len(self.H))
-        #print("P: ", P)
-        #print("Transposed H: ", self.H.T)
-
-
-        #S=H*P*H'+R;
-        #K=P*H'*inv(S);
-        #e_states(:,i+1)=e_states(:,i+1)+K*yd;
-        #P=(eye(5)-K*H)*P;
-        #self.predicted_position = self.predicted_position + np.dot(K, estimation_difference)
-        #self.predicted_velocity = self.predicted_velocity + np.dot(K, estimation_difference)
-        #self.predicted_heading = self.predicted_heading + np.dot(K, estimation_difference)
-        #P = (np.identity(5) - np.dot(np.dot(K, self.H)), P)
-
-        return self.measurement
-
-
+        return self.state_predicted
 
 # ROS collection
 def callback_imu(data): #from the beacon
@@ -192,16 +186,17 @@ w1 = EKF()
 def main():
     n = 100
     test_array = [0.0]*n
+    dT = 0.1
+    arr = [42867, 42928,  42929]
 
     for x in range(n):
-        w1.updating_imu([11.0,50.0,20.0],[10.0,50.0,2.0],[12.0,41.0,5.0])
-        w1.updating_distance(44531, 1, 10000)
-
-        #print(w1.measurement)
-        #print(w1.measurement_estimated)
-        test_array[x] = w1.extended_kalman_filter()
+        id = w1.id.index(arr[x%3])
+        new_position_x = w1.position[0] + w1.heading[0] * w1.velocity * dT
+        new_position_y = w1.position[1] + w1.heading[1] * w1.velocity * dT
+        dist = math.sqrt(pow(w1.x[id] - w1.position[0], 2) + pow(w1.y[id] - w1.position[1], 2))
+        w1.updating_distance(arr[x%3], 1, dist)
+        test_array[x] = w1.extended_kalman_filter(arr[x%3], dT)
         plt.scatter(test_array[x],x)
-        #print(w1.x_state_predicted)
         #time.sleep(1)
     #t = np.arange(0., 5., 0.2)
     # red dashes, blue squares and green triangles
