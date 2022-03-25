@@ -40,9 +40,9 @@ class Laser_component:
             index_of_data = self.beacon_id.index(id)
             theta = int(math.degrees(self.calculated_local_angle(id, robot_pose, heading)))
             dist = (math.dist(self.beacon[:,index_of_data],robot_pose))/1000
-            print(dist)
+            #print(dist)
             for i in range(theta - 5, theta + 5):
                 if lidar_array[i] < dist:
                     print("here i will do some stuff later ;)")
                     return 1
-        print("all good")
+        #print("all good")

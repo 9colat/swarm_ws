@@ -2,9 +2,9 @@
 %states: [position (1X2), forward vel (1X1), heading (1X2)]
 
 Beacons=[[0;0] [-5;5] [5;5]];
-R=1e-4; %measurement covariance
+R=1e-2; %measurement covariance
 P=eye(5); %initial estimate covariance
-
+Q = 100 * eye(5);
 %simulation time
 T=100;
 dT=0.1;
@@ -12,12 +12,13 @@ N=ceil(T/dT);
 states=zeros(5,N);
 e_states=states;
 states(:,1)=[0 0 1 1 0]';
-R90=[0 -1;1 0]
+R90=[0 -1;1 0];
 angle_small=0.1;
 Rsmall=[cos(angle_small) -sin(angle_small);sin(angle_small) cos(angle_small)];
 Hstart=Rsmall*[1;0];
 e_states(:,1)=[0.1 0 1 Hstart']';
 omega=0.2;
+
 
 for i=1:N-1
     states(1:2,i+1)=states(1:2,i)+dT*states(4:5,i)*states(3,i); %position update
@@ -32,11 +33,14 @@ for i=1:N-1
     %measurement
     B_index=rem(i,3)+1;
     Beacon=Beacons(:,B_index);
-    y=norm(states(1:2,i)-Beacon)^2+randn(1)*0.1;
+    y=norm(states(1:2,i)-Beacon)^2+randn(1)*0.01;
     ye=norm(e_states(1:2,i+1)-Beacon)^2;
     yd=y-ye;
     H=HdNum(Beacon(1),Beacon(2),e_states(1,i),e_states(2,i));
+    F = FNum(dT, e_states(4,i+1),e_states(5,i+1),omega,e_states(3,i+1));
+    P = F*P*F'+Q;
     S=H*P*H'+R;
+    inv(S);
     K=P*H'*inv(S);
     e_states(:,i+1)=e_states(:,i+1)+K*yd;
     P=(eye(5)-K*H)*P; 

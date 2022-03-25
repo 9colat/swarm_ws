@@ -25,6 +25,8 @@ index = count()
 
 data = pd.read_csv(path)
 df = pd.DataFrame(data)
+id = data["ID"]
+distance = ["distance"]
 x = data["x"]
 y = data["y"]
 z = data["z"]
