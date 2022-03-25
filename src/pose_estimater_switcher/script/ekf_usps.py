@@ -22,6 +22,12 @@ mag_y_calibrated = 0.0
 pi = 3.141593
 
 
+# for plotting
+fig = plt.figure(figsize = (10, 10))
+fig.suptitle('Kalman Filter Test')
+ax = fig.add_subplot(1, 1, 1) # one row, 1 column, which you want to interact with
+
+
 class EKF:
     def __init__(self):
 
@@ -48,23 +54,24 @@ class EKF:
 
         # self stuff for IMU
         self.imu_acc = np.array([[0.0, 0.0, 0.0]]).T
-        self.imu_gyro = np.array([[0.0, 0.0, 0.2]]).T
+        self.imu_gyro = np.array([[0.0, 0.0, 0]]).T
         self.imu_mag = np.array([[0.0, 0.0, 0.0]]).T
         self.old_time = time.time() / 1000
         self.predicted_old_time = time.time() / 1000
         self.heading = np.array([[1.0, 0.0]]).T
-        self.position = np.array([[0.0, 0.0]]).T
+        self.position = np.array([[1.0, 5.0]]).T
         self.velocity = 1.0
-        self.predicted_heading = np.array([[0.0, 0.0]]).T
+        self.predicted_heading = self.heading
         self.predicted_position = np.array([[0.0, 0.0]]).T
         self.predicted_velocity = 0.0
         self.input = np.array([[0.0, 0.0]])
-        self.x_state = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
+        self.state = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         self.state_predicted = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]])
         self.measurement = 0.0
         self.measurement_estimated = 0.0
         self.H = np.array([0.0]*5)
         self.F = np.array([0.0]*5)
+
 
 
 
@@ -100,57 +107,59 @@ class EKF:
         Q = 100 * np.identity(5)
 
 
+
         #setup
 
         # state
         self.position = self.position + np.dot(self.velocity, self.heading) * delta_time
-        self.velocity = self.velocity + self.imu_acc[0] * delta_time
+        self.velocity = float(self.velocity + self.imu_acc[0] * delta_time)
         self.heading = self.heading + np.dot(rotated_matrix, self.heading) * self.imu_gyro[2] * delta_time
 
+        self.state = np.array([[float(self.position[0]), float(self.position[1]), self.velocity, float(self.heading[0]), float(self.heading[1])]]).T
 
         # predicted state
         self.predicted_position = self.predicted_position + np.dot(self.predicted_velocity, self.predicted_heading) * delta_time
-        self.predicted_velocity = self.predicted_velocity + self.imu_acc[0] * delta_time
+        self.predicted_velocity = float(self.predicted_velocity + self.imu_acc[0] * delta_time)
         self.predicted_heading = self.predicted_heading + np.dot(rotated_matrix, self.predicted_heading) * self.imu_gyro[2] * delta_time
 
-        self.state_predicted = np.transpose([np.array([self.predicted_position[0], self.predicted_position[1], self.predicted_velocity, self.predicted_heading[0], self.predicted_heading[1]])])
+        self.state_predicted = np.array([[float(self.predicted_position[0]), float(self.predicted_position[1]), self.velocity, float(self.predicted_heading[0]), float(self.predicted_heading[1])]]).T
+
 
         # jacobians
-        self.F = np.array([[1,0,delta_time*self.predicted_heading[0],delta_time*self.predicted_velocity,0],
-             [0,1,delta_time*self.predicted_heading[1],0,delta_time*self.predicted_velocity],
-             [0,0,1,0,0],
-             [0,0,0,1,-delta_time*self.imu_gyro[2]],
-             [0,0,0,delta_time*self.imu_gyro[2],1]])
+        self.F = np.array([[1, 0, float(delta_time * self.predicted_heading[0]), float(delta_time * self.predicted_velocity), 0],
+             [0, 1, float(delta_time * self.predicted_heading[1]), 0, float(delta_time * self.predicted_velocity)],
+             [0, 0, 1, 0, 0],
+             [0, 0, 0, 1, float(-delta_time * self.imu_gyro[2])],
+             [0, 0, 0, float(delta_time*self.imu_gyro[2]), 1]])
+
+        # 2 x 5
+        H_magnetometer = np.array([[0, 0, 0, float(self.imu_mag[0]), float(self.imu_mag[1])],
+                          [0, 0 , 0, float(self.imu_mag[1]), float(-self.imu_mag[0])]])
 
 
-        H_magnetometer = np.array([[0,0,0,self.imu_mag[0],self.imu_mag[1]],
-                          [0,0,0,self.imu_mag[1],-self.imu_mag[0]]])
-
-
-        self.H = np.array([-2 * np.absolute(self.x[current_beacon] - self.predicted_position[0]) * np.sign(self.x[current_beacon] - self.predicted_position[0]), -2 * np.absolute(self.y[current_beacon] - self.predicted_position[1]) * np.sign(self.y[current_beacon] - self.predicted_position[1]),0,0,0])
-
-
+        self.H = np.array([[float(-2 * np.absolute(self.x[current_beacon] - self.predicted_position[0]) * np.sign(self.x[current_beacon] - self.predicted_position[0])), float(-2 * np.absolute(self.y[current_beacon] - self.predicted_position[1]) * np.sign(self.y[current_beacon] - self.predicted_position[1])), 0, 0, 0]])
 
         #remember to remove noise after you are finished with debugging
         # measurements
-        self.measurement = pow(np.linalg.norm(self.position - BEACON), 2) + random.random()
+        self.measurement = pow(np.linalg.norm(self.position - BEACON), 2)
+        #+ random.random()
         self.measurement_estimated = pow(np.linalg.norm(self.predicted_position - BEACON), 2)
         estimation_difference = self.measurement - self.measurement_estimated
 
         # kalman magic
-        P = np.dot(self.F, np.dot(P, np.transpose([self.F]))) + Q
-        S = np.dot(np.dot(self.H, P), np.transpose([self.H])) + R
-        K = P * np.transpose([self.H]) * pow(S, -1)
-        print("here", K)
+        P = np.dot(self.F, np.dot(P, np.transpose(self.F))) + Q
+        S = np.dot(np.dot(self.H, P), np.transpose(self.H)) + R
+        K = np.dot(np.dot(P, np.transpose(self.H)),np.linalg.inv(S))
         self.state_predicted = self.state_predicted + np.dot(K, estimation_difference)
-        print(self.state_predicted)
-        # output update
-        #self.position[0] = self.state_predicted[0]
-        #self.position[1] = self.state_predicted[1]
-        #self.velocity = self.state_predicted[2]
-        #self.heading[0] = self.state_predicted[3]
-        #self.heading[1] = self.state_predicted[4]
 
+        # output update
+        self.predicted_position[0] = self.state_predicted[0]
+        self.predicted_position[1] = self.state_predicted[1]
+        self.predicted_velocity = float(self.state_predicted[2])
+        self.predicted_heading[0] = self.state_predicted[3]
+        self.predicted_heading[1] = self.state_predicted[4]
+
+        #print(self.state)
         #covariance update
         P = np.identity(5) - np.dot(np.dot(K, self.H), P)
 
@@ -177,32 +186,54 @@ def callback_distance(data): #from the beacon
 
 
 w1 = EKF()
-
-
+old_x = 1
+old_y = 1
+head_x = 1
+head_y = 0
 
 #velocity = imu_acc[0]
 
 
 def main():
-    n = 100
+
+    global old_x, old_y, head_x, head_y
+    new_position_x = 0
+    new_position_y = 0
+    n = 2000
     test_array = [0.0]*n
-    dT = 0.1
+    dT = 0.01
+    omega = 2
+    velocity = 1
     arr = [42867, 42928,  42929]
 
     for x in range(n):
         id = w1.id.index(arr[x%3])
-        new_position_x = w1.position[0] + w1.heading[0] * w1.velocity * dT
-        new_position_y = w1.position[1] + w1.heading[1] * w1.velocity * dT
-        dist = math.sqrt(pow(w1.x[id] - w1.position[0], 2) + pow(w1.y[id] - w1.position[1], 2))
+        new_position_x = new_position_x + head_x * velocity * dT
+        head_x = head_x - head_x * w1.imu_gyro[2] * dT
+
+        new_position_y = new_position_y + head_y * velocity * dT
+        head_y = head_y + head_y * w1.imu_gyro[2] * dT
+
+        dist = math.sqrt(pow(w1.x[id] - new_position_x, 2) + pow(w1.y[id] - new_position_y, 2)) #+ random.uniform(-1, 1)
         w1.updating_distance(arr[x%3], 1, dist)
-        test_array[x] = w1.extended_kalman_filter(arr[x%3], dT)
-        plt.scatter(test_array[x],x)
+        test_array[x] = (w1.extended_kalman_filter(arr[x%3], dT))
+        ax.scatter(new_position_x, new_position_y, c='b') # true
+        ax.scatter(test_array[x][0],test_array[x][1],c='r') #predicted
+        print()
         #time.sleep(1)
     #t = np.arange(0., 5., 0.2)
     # red dashes, blue squares and green triangles
 
     #plt.xlim([499327316-100, 499327316+100])
     #print(test_array[n-1])
+    #print(len(test_array), len(test_array[0]))
+    #for i in range(len(test_array)):# position
+        #print(test_array[i][0],test_array[i][1])
+    #for j in range(len(arr)):
+    #    ax.scatter(w1.x[w1.id.index(arr[j])], w1.y[w1.id.index(arr[j])], c='y')
+    print(test_array[0][0])
+
+
     plt.show()
 
 
