@@ -32,14 +32,7 @@ x = data["x"]
 y = data["y"]
 z = data["z"]
 
-ax1.set_title("2d plot")
-ax1.set_xlabel("X - I have a bad feeling about this")
-ax1.set_ylabel("Y - Hello there")
-ax2.set_title("3d plot")
-ax2.set_xlabel("X - I have a bad feeling about this")
-ax2.set_ylabel("Y - Hello there")
-ax2.set_zlabel("z - General kenobi")
-    #print('x: ',x,',y: ',y)
+
 for j in range(len(x)):
     index_of_data = beacon_id.index(id[j])
     #ax1.clear()
