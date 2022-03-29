@@ -67,11 +67,11 @@ class Laser_component:
             #dist = (math.dist(self.beacon[:,index_of_data],robot_pose))/1000
             dist_projeted = self.projection(id, dist)
             #print(dist)
-            assumed_dist = self.dist_projeted(id, robot_pose)
+            assumed_dist = self.assumed_dist(id, robot_pose)
             assumed_dist_p = assumed_dist + (assumed_dist/100)*5    # The max distance with 5% error tolerance
             assumed_dist_m = assumed_dist - (assumed_dist/100)*5    # The min distance with 5% error tolerance
             if assumed_dist_p < dist or assumed_dist_m > dist:      # This if statmant will take objects that is not connected to the foor in to acount
-                print("bell value set to a value")
+                print("bell value set to a value: ",bell)
                 bell = 1000 # chage later to make sence ;)
 
             for i in range(theta - 5, theta + 5):

@@ -3,7 +3,7 @@ import rospy
 import math
 import matplotlib.pyplot as plt
 import numpy as np
-from laser_part_of_the_system import Laser_component
+from laser_system import Laser_component
 from sensor_msgs.msg import LaserScan
 lidar_array = [0.0] * 360
 
