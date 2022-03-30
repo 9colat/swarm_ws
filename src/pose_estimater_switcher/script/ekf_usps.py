@@ -37,7 +37,7 @@ class EKF:
 
         # self stuff for IMU
         self.imu_acc = np.array([[0.0, 0.0, 0.0]]).T
-        self.imu_gyro = np.array([[0.0, 0.0, 0.0]]).T
+        self.imu_gyro = np.array([[0.0, 0.0, 0.1]]).T
         self.imu_mag = np.array([[0.0, 0.0, 0.0]]).T
         self.predicted_heading = np.array([[1.0, 0.0]]).T
         self.predicted_position = np.array([[10.0, 15.0]]).T

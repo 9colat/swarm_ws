@@ -48,12 +48,13 @@ def main():
         test_head[0] = math.cos(varied_angle)
         test_head[1] = math.sin(varied_angle)
 
-        #dist = math.sqrt(pow(w1.x[id] - new_position[0], 2) + pow(w1.y[id] - new_position[1], 2)) #+ random.uniform(-1, 1)
-        #test_array[x] = (w1.beacon_measurement_updater_EKF(arr[x%3], dist + random.uniform(-0.1, 0.1), dT))
-        test_array[x] = w1.magnetometer_measurement_updater_EKF(test_head, dT)
-        #test_arr[x] = new_position.T
-        test_arr[x] = head.T
-        ax.scatter(test_array[x][3],test_array[x][4],c='r') #predicted
+        dist = math.sqrt(pow(w1.x[id] - new_position[0], 2) + pow(w1.y[id] - new_position[1], 2)) #+ random.uniform(-1, 1)
+        test_array[x] = (w1.beacon_measurement_updater_EKF(arr[x%3], dist + random.uniform(-0.1, 0.1), dT))
+        #test_array[x] = w1.magnetometer_measurement_updater_EKF(test_head, dT)
+        test_arr[x] = new_position.T
+        #test_arr[x] = head.T
+        #ax.scatter(test_array[x][3],test_array[x][4],c='r') #predicted
+        ax.scatter(test_array[x][0],test_array[x][1],c='r') #predicted
         print(test_array[x])
 
     ax.scatter(test_arr[:,0],test_arr[:,1], c='b') # true

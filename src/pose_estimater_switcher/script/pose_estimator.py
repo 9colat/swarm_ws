@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import rospy
 import time
 from custom_msgs.msg import odom_and_imu
@@ -70,8 +71,8 @@ def main():
         local_time = time.time()
         dT = local_time - global_time
         global_time = local_time
-        w1.state_predicted(dT)
-
+        hello = w1.state_prediction(dT)
+        print(hello)
         rospy.spin()
 
 
