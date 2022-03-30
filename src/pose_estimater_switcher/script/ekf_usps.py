@@ -37,7 +37,7 @@ class EKF:
 
         # self stuff for IMU
         self.imu_acc = np.array([[0.0, 0.0, 0.0]]).T
-        self.imu_gyro = np.array([[0.0, 0.0, 0.1]]).T
+        self.imu_gyro = np.array([[0.0, 0.0, 0.0]]).T
         self.imu_mag = np.array([[0.0, 0.0, 0.0]]).T
         self.predicted_heading = np.array([[1.0, 0.0]]).T
         self.predicted_position = np.array([[10.0, 15.0]]).T
@@ -46,29 +46,90 @@ class EKF:
         self.state_predicted = np.array([[float(self.predicted_position[0]), float(self.predicted_position[1]), self.predicted_velocity, float(self.predicted_heading[0]), float(self.predicted_heading[1])]])
         self.measurement = 0.0
         self.measurement_estimated = 0.0
-        self.H = np.array([0.0]*5)
+        self.H_beacon = np.array([0.0]*5)
+        self.H_magnetometer = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]]*2)
         self.F = np.array([0.0]*5)
 
 
 
-
-    def updating_distance(self, id, rssi, distance):
-        index_of_data = self.id.index(id)
-        self.distance[index_of_data] = distance
-        self.RSSI[index_of_data] = rssi
-        self.count[index_of_data] = 3
-
-    def updating_imu(self, imu_acc, imu_gyro, imu_mag):
+    def updating_imu(self, imu_acc, imu_gyro):
         self.imu_acc = imu_acc
         self.imu_gyro = imu_gyro
-        self.imu_mag = imu_mag
 
 
     #def input_model(self):
     #    self.input = np.transpose([self.imu_acc[0], self.imu_gyro[2]])
 
 
+    def state_prediction(self, delta_time):
+
+        # predicted state
+        self.predicted_position = self.predicted_position + np.dot(self.predicted_velocity, self.predicted_heading) * delta_time
+        self.predicted_velocity = float(self.predicted_velocity + self.imu_acc[0] * delta_time)
+        self.predicted_heading = self.predicted_heading + np.dot(rotated_matrix, self.predicted_heading) * self.imu_gyro[2] * delta_time
+
+        # combined together so it can be multiplied later
+        self.state_predicted = np.array([[float(self.predicted_position[0]), float(self.predicted_position[1]), self.predicted_velocity, float(self.predicted_heading[0]), float(self.predicted_heading[1])]]).T
+
+        return self.state_predicted
+
+
+
+    def magnetometer_measurement_updater_EKF(self, imu_mag, delta_time):
+
+        self.state_prediction(delta_time)
+
+        # noise
+        R = 0.01
+        P = np.identity(5)
+        Q = 100 * np.identity(5)
+
+
+        # jacobians
+        self.F = np.array([[1, 0, float(delta_time * self.predicted_heading[0]), float(delta_time * self.predicted_velocity), 0],
+             [0, 1, float(delta_time * self.predicted_heading[1]), 0, float(delta_time * self.predicted_velocity)],
+             [0, 0, 1, 0, 0],
+             [0, 0, 0, 1, float(-delta_time * self.imu_gyro[2])],
+             [0, 0, 0, float(delta_time*self.imu_gyro[2]), 1]])
+
+
+        self.H_magnetometer = np.array([[0, 0, 0, float(imu_mag[0]), float(imu_mag[1])],
+                          [0, 0 , 0, float(imu_mag[1]), float(-imu_mag[0])]])
+
+
+
+        #remember to remove noise after you are finished with debugging
+        # measurements based on the magnetometer data
+        self.measurement = imu_mag
+        self.measurement_estimated = self.predicted_heading
+        estimation_difference = self.measurement - self.measurement_estimated
+
+        # kalman magic
+        P = np.dot(np.dot(self.F, P), np.transpose(self.F)) + Q
+        S = np.dot(np.dot(self.H_magnetometer, P), np.transpose(self.H_magnetometer)) + R
+        K = np.dot(np.dot(P, np.transpose(self.H_magnetometer)), np.linalg.inv(S))
+
+        # output update
+        self.state_predicted = self.state_predicted + np.dot(K, estimation_difference)
+        self.predicted_position[0] = self.state_predicted[0]
+        self.predicted_position[1] = self.state_predicted[1]
+        self.predicted_velocity = float(self.state_predicted[2])
+        self.predicted_heading[0] = self.state_predicted[3]
+        self.predicted_heading[1] = self.state_predicted[4]
+
+
+        #covariance update
+        P = np.dot(np.identity(5) - (np.dot(K, self.H_magnetometer)), P)
+
+
+
+        return self.state_predicted
+
+
     def beacon_measurement_updater_EKF(self, id, DISTANCE, delta_time):
+
+
+        self.state_prediction(delta_time)
 
         #beacons
         current_beacon = self.id.index(id)
@@ -81,14 +142,6 @@ class EKF:
         Q = 100 * np.identity(5)
 
 
-        # predicted state
-        self.predicted_position = self.predicted_position + np.dot(self.predicted_velocity, self.predicted_heading) * delta_time
-        self.predicted_velocity = float(self.predicted_velocity + self.imu_acc[0] * delta_time)
-        self.predicted_heading = self.predicted_heading + np.dot(rotated_matrix, self.predicted_heading) * self.imu_gyro[2] * delta_time
-
-        self.state_predicted = np.array([[float(self.predicted_position[0]), float(self.predicted_position[1]), self.predicted_velocity, float(self.predicted_heading[0]), float(self.predicted_heading[1])]]).T
-
-
         # jacobians
         self.F = np.array([[1, 0, float(delta_time * self.predicted_heading[0]), float(delta_time * self.predicted_velocity), 0],
              [0, 1, float(delta_time * self.predicted_heading[1]), 0, float(delta_time * self.predicted_velocity)],
@@ -96,24 +149,20 @@ class EKF:
              [0, 0, 0, 1, float(-delta_time * self.imu_gyro[2])],
              [0, 0, 0, float(delta_time*self.imu_gyro[2]), 1]])
 
-        # 2 x 5
-        H_magnetometer = np.array([[0, 0, 0, float(self.imu_mag[0]), float(self.imu_mag[1])],
-                          [0, 0 , 0, float(self.imu_mag[1]), float(-self.imu_mag[0])]])
 
-
-        self.H = np.array([[float(-2 * np.absolute(self.x[current_beacon] - self.predicted_position[0]) * np.sign(self.x[current_beacon] - self.predicted_position[0])), float(-2 * np.absolute(self.y[current_beacon] - self.predicted_position[1]) * np.sign(self.y[current_beacon] - self.predicted_position[1])), 0, 0, 0]])
+        self.H_beacon = np.array([[float(-2 * np.absolute(self.x[current_beacon] - self.predicted_position[0]) * np.sign(self.x[current_beacon] - self.predicted_position[0])), float(-2 * np.absolute(self.y[current_beacon] - self.predicted_position[1]) * np.sign(self.y[current_beacon] - self.predicted_position[1])), 0, 0, 0]])
 
 
         #remember to remove noise after you are finished with debugging
-        # measurements
+        # measurements based on the beacon readings
         self.measurement = pow(DISTANCE, 2)
         self.measurement_estimated = pow(np.linalg.norm(self.predicted_position - BEACON), 2)
         estimation_difference = self.measurement - self.measurement_estimated
 
         # kalman magic
         P = np.dot(np.dot(self.F, P), np.transpose(self.F)) + Q
-        S = np.dot(np.dot(self.H, P), np.transpose(self.H)) + R
-        K = np.dot(np.dot(P, np.transpose(self.H)), np.linalg.inv(S))
+        S = np.dot(np.dot(self.H_beacon, P), np.transpose(self.H_beacon)) + R
+        K = np.dot(np.dot(P, np.transpose(self.H_beacon)), np.linalg.inv(S))
 
         # output update
         self.state_predicted = self.state_predicted + np.dot(K, estimation_difference)
@@ -125,6 +174,6 @@ class EKF:
 
 
         #covariance update
-        P = np.dot(np.identity(5) - (np.dot(K, self.H)), P)
+        P = np.dot(np.identity(5) - (np.dot(K, self.H_beacon)), P)
 
         return self.state_predicted

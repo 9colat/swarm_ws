@@ -28,11 +28,13 @@ def main():
     n = 2000
     test_array = [0.0]*n
     head = np.array([[0.1, 0.0]]).T
+    test_head = np.array([[0.1, 0.0]]).T
     new_position = np.array([[1.0, 1.0]]).T
     dT = 0.01
     velocity = 5
     arr = [42867, 42928,  42929]
     test_arr = np.array([[1.0]*2]*n)
+    old_angle = 0.0
 
     for x in range(n):
         id = w1.id.index(arr[x%3])
@@ -40,13 +42,22 @@ def main():
 
         new_position = new_position + head * velocity * dT
         head = head + np.dot(rotated_matrix, head) * w1.imu_gyro[2] * dT
-        dist = math.sqrt(pow(w1.x[id] - new_position[0], 2) + pow(w1.y[id] - new_position[1], 2)) #+ random.uniform(-1, 1)
-        test_array[x] = (w1.beacon_measurement_updater_EKF(arr[x%3], dist + random.uniform(-0.1, 0.1), dT))
-        test_arr[x] = new_position.T
-        ax.scatter(test_array[x][0],test_array[x][1],c='r') #predicted
+        true_angle = math.atan2(head[1], head[0])
+        varied_angle = true_angle + random.uniform(-0.01, 0.01)
+
+        test_head[0] = math.cos(varied_angle)
+        test_head[1] = math.sin(varied_angle)
+
+        #dist = math.sqrt(pow(w1.x[id] - new_position[0], 2) + pow(w1.y[id] - new_position[1], 2)) #+ random.uniform(-1, 1)
+        #test_array[x] = (w1.beacon_measurement_updater_EKF(arr[x%3], dist + random.uniform(-0.1, 0.1), dT))
+        test_array[x] = w1.magnetometer_measurement_updater_EKF(test_head, dT)
+        #test_arr[x] = new_position.T
+        test_arr[x] = head.T
+        ax.scatter(test_array[x][3],test_array[x][4],c='r') #predicted
+        print(test_array[x])
 
     ax.scatter(test_arr[:,0],test_arr[:,1], c='b') # true
-    print(test_arr)
+
     plt.show()
 
 
