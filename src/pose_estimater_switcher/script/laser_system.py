@@ -8,9 +8,9 @@ class Laser_component:
     def __init__(self):
         self.beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
         self.beacon =    np.array([[11700, 16244,  7824,   2000,   21369,  26163,  26163,  31000,  35766,  35766,  40205,  40204,  16560],[5999,  10150,  5726,   4499,   6534,   9939,   3699,   6519,   10012,  3522,   11684,  4363,   3549]])
-        self.magnetometer_corection_factor = math.radians(30)
-        self.r_h = 300
-        self.std = 6500
+        self.magnetometer_corection_factor = math.radians(30) # please remmeber to update me ;)
+        self.r_h = 300 # please remmeber to update me ;)
+        self.std = 6500 # please remmeber to update me ;)
         self.mean = 0
 
     def projection(self, id, dist):

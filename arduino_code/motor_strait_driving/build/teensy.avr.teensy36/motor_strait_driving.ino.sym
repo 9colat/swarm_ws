@@ -447,7 +447,7 @@ SYMBOL TABLE:
 1fff0a74 g     O .data	00000040 isr_table_portD
 0000068c  w    F .text	00000020 std_msgs::Float32::deserialize(unsigned char*)
 1fff228c g     O .bss	00000004 direction_indicator_right
-623afdd6 g       *ABS*	00000000 __rtc_localtime
+6243099f g       *ABS*	00000000 __rtc_localtime
 00005258 g     F .text	00000048 micros
 00000000  w      *UND*	00000000 __libc_fini
 00004c70  w    F .text	00000006 cmp1_isr
