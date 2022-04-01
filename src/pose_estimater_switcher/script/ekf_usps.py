@@ -107,12 +107,11 @@ class EKF:
         # measurements based on the magnetometer data
         self.measurement = imu_mag
         self.measurement_estimated = np.array([[float(np.dot(global_to_local_mag.T, self.predicted_heading))], [float((np.dot(np.dot(global_to_local_mag.T, rotated_matrix), self.predicted_heading)))]])
-        #print(math.degrees(math.atan2(self.measurement_estimated[1], self.measurement_estimated[0])))
+        self.measurement_estimated = np.divide(self.measurement_estimated, math.sqrt(pow(self.measurement_estimated[0], 2) + pow(self.measurement_estimated[1], 2)))
+
         estimation_difference = self.measurement - self.measurement_estimated
-        #print("R: ", rotated_matrix)
-        #print("H: ", self.predicted_heading)
-        #print("Dot product: ", np.dot(rotated_matrix, self.predicted_heading))
-        #print("Angle: ", math.degrees(math.atan2(self.measurement[1], self.measurement[0])))
+        print(math.atan2(estimation_difference[1], estimation_difference[0]))
+
 
         # kalman magic
         P = np.dot(np.dot(self.F, P), np.transpose(self.F)) + Q
@@ -124,8 +123,8 @@ class EKF:
         self.predicted_position[0] = self.state_predicted[0]
         self.predicted_position[1] = self.state_predicted[1]
         self.predicted_velocity = float(self.state_predicted[2])
-        self.predicted_heading[0] = np.linalg.norm(self.state_predicted[3])
-        self.predicted_heading[1] = np.linalg.norm(self.state_predicted[4])
+        self.predicted_heading[0] = self.state_predicted[3] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
+        self.predicted_heading[1] = self.state_predicted[4] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
 
         #covariance update
         P = np.dot(np.identity(5) - (np.dot(K, self.H_magnetometer)), P)
@@ -177,8 +176,8 @@ class EKF:
         self.predicted_position[0] = self.state_predicted[0]
         self.predicted_position[1] = self.state_predicted[1]
         self.predicted_velocity = float(self.state_predicted[2])
-        self.predicted_heading[0] = self.state_predicted[3]
-        self.predicted_heading[1] = self.state_predicted[4]
+        self.predicted_heading[0] = self.state_predicted[3] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
+        self.predicted_heading[1] = self.state_predicted[4] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
 
 
         #covariance update

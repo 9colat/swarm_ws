@@ -30,9 +30,9 @@ def rot_mat(theta):
 
 def main():
     theta = 0.1
-    n = 1600
+    n = 5
     test_array = [0.0]*n
-    head = np.array([[1.0, 0.0]]).T
+    head = np.array([[-1.0, 0.0]]).T
     new_position = np.array([[1.0, 1.0]]).T
     dT = 0.01
     velocity = 5
@@ -40,6 +40,8 @@ def main():
     arr = [42867, 42928,  42929]
     test_arr = np.array([[1.0]*2]*n)
     mag_measurement = np.array([[0.0, 0.0]])
+    mag_measurement_normalised = np.array([[0.0, 0.0]])
+
 
     R_matrix = np.dot(rot_mat(3*math.pi/180), np.array([[1, 0]]).T)
 
@@ -54,21 +56,30 @@ def main():
         #dist = math.sqrt(pow(w1.x[id] - new_position[0], 2) + pow(w1.y[id] - new_position[1], 2)) #+ random.uniform(-1, 1)
 
         head = head + np.dot(rotated_matrix, head) * omega * dT # true heading
+        #head = np.divide(head, math.sqrt(pow(head[0], 2) + pow(head[1], 2)))
         mag_angle = np.array(np.dot(theta, np.array([[1, 0]]).T))
-        mag_measurement = np.array([[float(np.dot(R_matrix.T, head))], [float((np.dot(np.dot(R_matrix.T, rotated_matrix), head)))]])
-        #+ random.uniform(-0.0001, 0.0001)
-
-
+        noise_x = random.uniform(-0.001, 0.001)
+        noise_y = random.uniform(-0.001, 0.001)
+        mag_measurement = np.array([[float(np.dot(R_matrix.T, head) + noise_x)], [float(np.dot(np.dot(R_matrix.T, rotated_matrix), head) + noise_y)]])
+        mag_measurement_normalised = np.divide(mag_measurement, math.sqrt(pow(mag_measurement[0], 2) + pow(mag_measurement[1], 2)))
+        #/ math.sqrt(pow(mag_measurement[0], 2) + pow(mag_measurement[1], 2))
+        #mag_measurement_normalised[0][1] = mag_measurement[1] / math.sqrt(pow(mag_measurement[0], 2) + pow(mag_measurement[1], 2))
+        #print("mag: ", mag_measurement)
+        #print("mag: ", mag_measurement)
+        #print("mag normalised: ", mag_measurement_normalised)
+        #print(round(math.sqrt(pow(mag_measurement_normalised[0], 2) + pow(mag_measurement_normalised[1], 2))))
 
 
         #test_array[x] = (w1.beacon_measurement_updater_EKF(arr[x%3], dist + random.uniform(-0.1, 0.1), dT))
-        test_array[x] = w1.magnetometer_measurement_updater_EKF(mag_measurement, dT)
+        #test_array[x] = w1.magnetometer_measurement_updater_EKF(mag_measurement_normalised, dT)
+        test_array[x] = w1.magnetometer_measurement_updater_EKF(mag_measurement_normalised, dT)
         #test_arr[x] = new_position.T
         test_arr[x] = head.T
+        #ax.scatter(mag_measurement_normalised[0], mag_measurement_normalised[1], c='r')
         ax.scatter(test_array[x][3],test_array[x][4],c='r') #predicted
         #ax.scatter(test_array[x][0],test_array[x][1],c='r') #predicted
 
-        print(test_array[x])
+        #print(test_array[x])
 
     ax.scatter(test_arr[:,0],test_arr[:,1], c='b') # true
 
