@@ -56,6 +56,10 @@ class EKF:
         self.imu_acc = imu_acc
         self.imu_gyro = imu_gyro
 
+    def angle_to_vector(self, theta):
+        vector = np.array([[math.cos(theta), -math.sin(theta)], [math.sin(theta), math.cos(theta)]])
+        return vector
+
 
     #def input_model(self):
     #    self.input = np.transpose([self.imu_acc[0], self.imu_gyro[2]])
@@ -79,6 +83,8 @@ class EKF:
 
         self.state_prediction(delta_time)
 
+        global_to_local_mag = np.dot(self.angle_to_vector(3*math.pi/180), np.array([[1, 0]]).T)
+
         # noise
         R = 0.01
         P = np.identity(5)
@@ -97,12 +103,16 @@ class EKF:
                           [0, 0 , 0, float(imu_mag[1]), float(-imu_mag[0])]])
 
 
-
         #remember to remove noise after you are finished with debugging
         # measurements based on the magnetometer data
         self.measurement = imu_mag
-        self.measurement_estimated = self.predicted_heading
+        self.measurement_estimated = np.array([[float(np.dot(global_to_local_mag.T, self.predicted_heading))], [float((np.dot(np.dot(global_to_local_mag.T, rotated_matrix), self.predicted_heading)))]])
+        #print(math.degrees(math.atan2(self.measurement_estimated[1], self.measurement_estimated[0])))
         estimation_difference = self.measurement - self.measurement_estimated
+        #print("R: ", rotated_matrix)
+        #print("H: ", self.predicted_heading)
+        #print("Dot product: ", np.dot(rotated_matrix, self.predicted_heading))
+        #print("Angle: ", math.degrees(math.atan2(self.measurement[1], self.measurement[0])))
 
         # kalman magic
         P = np.dot(np.dot(self.F, P), np.transpose(self.F)) + Q
@@ -114,13 +124,11 @@ class EKF:
         self.predicted_position[0] = self.state_predicted[0]
         self.predicted_position[1] = self.state_predicted[1]
         self.predicted_velocity = float(self.state_predicted[2])
-        self.predicted_heading[0] = self.state_predicted[3]
-        self.predicted_heading[1] = self.state_predicted[4]
-
+        self.predicted_heading[0] = np.linalg.norm(self.state_predicted[3])
+        self.predicted_heading[1] = np.linalg.norm(self.state_predicted[4])
 
         #covariance update
         P = np.dot(np.identity(5) - (np.dot(K, self.H_magnetometer)), P)
-
 
 
         return self.state_predicted
