@@ -15,13 +15,13 @@
 #include <geometry_msgs/Twist.h>
 #include <custom_msgs/odom_and_imu.h>
 
-//Adafruit_BMP280 bmp; // use I2C interface
-//Adafruit_Sensor *bmp_temp = bmp.getTemperatureSensor();
-//Adafruit_Sensor *bmp_pressure = bmp.getPressureSensor();
+Adafruit_BMP280 bmp; // use I2C interface
+Adafruit_Sensor *bmp_temp = bmp.getTemperatureSensor();
+Adafruit_Sensor *bmp_pressure = bmp.getPressureSensor();
 double error_l;
 double error_r;
 
-//-----pinout setting up-----//
+//-----Pinout setting up-----//
 const int MPU_addr = 0x68; // I2C address of the MPU-6050 and mpu9250
 const byte right_motor_pwm = 29;     // setting the pin for the left motors PWM
 const byte right_motor_inb = 28;     // setting the pin for the left motors b direction pin
@@ -37,7 +37,7 @@ const byte RGB_led_green = 2;
 const byte RGB_led_blue = 3;
 const byte RGB_led_red = 4;
 
-//-----variabels-----//
+//-----Variabels-----//
 const int counts_per_revolution = 1920.0;   // the number of counts per full wheel revulotion
 const float pi = 3.141593;          // this is pi, or an aproximation, what did you expeced?
 const float max_vel = 13.0;
@@ -56,15 +56,15 @@ const int opper_lim = 255;
 double goal_vel_x;
 double temp_input_vel;
 int bool_tele_op_toggel;
-int period = 1000;
+const int period = 10;
 unsigned long time_now = 0;
 double encoder_counter_right = 0.0;   // this is the encoder counter for the right wheel
 double encoder_counter_left = 0.0;    // this is the encoder counter for the left wheel
 int status_of_led = HIGH;           // this can be removed later
 int direction_indicator_right;  //this is a direction indicator, that can be either 0 or 1. if the variable is 0 that means that the moters are going backwards, and 1 means forwards.
 int direction_indicator_left;   //this is a direction indicator, that can be either 0 or 1. if the variable is 0 that means that the moters are going backwards, and 1 means forwards.
-float count_to_deg = (360.0) / counts_per_revolution; //convertion constants for degrees
-double count_to_rad = (2.0 * pi) / counts_per_revolution; //convertion constants for radians
+const float count_to_deg = (360.0) / counts_per_revolution; //convertion constants for degrees
+const double count_to_rad = (2.0 * pi) / counts_per_revolution; //convertion constants for radians
 int pwm_procent_right = 0;        // the PWM procentage, initialed to 0 for the right motor
 int pwm_procent_left = 0;         // the PWM procentage, initialed to 0 for the left motor
 int pwm_value_right;                // initialzing the PWM value aka. turning the procentage into a 8-bit value (0-255)
@@ -94,11 +94,11 @@ double cum_error_left;
 double rate_error_left;
 double goal_omega_right;
 double goal_omega_left;
-float float_to_long_factor = 10000.0;
+const float float_to_long_factor = 10000.0;
 int right_count_tick;
 int left_count_tick;
-float wheel_base = 0.229;            // needs to be updated and use the right unit (proberbly meters)
-float wheel_radius = 0.04;           // needs to be updated and use the right unit (proberbly meters)
+const float wheel_base = 0.229;            // needs to be updated and use the right unit (proberbly meters)
+const float wheel_radius = 0.04;           // needs to be updated and use the right unit (proberbly meters)
 int16_t accel_X, accel_Y, accel_Z, tmp, gyro_X, gyro_Y, gyro_Z, mx, my, mz;
 long publisher_timer;
 MPU9250 accelgyro;
@@ -119,12 +119,6 @@ std_msgs::Float32 angle_of_wheel;
 ros::Publisher ankle_pub("wheel_angle", &angle_of_wheel);
 geometry_msgs::Quaternion wheel_speed;
 ros::Publisher speed_pub("speed_and_tick", &wheel_speed);
-//geometry_msgs::Vector3 imu_acc = geometry_msgs::Vector3();
-//ros::Publisher IMU_data_acc("imu_acc", &imu_acc);
-//geometry_msgs::Vector3 imu_gyro = geometry_msgs::Vector3();
-// IMU_data_gyro("imu_gyro", &imu_gyro);
-//geometry_msgs::Vector3 imu_mag = geometry_msgs::Vector3();
-//ros::Publisher IMU_data_mag("imu_mag", &imu_mag);
 geometry_msgs::Vector3 data_measured_angle = geometry_msgs::Vector3();
 ros::Publisher measured_angle_pub("measured_angle", &data_measured_angle);
 custom_msgs::odom_and_imu data_measured_odom_and_imu = custom_msgs::odom_and_imu();
@@ -154,12 +148,10 @@ void encoder_count_chage_right() {
   old_time_right = double(micros()) / 1000000;
   if (encoder_counter_right < counts_per_revolution && encoder_counter_right > -counts_per_revolution) {
     if (direction_indicator_right == 1) {
-    //  encoder_counter_right++;
       right_count_tick += 1;
       current_omega_right = count_to_rad / delta_time_right;
     }
     if (direction_indicator_right == 0) {
-    //  encoder_counter_right = encoder_counter_right - 1;
       right_count_tick += -1;
       current_omega_right = -count_to_rad / delta_time_right;
     }
@@ -169,9 +161,6 @@ void encoder_count_chage_right() {
   if (current_omega_right < 20 && current_omega_right > -20) {
     array_push(speed_array_right, current_omega_right);
   }
-
-  //right_tick.data = right_count_tick;
-  //right_tick_pub.publish(&right_tick);
   average_omega_right = averaging_array(speed_array_right);
 }
 
@@ -180,12 +169,10 @@ void encoder_count_chage_left() {
   old_time_left = double(micros()) / 1000000;
   if (encoder_counter_left < counts_per_revolution && encoder_counter_left > -counts_per_revolution) {
     if (direction_indicator_left == 1) {
-    //  encoder_counter_left++;
       left_count_tick += 1;
       current_omega_left = count_to_rad / delta_time_left;
     }
     if (direction_indicator_left == 0) {
-    //  encoder_counter_left = encoder_counter_left - 1;
       left_count_tick += -1;
       current_omega_left = -count_to_rad / delta_time_left;
     }
@@ -194,10 +181,6 @@ void encoder_count_chage_left() {
   if (current_omega_left < 20 && current_omega_left > -20) {
     array_push(speed_array_left, current_omega_left);
   }
-
-  //left_tick.data = left_count_tick;
-  //left_tick_pub.publish(&left_tick);
-
   average_omega_left = averaging_array(speed_array_left);
 }
 
@@ -358,19 +341,17 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
 
 
 
-
+//-----IMU data colection function-----//
 void imu_collection() {
   accelgyro.getMotion9(&accel_X, &accel_Y, &accel_Z, &gyro_X, &gyro_Y, &gyro_Z, &mx, &my, &mz);
   data_measured_odom_and_imu.imu_acc.x = accel_X;
   data_measured_odom_and_imu.imu_acc.y = accel_Y;
   data_measured_odom_and_imu.imu_acc.z = accel_Z;
   //IMU_data_acc.publish(&imu_acc);
-  //sensors_event_t temp_event;
-  //bmp_temp->getEvent(&temp_event);
-  //temperature = temp_event.temperature;
-
-  //data_measured_odom_and_imu.temp = temperature;
-
+  sensors_event_t temp_event;
+  bmp_temp->getEvent(&temp_event);
+  temperature = temp_event.temperature;
+  data_measured_odom_and_imu.temp = temperature;
   data_measured_odom_and_imu.imu_gyro.x = gyro_X;
   data_measured_odom_and_imu.imu_gyro.y = gyro_Y;
   data_measured_odom_and_imu.imu_gyro.z = gyro_Z;
@@ -385,7 +366,6 @@ void imu_collection() {
   data_measured_angle.y = reference_angle;
   data_measured_angle.z = measured_angle;
   //measured_angle_pub.publish(&data_measured_angle);
-
 }
 
 void heading_controller(float measured_angle, float reference_angle, float p_gain) { //(measured, goal, p_value)
@@ -478,18 +458,18 @@ void setup() {
   //nh.advertise(right_tick_pub);
   //nh.advertise(left_tick_pub);
   //nh.advertise(ankle_pub);
-  nh.advertise(speed_pub);
+  //nh.advertise(speed_pub);
 //  nh.advertise(IMU_data_acc);
 //  nh.advertise(IMU_data_gyro);
 //  nh.advertise(IMU_data_mag);
  nh.advertise(odom_and_IMU_pub);
-  //unsigned status;
-  //status = bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID);
-  //if (!status) {
-  //  nh.loginfo("Could not find a valid BMP280 sensor, check wiring");
-  //}
+ unsigned status;
+ status = bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID);
+ if (!status) {
+   nh.loginfo("Could not find a valid BMP280 sensor, check wiring");
+ }
 
-  //accelgyro.initialize();
+  accelgyro.initialize();
   //bmp.setSampling(Adafruit_BMP280::MODE_FORCED,     /* Operating Mode. */
   //                Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
   //                Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
@@ -517,23 +497,16 @@ void loop() {
     time_now = millis();
 
 
-    /*wheel_speed.x = average_omega_right;
-    wheel_speed.y = average_omega_left;
-    wheel_speed.z = temp_input_vel;
-    wheel_speed.w = goal_vel_x;*/
-    wheel_speed.x = average_omega_right;
-    wheel_speed.y = average_omega_left;
-    wheel_speed.z = error_r;
-    wheel_speed.w = cum_error_r;
-    /*wheel_speed.x = error_r;
-    wheel_speed.y = error_l;
-    wheel_speed.z = cum_error_r;
-    wheel_speed.w = cum_error_l;*/
-    //imu_collection();
-    //data_measured_odom_and_imu.omega_right = average_omega_right;
-    //data_measured_odom_and_imu.omega_left = average_omega_left;
+
+    //wheel_speed.x = average_omega_right;
+    //wheel_speed.y = average_omega_left;
+    //wheel_speed.z = error_r;
+    //wheel_speed.w = cum_error_r;
+
+    imu_collection();
+
     odom_and_IMU_pub.publish(&data_measured_odom_and_imu);
-    speed_pub.publish(&wheel_speed);
+    //speed_pub.publish(&wheel_speed);
   }
   nh.spinOnce();
   //}
