@@ -125,7 +125,7 @@ class EKF:
         self.predicted_velocity = float(self.state_predicted[2])
         self.predicted_heading[0] = self.state_predicted[3] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
         self.predicted_heading[1] = self.state_predicted[4] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
-
+        print(math.sqrt(pow(self.predicted_heading[0], 2) + pow(self.predicted_heading[1], 2)))
         #covariance update
         P = np.dot(np.identity(5) - (np.dot(K, self.H_magnetometer)), P)
 
