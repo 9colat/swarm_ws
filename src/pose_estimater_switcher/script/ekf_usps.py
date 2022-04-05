@@ -38,7 +38,7 @@ class EKF:
         # self stuff for IMU
         self.imu_acc = np.array([[0.0, 0.0, 0.0]]).T
         self.imu_gyro = np.array([[0.0, 0.0, 0.2]]).T
-        self.imu_mag = np.array([[0.0, 0.0, 0.0]]).T
+        self.imu_mag = np.array([[1.0, 0.0]]).T
         self.predicted_heading = np.array([[1.0, 0.0]]).T
         self.predicted_position = np.array([[10.0, 15.0]]).T
         self.predicted_velocity = 1.0
@@ -81,9 +81,9 @@ class EKF:
 
     def magnetometer_measurement_updater_EKF(self, imu_mag, delta_time):
 
-        self.state_prediction(delta_time)
+        #self.state_prediction(delta_time)
 
-        global_to_local_mag = np.dot(self.angle_to_vector(0), np.array([[1, 0]]).T)
+        global_to_local_mag = np.dot(self.angle_to_vector(0), np.array([[1.0, 0.0]]).T)
 
         # noise
         R = np.identity(2)*0.1
@@ -100,6 +100,11 @@ class EKF:
              [0, 0, 0, float(delta_time*self.imu_gyro[2]), 1]])
 
 
+
+
+
+
+
         self.H_magnetometer = np.array([[0, 0, 0, float(imu_mag[0]), float(imu_mag[1])],
                           [0, 0 , 0, float(imu_mag[1]), float(-imu_mag[0])]])
 
@@ -107,11 +112,17 @@ class EKF:
         #remember to remove noise after you are finished with debugging
         # measurements based on the magnetometer data
         self.measurement = imu_mag
-        self.measurement_estimated = np.array([[float(np.dot(global_to_local_mag.T, self.predicted_heading))], [float(np.dot(global_to_local_mag.T, np.dot(rotated_matrix, self.predicted_heading)))]])
-        #print(self.measurement_estimated)
-        #self.measurement_estimated = np.divide(self.measurement_estimated, math.sqrt(pow(self.measurement_estimated[0], 2) + pow(self.measurement_estimated[1], 2)))
 
-        estimation_difference = self.measurement - self.measurement_estimated
+
+
+        rotated_heading_vector = np.dot(rotated_matrix, self.predicted_heading)
+        self.measurement_estimated = np.array([[float(np.dot(np.transpose(global_to_local_mag), self.predicted_heading))], [float(np.dot(np.transpose(global_to_local_mag), rotated_heading_vector))]])
+        #print(self.measurement_estimated)
+        measurement_estimated_normalised = self.measurement_estimated / math.sqrt(pow(self.measurement_estimated[0], 2) + pow(self.measurement_estimated[1], 2))
+
+
+
+        estimation_difference = self.measurement - measurement_estimated_normalised
         print(math.atan2(estimation_difference[1], estimation_difference[0]))
 
 
@@ -126,9 +137,9 @@ class EKF:
         self.predicted_position[1] = self.state_predicted[1]
         self.predicted_velocity = float(self.state_predicted[2])
         self.predicted_heading[0] = self.state_predicted[3] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
-        #self.state_predicted[3] = self.predicted_heading[0]
         self.predicted_heading[1] = self.state_predicted[4] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
-        #self.state_predicted[4] = self.predicted_heading[1]
+        self.state_predicted[3] = self.predicted_heading[0]
+        self.state_predicted[4] = self.predicted_heading[1]
         #print("dist: ", math.sqrt(pow(self.predicted_heading[0], 2) + pow(self.predicted_heading[1], 2)))
         #print("x: ",self.predicted_heading[0]," y: ",self.predicted_heading[1])
         #covariance update
@@ -183,7 +194,8 @@ class EKF:
         self.predicted_velocity = float(self.state_predicted[2])
         self.predicted_heading[0] = self.state_predicted[3] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
         self.predicted_heading[1] = self.state_predicted[4] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
-
+        self.state_predicted[3] = self.predicted_heading[0]
+        self.state_predicted[4] = self.predicted_heading[1]
 
         #covariance update
         P = np.dot(np.identity(5) - (np.dot(K, self.H_beacon)), P)
