@@ -1,6 +1,6 @@
 Mag=rotmat(3*pi/4)*[1 0]'
 
-h1=rotmat(45*pi/180)*[1 0]';
+h1=rotmat(180*pi/180)*[1 0]';
 h2=rotmat(0.1)*h1;
 
 Meas1=[Mag'*h1;Mag'*(rotmat(pi/2)*h1)]
