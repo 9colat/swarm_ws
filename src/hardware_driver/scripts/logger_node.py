@@ -2,12 +2,15 @@
 import rospy
 import sys
 import os
+import csv
 from pathlib import Path
 from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
-
+from geometry_msgs.msg import Pose
+from custom_msgs.msg import odom_and_imu
+from custom_msgs.msg import USPS_msgs
 
 
 
@@ -32,17 +35,20 @@ from geometry_msgs.msg import Twist
 
 
 input_speed = 0
+angular_speed = 0
 
-
-path = Path.home().joinpath("test_data", "log%s.txt")
+path = Path.home().joinpath("test_data", "log%s.csv")
 folder_path = str(Path.home().joinpath("test_data"))
 isfolder = os.path.isdir(folder_path)
 number_of_files = 0
 lidar_array = [0] * 360
-wheel_speed = [0] * 4
-lidar_label = ",lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar"
-seperator = ","
+beacon_data = [0] * 2
+IMU_data = [0]*6
+without_lidar_data = [0] * 5
+with_lidar_data = [0] * 5
+lidar_label = "lidar","lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar"
 
+fieldnames = ["with_x","with_y","with_v","with_hx","with_hy","without_x","without_y","without_v","without_hx","without_hy","acc_x","acc_y","acc_z","gyro_x","gyro_y","gyro_z","ID","distance","linear_speed","angular_speed"]
 def file_iterator():
     global number_of_files
     number_of_files = 0
@@ -51,8 +57,24 @@ def file_iterator():
         #print("im running itorator")
         number_of_files = number_of_files + 1
 
-def callback(data):
-    print(data.data)
+#def callback(data):
+#    print(data.data)
+
+def callback_distance(data):
+    global beacon_data
+    beacon_data = [data.ID, data.distance]
+
+def callback_imu(data):
+    global IMU_data
+    IMU_data = [data.imu_acc.x, data.imu_acc.y, data.imu_acc.z, data.imu_gyro.x, data.imu_gyro.y, data.imu_gyro.z]
+
+def callback_pose_estimator_with_lidar(data):
+    global with_lidar_data
+    with_lidar_data = [data.position.x,data.position.y,data.position.v,data.orientation.x,data.orientation.y]
+
+def callback_pose_estimator_without_lidar(data):
+    global without_lidar_data
+    without_lidar_data = [data.position.x,data.position.y,data.position.v,data.orientation.x,data.orientation.y]
 
 def callback_lidar(data):#####
     global lidar_array
@@ -60,52 +82,64 @@ def callback_lidar(data):#####
     for i in range(len(data.ranges)):
         lidar_array[i] = data.ranges[i]
 
-def callback_wheel_speed(data):
-    global wheel_speed
-    wheel_speed[0] = data.x
-    wheel_speed[1] = data.y
-    wheel_speed[2] = data.z
-    wheel_speed[3] = data.w
 
 
 def callback_input_speed(data):
-    global input_speed
+    global input_speed, angular_speed
     input_speed = data.linear.x
+    angular_speed = data.angular.z
 
 
 def main():
-    global path, folder_path, isfolder, number_of_files, seperator
-    print(isfolder)
+    global path, folder_path, isfolder, number_of_files, seperator,input_speed, angular_speed, lidar_array,without_lidar_data, with_lidar_data, IMU_data, beacon_data, fieldnames
     if not isfolder:
         os.mkdir(folder_path)
         print("making directory")
     file_iterator()
-    array_length = len(wheel_speed)
+    path = str(path) % number_of_files
     rospy.init_node('logger', anonymous=True)
-    #print(str(lidar_array))
-    f = open(str(path) % number_of_files,"a")
-    f.write("Right wheel speed"+seperator+"Left wheel speed"+seperator+"Input Omega Right"+seperator+"Input Linear Speed"+"\n")
-    #f.write("Right wheel speed"+seperator+"Left wheel speed"+lidar_label+"\n")
-    f.close()
+
+    with open(path,'w') as csv_file:
+        csv_writer = csv.DictWriter(csv_file,fieldnames=fieldnames)
+        csv_writer.writeheader()
     #rospy.Subscriber("chatter", String, callback)
     #v = 1
     rate = rospy.Rate(1)
     while not rospy.is_shutdown():
         #print(v)
-        #rospy.Subscriber("scan", LaserScan, callback_lidar)
-        rospy.Subscriber("speed_and_tick", Quaternion, callback_wheel_speed)
+        rospy.Subscriber("scan", LaserScan, callback_lidar)
         rospy.Subscriber("cmd_vel", Twist, callback_input_speed)
+        rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
+        rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_imu)
+        rospy.Subscriber("pose_estimator_with_lidar", Pose, callback_pose_estimator_with_lidar)
+        rospy.Subscriber("pose_estimator_without_lidar", Pose, callback_pose_estimator_without_lidar)
 
-        f = open(str(path) % number_of_files,"a")
-        #f.write(str(input_speed)+seperator)
-        for i in range(array_length-1):
-            f.write(str(wheel_speed[i])+seperator)
-        f.write(str(wheel_speed[array_length-1])+"\n")
-        #for j in range(len(lidar_array)-1):
-        #    f.write(str(lidar_array[j])+seperator)
-        #f.write(str(lidar_array[359])+"\n")
-        f.close()
-        #v += 1
+        with open(path, 'a') as csv_file:
+            csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            info = {
+                "with_x": with_lidar_data[0],
+                "with_y": with_lidar_data[1],
+                "with_v": with_lidar_data[2],
+                "with_hx": with_lidar_data[3],
+                "with_hy": with_lidar_data[4],
+                "without_x": without_lidar_data[0],
+                "without_y": without_lidar_data[1],
+                "without_v": without_lidar_data[2],
+                "without_hx": without_lidar_data[3],
+                "without_hy": without_lidar_data[4],
+                "acc_x": IMU_data[0],
+                "acc_y": IMU_data[1],
+                "acc_z": IMU_data[2],
+                "gyro_x": IMU_data[3],
+                "gyro_y": IMU_data[4],
+                "gyro_z": IMU_data[5],
+                "ID": beacon_data[0],
+                "distance": beacon_data[1],
+                "linear_speed": input_speed,
+                "angular_speed": angular_speed
+                }
+
+            csv_writer.writerow(info)
         rate.sleep()
     #rospy.spin()
 

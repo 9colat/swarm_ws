@@ -29,11 +29,12 @@ class EKF:
         self.time_i = np.array([3.0, 2.0, 1.0])
         self.acc_meas = np.array([0.0, 0.0, 0.0])
         self.omega = np.array([0.0, 0.0])
-        self.r = 0.04
+        selfWheel_r = 0.04
         self.l = 0.229
         self.callibration_factor_acc = 1.0
         self.floor_corection_array = np.array([[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]])
         self.floor_corection = np.array([0.0,0.0,0.0])
+        self.R_beacon = 0.01
 
         # self stuff for IMU
         self.imu_acc = np.array([[0.0, 0.0, 0.0]]).T
@@ -160,7 +161,7 @@ class EKF:
 
 
         # noise
-        R = 0.01
+
         P = np.identity(5)
         Q = 100 * np.identity(5)
 
@@ -184,7 +185,7 @@ class EKF:
 
         # kalman magic
         P = np.dot(np.dot(self.F, P), np.transpose(self.F)) + Q
-        S = np.dot(np.dot(self.H_beacon, P), np.transpose(self.H_beacon)) + R
+        S = np.dot(np.dot(self.H_beacon, P), np.transpose(self.H_beacon)) + self.R_beacon
         K = np.dot(np.dot(P, np.transpose(self.H_beacon)), np.linalg.inv(S))
 
         # output update
