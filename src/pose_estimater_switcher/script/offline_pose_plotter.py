@@ -91,4 +91,4 @@ print(variance,std, mean)
 
 #plt.tight_layout()
 fig.savefig(output_path + 'plot.svg')
-plt.show()
+#plt.show()

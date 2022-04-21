@@ -20,7 +20,7 @@ fig = plt.figure(figsize=(20,10))
 fig.suptitle('pose plot test')
 ax1 = fig.add_subplot(1,2,1)
 ax2 = fig.add_subplot(1,2,2, projection='3d')
-path = Path.home().joinpath("test_data", "pose.csv")
+path = str(Path.home().joinpath("test_data", "pose.csv"))
 
 index = count()
 
