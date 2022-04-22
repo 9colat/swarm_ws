@@ -4,7 +4,7 @@ import rospy
 import time
 from pathlib import Path
 
-path = str(Path.home().joinpath("swarm_ws/src/swarm_robot_nav/launch","112.launch"))
+path = str(Path.home().joinpath("swarm_ws/src/swarm_robot_nav/launch","StaticTestigAndLog.launch"))
 
 rospy.init_node('en_Mapping', anonymous=True)
 uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)

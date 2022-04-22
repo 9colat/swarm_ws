@@ -70,7 +70,7 @@ class EKF:
 
         # predicted state
         self.predicted_position = self.predicted_position + np.dot(self.predicted_velocity, self.predicted_heading) * delta_time
-        self.predicted_velocity = float(self.predicted_velocity + self.imu_acc[0] * delta_time)
+        self.predicted_velocity = float(self.predicted_velocity) + float(self.imu_acc[0][0]) * float(delta_time)
         self.predicted_heading = self.predicted_heading + np.dot(rotated_matrix, self.predicted_heading) * self.imu_gyro[2] * delta_time
 
         # combined together so it can be multiplied later
