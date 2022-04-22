@@ -5,6 +5,7 @@ import numpy as np
 from custom_msgs.msg import odom_and_imu
 from custom_msgs.msg import USPS_msgs
 from sensor_msgs.msg import LaserScan
+from std_msgs.msg import Bool
 from geometry_msgs.msg import Pose
 from ekf_usps import EKF
 from laser_system import Laser_component
@@ -47,6 +48,13 @@ def callback_lidar(data): #from the beacon
     for i in range(len(data.ranges)):
         lidar_array[i] = data.ranges[i]
 
+def callback_terminating_signal(data):
+    boll = data.data
+    if boll == True:
+        #print("i'ma fireing my LAZER!")
+        rospy.spin(0)
+
+
 
 def main():
     global w1, w2, global_time, state
@@ -56,13 +64,15 @@ def main():
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_imu)
     rospy.Subscriber("scan", LaserScan, callback_lidar)
+    rospy.Subscriber("terminating_signal", Bool, callback_terminating_signal)
     pub = rospy.Publisher('with_lidar', Pose, queue_size=10)
     rate = rospy.Rate(100) # 100hz
+    pose_est = Pose()
 
 
 
     while not rospy.is_shutdown():
-        pose_est = Pose()
+
         # time update for ONLY the predictor function in EKF
         local_time = time.time()
         dT = local_time - global_time

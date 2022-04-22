@@ -3,8 +3,9 @@ import rospy
 import sys
 import os
 import csv
+import time
 from pathlib import Path
-from std_msgs.msg import String
+from std_msgs.msg import Bool
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
@@ -46,6 +47,9 @@ beacon_data = [0] * 2
 IMU_data = [0]*6
 without_lidar_data = [0] * 5
 with_lidar_data = [0] * 5
+test_run_time = 120
+terminate_time = time.time() + test_run_time
+print(terminate_time)
 lidar_label = "lidar","lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar,lidar"
 
 fieldnames = ["with_x","with_y","with_v","with_hx","with_hy","without_x","without_y","without_v","without_hx","without_hy","acc_x","acc_y","acc_z","gyro_x","gyro_y","gyro_z","ID","distance","linear_speed","angular_speed"]
@@ -56,6 +60,7 @@ def file_iterator():
     while os.path.exists(str(path) % number_of_files):
         #print("im running itorator")
         number_of_files = number_of_files + 1
+    print(number_of_files)
 
 #def callback(data):
 #    print(data.data)
@@ -113,6 +118,7 @@ def main():
         rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_imu)
         rospy.Subscriber("pose_estimator_with_lidar", Pose, callback_pose_estimator_with_lidar)
         rospy.Subscriber("pose_estimator_without_lidar", Pose, callback_pose_estimator_without_lidar)
+        pub = rospy.Publisher('terminating_signal', Bool, queue_size=10)
 
         with open(path, 'a') as csv_file:
             csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
@@ -140,6 +146,11 @@ def main():
                 }
 
             csv_writer.writerow(info)
+        if terminate_time < time.time():
+            term_sig = Bool()
+            term_sig.data = True
+            pub.publish(term_sig)
+            rospy.spin(0)
         rate.sleep()
     #rospy.spin()
 

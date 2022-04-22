@@ -121,3 +121,18 @@ rosrun rosserial_python serial_node.py /dev/ttyACM0
 ```
 rostopic echo /cmd_vel
 ```
+
+
+## Static Test launch procedure
+The test is preformed with having the robot platform sit at multiple locations and collected data that is then logged. The log data file will be analysis at the end.
+
+
+First you will need to launch a roscore
+```
+roscore
+```
+After you will need to run this
+```
+rosrun hardware_driver pylaunch.py
+```
+## linear motion Test launch procedure

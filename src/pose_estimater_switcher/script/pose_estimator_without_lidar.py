@@ -4,6 +4,7 @@ import time
 import numpy as np
 from custom_msgs.msg import odom_and_imu
 from custom_msgs.msg import USPS_msgs
+from std_msgs.msg import Bool
 from geometry_msgs.msg import Pose
 from ekf_usps import EKF
 from laser_system import Laser_component
@@ -26,6 +27,12 @@ def callback_distance(data):
     state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
     # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
 
+def callback_terminating_signal(data):
+    boll = data.data
+    if boll == True:
+        #print("i'ma fireing my LAZER!")
+        rospy.spin(0)
+
 # getting data from the IMU
 def callback_imu(data):
     global w1, global_time
@@ -44,8 +51,10 @@ def main():
     rospy.init_node('pose_estimator_without_lidar', anonymous=True) # initialize the node
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_imu)
+    rospy.Subscriber("terminating_signal", Bool, callback_terminating_signal)
     pub = rospy.Publisher('without_lidar', Pose, queue_size=10)
     rate = rospy.Rate(100) # 100hz
+    pose_est = Pose()
 
 
 
