@@ -457,14 +457,17 @@ def main():
         ax3.plot(time_array,delta)
         ax4.scatter(with_x, with_y, c='b')
         ax4.scatter(without_x, without_y, c='r')
+        frames_per_figure = 10
         def animate(i):
             ax5.clear()
+
+            i = int(i/frames_per_figure)
             for l in range(360):
                 if i%2 == 0:
                     ax5.scatter(math.cos(math.radians(l)) * lidar_array[l][i], math.sin(math.radians(l)) * lidar_array[l][i], c='b')
                 if i%2 == 1:
                     ax5.scatter(math.cos(math.radians(l)) * lidar_array[l][i], math.sin(math.radians(l)) * lidar_array[l][i], c='r')
-        ani = FuncAnimation(fig4, animate, frames = len(data["lidar0"]))
+        ani = FuncAnimation(fig4, animate, frames = frames_per_figure * len(data["lidar0"]))
 
         ax1.set_xlim(0,45000)
         ax1.set_ylim(0,12000)

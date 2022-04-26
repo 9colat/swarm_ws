@@ -21,7 +21,7 @@ state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 def callback_distance(data):
     global w1, w2, global_time, lidar_array, state
     projected_distance = w2.projection(data.ID, data.distance)
-    updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0], w1.state_predicted[1]], [w1.state_predicted[3], w1.state_predicted[4]], data.distance) # measurement 'variance/trust' updated
+    updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0][0], w1.state_predicted[0][1]], [w1.state_predicted[0][3], w1.state_predicted[0][4]], data.distance) # measurement 'variance/trust' updated
     w1.R_beacon = updated_R
     local_time = time.time()
     dT = local_time - global_time

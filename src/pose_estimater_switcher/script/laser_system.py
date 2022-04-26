@@ -18,7 +18,8 @@ class Laser_component:
         index_of_data = self.beacon_id.index(id)
         #dist = math.sqrt(pow(beacon_x[index_of_data] - pose[0],2) + pow(beacon_y[index_of_data] - pose[1],2)+pow(beacon_z[index_of_data] - pose[2],2))
         d_z = (beacon_z[index_of_data] - self.r_h)/1000
-        x = math.sqrt(pow((dist/1000),2)-pow(d_z,2))
+        dist = (dist/1000)
+        x = math.sqrt(pow(dist,2)-pow(d_z,2))
         return x
 
     def bell_function(self, laser_dist):
@@ -31,7 +32,7 @@ class Laser_component:
         beacon_x =    [11700, 16244,  7824,   2000,   21369,  26163,  26163,  31000,  35766,  35766,  40205,  40204,  16560]    #[11700  , 16244 , 7824  , 2000  , 21369 , 26163 , 26163 , 31000 , 35766 , 35766 , 40205 , 40204 , 16560 ]beacon_
         beacon_y =    [5999,  10150,  5726,   4499,   6534,   9939,   3699,   6519,   10012,  3522,   11684,  4363,   3549]    #[5999   , 10150 , 5726  , 4499  , 6534  , 9939  , 3699  , 6519  , 10012  , 10012 , 11684 , 4363  , 3549 ]
         beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
-        dist = math.sqrt(pow(beacon_x[index_of_data] - robot_pose[0],2) + pow(beacon_y[index_of_data] - robot_pose[1],2)+pow(beacon_z[index_of_data] - robot_pose[2],2))
+        dist = math.sqrt(pow(beacon_x[index_of_data] - robot_pose[0],2) + pow(beacon_y[index_of_data] - robot_pose[1],2)+pow(beacon_z[index_of_data] - self.r_h,2))
         return dist
 
     def calculated_local_angle(self, id, robot_pose, heading):
