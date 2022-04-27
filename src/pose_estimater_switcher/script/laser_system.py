@@ -60,6 +60,7 @@ class Laser_component:
     def potential_occlusion_check(self, lidar_array, id, robot_pose, heading, dist):
         if len(robot_pose) != 2 and len(heading) != 2 and lidar_array != 360:
             print("sorry the input length was weird give that a look ;)")
+            
             return -1
         else:
             bell = 1 # chage later to make sence ;)
