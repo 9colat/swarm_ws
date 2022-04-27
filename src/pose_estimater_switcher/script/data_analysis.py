@@ -3,6 +3,7 @@
 import rospy
 import os
 import math
+import csv
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -43,6 +44,9 @@ def main():
     beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
     global path, folder_path
     number_of_files = 0
+    output_file_name = 'outputdata.csv'
+    path_out = str(Path.home().joinpath("test_data", output_file_name))
+    os.remove(path_out)
 
 
     while os.path.exists(path % number_of_files):
@@ -71,6 +75,7 @@ def main():
         distance = data["distance"]
         linear_speed = data["linear_speed"]
         angular_speed = data["angular_speed"]
+        good_lidar = data["lidar_good"]
         lidar_array[0] = data["lidar0"]
         lidar_array[1] = data["lidar1"]
         lidar_array[2] = data["lidar2"]
@@ -479,12 +484,58 @@ def main():
         name_of_file_2 = 'position_delta%s.svg'
         name_of_file_3 = 'position_in_the_same_plot%s.svg'
         name_of_file_4 = 'lidar%s.gif'
+
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
         fig2.savefig(output_path + name_of_file_2 % number_of_files)
         fig3.savefig(output_path + name_of_file_3 % number_of_files)
         writergif = animation.PillowWriter(fps=30)
-        ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
+        #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
+        w_x_variance = np.var(with_x)
+        w_x_std = np.std(with_x)
+        w_x_mean = np.mean(with_x)
+        w_y_variance = np.var(with_y)
+        w_y_std = np.std(with_y)
+        w_y_mean = np.mean(with_y)
+        w_variance = np.var([with_x,with_y])
+        w_std = np.std([with_x,with_y])
+        w_mean = np.mean([with_x,with_y])
+        wo_x_variance = np.var(without_x)
+        wo_x_std = np.std(without_x)
+        wo_x_mean = np.mean(without_x)
+        wo_y_variance = np.var(without_y)
+        wo_y_std = np.std(without_y)
+        wo_y_mean = np.mean(without_y)
+        wo_variance = np.var([without_x,without_y])
+        wo_std = np.std([without_x,without_y])
+        wo_mean = np.mean([without_x,without_y])
+        fieldnames = ["variance_w_x","std_w_x","mean_w_x","variance_w_y","std_w_y","mean_w_y","variance_wo_x","std_wo_x","mean_wo_x","variance_wo_y","std_wo_y","mean_wo_y","variance_wo","std_wo","mean_wo","variance_w","std_w","mean_w"]
+        if os.path.exists(path_out) == False:
+            with open(path_out, 'a') as csv_file:
+                pass
+        with open(path_out, 'a') as csv_file:
+            csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            info = {
+                "variance_w_x": w_x_variance,
+                "std_w_x": w_x_std,
+                "mean_w_x": w_x_mean,
+                "variance_w_y": w_y_variance,
+                "std_w_y": w_y_std,
+                "mean_w_y": w_y_mean,
+                "variance_wo_x": wo_x_variance,
+                "std_wo_x": wo_x_std,
+                "mean_wo_x": wo_x_mean,
+                "variance_wo_y": wo_y_variance,
+                "std_wo_y": wo_y_std,
+                "mean_wo_y": wo_y_mean,
+                "variance_wo": wo_variance,
+                "std_wo": wo_std,
+                "mean_wo": wo_mean,
+                "variance_w": w_variance,
+                "std_w": w_std,
+                "mean_w": w_mean
+                }
+            csv_writer.writerow(info)
 
         number_of_files = number_of_files + 1
     print("im done baby ;)")
