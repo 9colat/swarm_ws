@@ -113,10 +113,10 @@ source ~/.bashrc
 #here we setup the lidar
 ls -l /dev | grep ttyUSB
 sudo chmod 666 /dev/ttyUSB0
-cd
-cd swarm_ws/src
-git clone https://github.com/Slamtec/rplidar_ros.git
-catkin_make
+#cd
+#cd swarm_ws/src
+#git clone https://github.com/Slamtec/rplidar_ros.git
+#catkin_make
 
 git clone https://github.com/tu-darmstadt-ros-pkg/hector_slam.git
 cd ..

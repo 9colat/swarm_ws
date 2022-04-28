@@ -16,23 +16,25 @@ w2 = Laser_component()
 lidar_array = [0.0]*360
 global_time = time.time() # this should be already in seconds, initialised
 state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+mag_heading = [0]*2
 
 # gettng data from the beacons
 def callback_distance(data):
-    global w1, w2, global_time, lidar_array, state
+    global w1, w2, global_time, lidar_array, state, mag_heading
     projected_distance = w2.projection(data.ID, data.distance)
-    updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0][0], w1.state_predicted[0][1]], [w1.state_predicted[0][3], w1.state_predicted[0][4]], data.distance) # measurement 'variance/trust' updated
-    w1.R_beacon = updated_R
-    local_time = time.time()
-    dT = local_time - global_time
-    global_time = local_time
+    if mag_heading[0] != 0:
+        updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0][0], w1.state_predicted[0][1]], mag_heading, data.distance) # measurement 'variance/trust' updated
+        w1.R_beacon = updated_R
+        local_time = time.time()
+        dT = local_time - global_time
+        global_time = local_time
 
     state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
     # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
 
 # getting data from the IMU
 def callback_imu(data):
-    global w1, global_time
+    global w1, global_time, mag_heading
 
     local_time = time.time()
     dT = local_time - global_time
@@ -40,7 +42,7 @@ def callback_imu(data):
 
     w1.updating_imu([[data.imu_acc.x], [data.imu_acc.y], [data.imu_acc.z]], [[data.imu_gyro.x], [data.imu_gyro.y], [data.imu_gyro.z]])
     #w1.magnetometer_measurement_updater_EKF([[data.imu_mag.x], [data.imu_mag.y], [data.imu_mag.z]], dT)
-
+    mag_heading = [data.imu_mag.x, data.imu_mag.y]
 
 # getting data from the LiDAR
 def callback_lidar(data): #from the beacon

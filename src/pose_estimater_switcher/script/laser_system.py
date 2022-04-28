@@ -22,9 +22,9 @@ class Laser_component:
         x = math.sqrt(pow(dist,2)-pow(d_z,2))
         return x
 
-    def bell_function(self, laser_dist):
-        t = pow(laser_dist-self.mean,2)/(2*pow(self.std,2))
-        y = (1/(self.std * math.sqrt(2*math.pi)))*pow(math.e,t)
+    def bell_function(self, max_occlusion_height):
+        t = pow(max_occlusion_height-self.mean,2)/(pow(self.std,2))
+        y = (1/(self.std * math.sqrt(2*math.pi)))*pow(math.e,(1/2)*t)
         return y
 
     def assumed_dist(self, id, robot_pose):
@@ -35,13 +35,13 @@ class Laser_component:
         dist = math.sqrt(pow(beacon_x[index_of_data] - robot_pose[0],2) + pow(beacon_y[index_of_data] - robot_pose[1],2)+pow(beacon_z[index_of_data] - self.r_h,2))
         return dist
 
-    def calculated_local_angle(self, id, robot_pose, heading):
-        if len(robot_pose) != 2 and len(heading) != 2:
+    def calculated_local_angle(self, id, robot_pose, mag_heading):
+        if len(robot_pose) != 2 and len(mag_heading) != 2:
             print("sorry the input length was weird give that a look ;)")
             return -1
         else:
             index_of_data = self.beacon_id.index(id)
-            mag_theta_for_robot = math.atan2(heading[1],heading[0])
+            mag_theta_for_robot = math.atan2(mag_heading[1],mag_heading[0])
             robot_heading_x = math.cos(mag_theta_for_robot + self.magnetometer_corection_factor)
             robot_heading_y = math.sin(mag_theta_for_robot + self.magnetometer_corection_factor)
             robot_heading_corrected = math.atan2(robot_heading_y,robot_heading_x)
@@ -57,15 +57,16 @@ class Laser_component:
                 #print(beacon_theta)
             return beacon_theta
 
-    def potential_occlusion_check(self, lidar_array, id, robot_pose, heading, dist):
-        if len(robot_pose) != 2 and len(heading) != 2 and lidar_array != 360:
+    def potential_occlusion_check(self, lidar_array, id, robot_pose, mag_heading, dist):
+        beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
+        if len(robot_pose) != 2 and len(mag_heading) != 2 and lidar_array != 360:
             print("sorry the input length was weird give that a look ;)")
-            
+
             return -1
         else:
             bell = 1 # chage later to make sence ;)
             index_of_data = self.beacon_id.index(id)
-            theta = int(math.degrees(self.calculated_local_angle(id, robot_pose, heading)))
+            theta = int(math.degrees(self.calculated_local_angle(id, robot_pose, mag_heading)))
             #dist = (math.dist(self.beacon[:,index_of_data],robot_pose))/1000
             dist_projeted = self.projection(id, dist)
             #print(dist)
@@ -75,11 +76,19 @@ class Laser_component:
             if assumed_dist_p < dist or assumed_dist_m > dist:      # This if statmant will take objects that is not connected to the foor in to acount
                 print("bell value set to a value: ",bell)
                 bell = 1000 # chage later to make sence ;)
-
-            for i in range(theta - 5, theta + 5):
+            area_of_intreast = 2
+            stored_dist = [12]*(2*area_of_intreast+1)
+            for i in range(theta - area_of_intreast, theta + area_of_intreast):
+                i = i % 359
                 if lidar_array[i] < dist_projeted:
-                    bell = self.bell_function(lidar_array[i])
+                    stored_dist[i] = lidar_array[i]
                     print(bell)
                     print("here i will do some stuff later ;)")
+                if i == (theta + area_of_intreast) % 359:
+                    min_projected = min(stored_dist)
+                    beacon_h_minus_robot = (beacon_z[index_of_data] - self.r_h)/1000
+                    angle_to_beacon = math.tan(beacon_h_minus_robot/dist_projeted)
+                    height_to_occlusion = min_projected/math.tan(angle_to_beacon)
+                    bell = self.bell_function(height_to_occlusion)
             return bell
         #print("all good")
