@@ -78,10 +78,12 @@ class Laser_component:
                 bell = 1000 # chage later to make sence ;)
             area_of_intreast = 2
             stored_dist = [12]*(2*area_of_intreast+1)
+            j = 0
             for i in range(theta - area_of_intreast, theta + area_of_intreast):
                 i = i % 359
                 if lidar_array[i] < dist_projeted:
-                    stored_dist[i] = lidar_array[i]
+                    stored_dist[j] = lidar_array[i]
+                    j = j + 1
                     print(bell)
                     print("here i will do some stuff later ;)")
                 if i == (theta + area_of_intreast) % 359:

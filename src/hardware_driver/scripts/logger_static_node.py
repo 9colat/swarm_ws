@@ -133,6 +133,7 @@ def main():
             good_lidar = 0
             if len(lidar_array) == 360:
                 good_lidar = 1
+            if len(lidar_array) != 360:
                 lidar_array = [float("nan")] * len(lidar_array)
             with open(path, 'a') as csv_file:
                 csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)

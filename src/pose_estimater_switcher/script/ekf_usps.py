@@ -170,8 +170,8 @@ class EKF:
         self.F = np.array([[1, 0, float(delta_time * self.predicted_heading[0]), float(delta_time * self.predicted_velocity), 0],
              [0, 1, float(delta_time * self.predicted_heading[1]), 0, float(delta_time * self.predicted_velocity)],
              [0, 0, 1, 0, 0],
-             [0, 0, 0, 1, float(-delta_time * self.imu_gyro[2])],
-             [0, 0, 0, float(delta_time*self.imu_gyro[2]), 1]])
+             [0, 0, 0, 1, float(-delta_time * self.imu_gyro[2][0])],
+             [0, 0, 0, float(delta_time*self.imu_gyro[2][0]), 1]])
 
 
         self.H_beacon = np.array([[float(-2 * np.absolute(self.x[current_beacon] - self.predicted_position[0]) * np.sign(self.x[current_beacon] - self.predicted_position[0])), float(-2 * np.absolute(self.y[current_beacon] - self.predicted_position[1]) * np.sign(self.y[current_beacon] - self.predicted_position[1])), 0, 0, 0]])

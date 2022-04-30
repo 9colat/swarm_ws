@@ -9,13 +9,13 @@
 
 <include file="$(find rplidar_ros)/launch/rplidar.launch"/>
 
-<node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar">
+<node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar" respawn="true">
 </node>
 
-<node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="with_lidar">
+<node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="with_lidar" respawn="true">
 </node>
 
-<node pkg="hardware_driver" type="logger_static_node.py" name="logger_static_node">
+<node pkg="hardware_driver" type="logger_static_node.py" name="logger_static_node" respawn="true">
 </node>
 
 
