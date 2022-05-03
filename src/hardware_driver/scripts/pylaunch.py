@@ -2,17 +2,38 @@
 import roslaunch
 import rospy
 import time
+import sys
 from pathlib import Path
+from std_msgs.msg import Int16
 
 path = str(Path.home().joinpath("swarm_ws/src/swarm_robot_nav/launch","StaticTestigAndLog.launch"))
 
 rospy.init_node('en_Mapping', anonymous=True)
+pub1 = rospy.Publisher('indicator_color', Int16, queue_size=10)
+indicator = Int16()
+
 uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
 roslaunch.configure_logging(uuid)
 launch = roslaunch.parent.ROSLaunchParent(uuid, [path])
 launch.start()
-
-desired_time = 4 * 60 # we want the test to be run for 20 min, and convert it to seconds
+local_time = time.time()
+pub_time = 5
+first_time = True
+desired_time = 0.5 * 60 # we want the test to be run for 20 min, and convert it to seconds
 test_time_with_over_head_takken_to_a_count = desired_time + (desired_time/100)*25 # we add 25% time to acount for overhead.
-time.sleep(test_time_with_over_head_takken_to_a_count) # there is about 20% overhead on the time.
-launch.shutdown()
+rate = rospy.Rate(1)
+while not rospy.is_shutdown():
+    if (time.time() - local_time) > pub_time and first_time:
+        indicator.data = 1
+        pub1.publish(indicator)
+        first_time = False
+        print("it is now time for a sleep")
+    if (time.time() - local_time) > test_time_with_over_head_takken_to_a_count:
+        print("im awake again")
+        indicator.data = 255
+        pub1.publish(indicator)
+        launch.shutdown()
+        rospy.spin()
+
+
+    rate.sleep()

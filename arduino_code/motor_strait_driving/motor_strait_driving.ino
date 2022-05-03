@@ -322,6 +322,15 @@ void start_up_hi(std_msgs::Int16& num){
   }
 }
 
+void callback_indicator(std_msgs::Int16& data){
+  if(data.data == 1){
+    RGB_led_set("orange");
+  }
+  if(data.data == 255){
+    RGB_led_set("green");
+  }
+}
+
 void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
   double goal_vel_x = cmd_goal.linear.x;
   double goal_omega = cmd_goal.angular.z;
@@ -460,6 +469,7 @@ void RGB_led_set(const String& color) {
 
 // Subscribers //
 ros::Subscriber<geometry_msgs::Twist> sub_cmd_vel("cmd_vel", &cmd_velocity);
+ros::Subscriber<std_msgs::Int16> sub_indicator_color("indicator_color", &callback_indicator);
 //ros::Subscriber<std_msgs::Int16> start_up("stat_up_done", &start_up_hi);
 
 void setup() {
@@ -485,6 +495,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(left_encoder_b), encoder_count_chage_left, CHANGE);
   nh.subscribe(sub_cmd_vel);
   //nh.subscribe(start_up);
+  nh.subscribe(sub_indicator_color);
   //nh.advertise(right_tick_pub);
   //nh.advertise(left_tick_pub);
   //nh.advertise(ankle_pub);
