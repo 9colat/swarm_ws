@@ -121,7 +121,7 @@ def main():
     #v = 1
     rate = rospy.Rate(1)
     while not rospy.is_shutdown():
-        print("i am boot")
+        #print("i am boot")
         rospy.Subscriber("scan", LaserScan, callback_lidar)
         rospy.Subscriber("cmd_vel", Twist, callback_input_speed)
         rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
