@@ -71,7 +71,7 @@ def main():
         pose_est.orientation.x = state[3]
         pose_est.orientation.y = state[4]
         pub.publish(pose_est)
-        print("without: ", state[0],state[1])
+        #print("without: ", state[0],state[1])
         rate.sleep()
 
 

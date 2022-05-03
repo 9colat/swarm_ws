@@ -1,13 +1,6 @@
 
 <launch>
-<node pkg="rosserial_python" type="serial_node.py" name="motor_robot" output="screen">
-   <param name="port" value="/dev/ttyACM0" />
-</node>
 
-<node pkg="hardware_driver" type="logger_static_node.py" name="logger_static_node" respawn="true" />
-
-<node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="pose_estimator_without_lidar" respawn="true" />
-
-<node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="pose_estimator_with_lidar" respawn="true" />
+<node pkg="hardware_driver" type="pylaunch.py" name="pylaunch" respawn="false" />
 
 </launch>
