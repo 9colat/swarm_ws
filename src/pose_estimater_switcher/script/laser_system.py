@@ -10,8 +10,8 @@ class Laser_component:
         self.beacon =    np.array([[11700, 16244,  7824,   2000,   21369,  26163,  26163,  31000,  35766,  35766,  40205,  40204,  16560],[5999,  10150,  5726,   4499,   6534,   9939,   3699,   6519,   10012,  3522,   11684,  4363,   3549]])
         self.magnetometer_corection_factor = math.radians(30) # please remmeber to update me ;)
         self.r_h = 300 # please remmeber to update me ;)
-        self.std = 6500 # please remmeber to update me ;)
-        self.mean = 0
+        self.std = 0.7887537272 # please remmeber to update me ;)
+        self.mean = 1.464210526
 
     def projection(self, id, dist):
         beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
@@ -22,7 +22,7 @@ class Laser_component:
         x = math.sqrt(pow(dist,2)-pow(d_z,2))
         return x
 
-    def bell_function(self, max_occlusion_height):
+    def bell_function(self, max_occlusion_height): #input is in meters
         t = pow(max_occlusion_height-self.mean,2)/(pow(self.std,2))
         y = (1/(self.std * math.sqrt(2*math.pi)))*pow(math.e,(1/2)*t)
         return y
@@ -87,10 +87,10 @@ class Laser_component:
                     print(bell)
                     print("here i will do some stuff later ;)")
                 if i == (theta + area_of_intreast) % 359:
-                    min_projected = min(stored_dist)
+                    min_laser_measure = min(stored_dist)
                     beacon_h_minus_robot = (beacon_z[index_of_data] - self.r_h)/1000
                     angle_to_beacon = math.tan(beacon_h_minus_robot/dist_projeted)
-                    height_to_occlusion = min_projected/math.tan(angle_to_beacon)
+                    height_to_occlusion = min_laser_measure/math.tan(angle_to_beacon)
                     bell = self.bell_function(height_to_occlusion)
             return bell
         #print("all good")

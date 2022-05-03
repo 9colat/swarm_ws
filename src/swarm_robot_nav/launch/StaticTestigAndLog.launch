@@ -1,8 +1,8 @@
 
 <launch>
-<node pkg="rosserial_python" type="serial_node.py" name="GOT" output="screen">
+<!--<node pkg="rosserial_python" type="serial_node.py" name="GOT" output="screen">
    <param name="port" value="/dev/ttyACM0" />
-</node>
+</node>-->
 <node pkg="rosserial_python" type="serial_node.py" name="robot_Driver" output="screen">
    <param name="port" value="/dev/ttyACM1" />
 </node>
@@ -12,11 +12,15 @@
 <node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar" respawn="true">
 </node>
 
+<node pkg="pose_estimater_switcher" type="data_publisher.py" name="data_pub" respawn="true">
+</node>
+
+<!--
 <node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="with_lidar" respawn="true">
 </node>
 
 <node pkg="hardware_driver" type="logger_static_node.py" name="logger_static_node" respawn="true">
-</node>
+</node>-->
 
 
 </launch>

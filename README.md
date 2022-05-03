@@ -139,3 +139,4 @@ rosrun hardware_driver pylaunch.py
 ```
 sudo nmcli dev wifi connect "Smart production" password "aau smart production lab"
 ```
+sudo nmcli dev wifi connect "Piss off_my_hotspot" password "hello there"

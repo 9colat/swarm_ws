@@ -411,7 +411,7 @@ def main():
     pub_cmd_vel = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     pub_beacon = rospy.Publisher('beacon_data', USPS_msgs, queue_size=10)
     pub_odom = rospy.Publisher('odometry_and_IMU', odom_and_imu, queue_size=10)
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(5)
     i = 0
     lidar_array = [[0] * len(data["lidar0"])]*360
     while not rospy.is_shutdown():
@@ -438,9 +438,9 @@ def main():
         odom.imu_gyro.z = gyro_z[i]
 
         #print(acc_x)
-        pub_cmd_vel.publish(cmd_input)
+        #pub_cmd_vel.publish(cmd_input)
         pub_beacon.publish(beacon)
-        pub_odom.publish(odom)
+        #pub_odom.publish(odom)
         i = i + 1
         rate.sleep()
 
