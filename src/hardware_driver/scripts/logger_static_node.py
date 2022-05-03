@@ -78,7 +78,7 @@ def callback_pose_estimator_with_lidar(data):
     global with_lidar_data
     with_lidar_data = [data.position.x,data.position.y,data.position.v,data.orientation.x,data.orientation.y]
     print(with_lidar_data)
-    
+
 def callback_pose_estimator_without_lidar(data):
     global without_lidar_data
     without_lidar_data = [data.position.x,data.position.y,data.position.v,data.orientation.x,data.orientation.y]
@@ -127,8 +127,8 @@ def main():
         rospy.Subscriber("cmd_vel", Twist, callback_input_speed)
         rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
         rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_imu)
-        rospy.Subscriber("pose_estimator_with_lidar", Pose, callback_pose_estimator_with_lidar)
-        rospy.Subscriber("pose_estimator_without_lidar", Pose, callback_pose_estimator_without_lidar)
+        rospy.Subscriber("with_lidar", Pose, callback_pose_estimator_with_lidar)
+        rospy.Subscriber("without_lidar", Pose, callback_pose_estimator_without_lidar)
         pub = rospy.Publisher('terminating_signal', Bool, queue_size=10)
         if first_time == False:
             good_lidar = 0
