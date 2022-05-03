@@ -76,12 +76,12 @@ def callback_imu(data):
 
 def callback_pose_estimator_with_lidar(data):
     global with_lidar_data
-    with_lidar_data = [data.position.x,data.position.y,data.position.v,data.orientation.x,data.orientation.y]
+    with_lidar_data = [data.position.x,data.position.y,data.position.z,data.orientation.x,data.orientation.y]
     print(with_lidar_data)
 
 def callback_pose_estimator_without_lidar(data):
     global without_lidar_data
-    without_lidar_data = [data.position.x,data.position.y,data.position.v,data.orientation.x,data.orientation.y]
+    without_lidar_data = [data.position.x,data.position.y,data.position.z,data.orientation.x,data.orientation.y]
 
 def callback_lidar(data):#####
     global lidar_array, first_time
