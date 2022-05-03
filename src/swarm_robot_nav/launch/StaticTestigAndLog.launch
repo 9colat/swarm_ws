@@ -15,10 +15,10 @@
 <node pkg="pose_estimater_switcher" type="data_publisher.py" name="data_pub" respawn="true">
 </node>
 
-<!--
+
 <node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="with_lidar" respawn="true">
 </node>
-
+<!--
 <node pkg="hardware_driver" type="logger_static_node.py" name="logger_static_node" respawn="true">
 </node>-->
 

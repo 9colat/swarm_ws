@@ -86,7 +86,7 @@ def main():
         pose_est.orientation.x = state[3]
         pose_est.orientation.y = state[4]
         pub.publish(pose_est)
-        #print(ola_has_bad_names)
+        print("with: ", state[0],state[1])
         rate.sleep()
 
 
