@@ -84,8 +84,8 @@ class Laser_component:
                 if lidar_array[i] < dist_projeted:
                     stored_dist[j] = lidar_array[i]
                     j = j + 1
-                    print(bell)
-                    print("here i will do some stuff later ;)")
+                    #print(bell)
+                    #print("here i will do some stuff later ;)")
                 if i == (theta + area_of_intreast) % 359:
                     min_laser_measure = min(stored_dist)
                     beacon_h_minus_robot = (beacon_z[index_of_data] - self.r_h)/1000
