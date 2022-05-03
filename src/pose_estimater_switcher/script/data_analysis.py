@@ -497,18 +497,18 @@ def main():
         w_y_variance = np.var(with_y)
         w_y_std = np.std(with_y)
         w_y_mean = np.mean(with_y)
-        w_variance = np.var([with_x,with_y])
-        w_std = np.std([with_x,with_y])
-        w_mean = np.mean([with_x,with_y])
+        #w_variance = np.var([with_x,with_y])
+        #w_std = np.std([with_x,with_y])
+        #w_mean = np.mean([with_x,with_y])
         wo_x_variance = np.var(without_x)
         wo_x_std = np.std(without_x)
         wo_x_mean = np.mean(without_x)
         wo_y_variance = np.var(without_y)
         wo_y_std = np.std(without_y)
         wo_y_mean = np.mean(without_y)
-        wo_variance = np.var([without_x,without_y])
-        wo_std = np.std([without_x,without_y])
-        wo_mean = np.mean([without_x,without_y])
+        #wo_variance = np.var([without_x,without_y])
+        #wo_std = np.std([without_x,without_y])
+        #wo_mean = np.mean([without_x,without_y])
         fieldnames = ["variance_w_x","std_w_x","mean_w_x","variance_w_y","std_w_y","mean_w_y","variance_wo_x","std_wo_x","mean_wo_x","variance_wo_y","std_wo_y","mean_wo_y","variance_wo","std_wo","mean_wo","variance_w","std_w","mean_w"]
         if os.path.exists(path_out) == False:
             with open(path_out, 'a') as csv_file:
@@ -527,13 +527,13 @@ def main():
                 "mean_wo_x": wo_x_mean,
                 "variance_wo_y": wo_y_variance,
                 "std_wo_y": wo_y_std,
-                "mean_wo_y": wo_y_mean,
-                "variance_wo": wo_variance,
-                "std_wo": wo_std,
-                "mean_wo": wo_mean,
-                "variance_w": w_variance,
-                "std_w": w_std,
-                "mean_w": w_mean
+                "mean_wo_y": wo_y_mean
+                #"variance_wo": wo_variance,
+                #"std_wo": wo_std,
+                #"mean_wo": wo_mean,
+                #"variance_w": w_variance,
+                #"std_w": w_std,
+                #"mean_w": w_mean
                 }
             csv_writer.writerow(info)
 

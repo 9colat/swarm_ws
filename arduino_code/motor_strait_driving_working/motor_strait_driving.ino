@@ -106,14 +106,6 @@ float temperature;
 int mag_x_cal = -20; //magnetometer callibration in x direction
 int mag_y_cal = -6; //magnetometer callibration in y direction
 int hi;
-int start_up_count = 0;
-int num_epoxes = 10;
-float calibrated_acc[3];
-float calibrated_gyro[3];
-float calibrated_correction_acc[3];
-float calibrated_correction_gyro[3];
-float g_to_km_s;
-float gravity;
 
 //-----ROS node handler-----//
 ros::NodeHandle nh;   // here the node handler is set with the name nh
@@ -352,39 +344,17 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
 //-----IMU data colection function-----//
 void imu_collection() {
   accelgyro.getMotion9(&accel_X, &accel_Y, &accel_Z, &gyro_X, &gyro_Y, &gyro_Z, &mx, &my, &mz);
-  if(start_up_count < num_epoxes){
-    calibrated_correction_acc[0] += accel_X;
-    calibrated_correction_acc[1] += accel_Y;
-    calibrated_correction_acc[2] += accel_Z;
-    calibrated_correction_gyro[0] += gyro_X * 250 / 32768;
-    calibrated_correction_gyro[1] += gyro_Y * 250 / 32768;
-    calibrated_correction_gyro[2] += gyro_Z * 250 / 32768;
-
-    start_up_count = start_up_count + 1;
-    if(start_up_count == num_epoxes){
-      calibrated_acc[0] = calibrated_correction_acc[0]/num_epoxes;
-      calibrated_acc[1] = calibrated_correction_acc[1]/num_epoxes;
-      calibrated_acc[2] = calibrated_correction_acc[2]/num_epoxes;
-      calibrated_gyro[0] = calibrated_correction_gyro[0]/num_epoxes;
-      calibrated_gyro[1] = calibrated_correction_gyro[1]/num_epoxes;
-      calibrated_gyro[2] = calibrated_correction_gyro[2]/num_epoxes;
-      gravity = sqrt(pow(calibrated_acc[0],2)+pow(calibrated_acc[1],2)+pow(calibrated_acc[2],2));
-    }
-  }
-  if(start_up_count == num_epoxes){
-
-    data_measured_odom_and_imu.imu_acc.x = (accel_X/gravity-calibrated_acc[0]/gravity)*9.82;
-    data_measured_odom_and_imu.imu_acc.y = (accel_Y/gravity-calibrated_acc[1]/gravity)*9.82;
-    data_measured_odom_and_imu.imu_acc.z = (accel_Z/gravity-calibrated_acc[2]/gravity)*9.82;
-    data_measured_odom_and_imu.imu_gyro.x = (gyro_X * 250 / 32768 - calibrated_gyro[0]) * 0.01745;
-    data_measured_odom_and_imu.imu_gyro.y = (gyro_Y * 250 / 32768 - calibrated_gyro[1]) * 0.01745;
-    data_measured_odom_and_imu.imu_gyro.z = (gyro_Z * 250 / 32768 - calibrated_gyro[2]) * 0.01745;
-  }
+  data_measured_odom_and_imu.imu_acc.x = accel_X;
+  data_measured_odom_and_imu.imu_acc.y = accel_Y;
+  data_measured_odom_and_imu.imu_acc.z = accel_Z;
   //IMU_data_acc.publish(&imu_acc);
   sensors_event_t temp_event;
   bmp_temp->getEvent(&temp_event);
   temperature = temp_event.temperature;
   data_measured_odom_and_imu.temp = temperature;
+  data_measured_odom_and_imu.imu_gyro.x = gyro_X;
+  data_measured_odom_and_imu.imu_gyro.y = gyro_Y;
+  data_measured_odom_and_imu.imu_gyro.z = gyro_Z;
   //IMU_data_gyro.publish(&imu_gyro);
   // data from the magnetometer that is calibrated and turned into a heading
   data_measured_odom_and_imu.imu_mag.x = mx;

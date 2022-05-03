@@ -53,7 +53,7 @@ def main():
     rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_imu)
     rospy.Subscriber("terminating_signal", Bool, callback_terminating_signal)
     pub = rospy.Publisher('without_lidar', Pose, queue_size=10)
-    rate = rospy.Rate(100) # 100hz
+    rate = rospy.Rate(5) # 100hz
     pose_est = Pose()
 
 
@@ -71,7 +71,7 @@ def main():
         pose_est.orientation.x = state[3]
         pose_est.orientation.y = state[4]
         pub.publish(pose_est)
-        #print(ola_has_bad_names)
+        print(state)
         rate.sleep()
 
 

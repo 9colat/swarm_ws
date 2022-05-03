@@ -136,3 +136,6 @@ After you will need to run this
 rosrun hardware_driver pylaunch.py
 ```
 ## linear motion Test launch procedure
+```
+sudo nmcli dev wifi connect "Smart production" password "aau smart production lab"
+```
