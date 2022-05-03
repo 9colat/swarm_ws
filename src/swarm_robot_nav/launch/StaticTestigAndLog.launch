@@ -9,7 +9,7 @@
 
 <include file="$(find rplidar_ros)/launch/rplidar.launch"/>
 
-<node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar" respawn="true">
+<node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar" output="screen" respawn="true">
 </node>
 
 <node pkg="pose_estimater_switcher" type="data_publisher.py" name="data_pub" respawn="true">
