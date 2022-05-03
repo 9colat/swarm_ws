@@ -1,6 +1,6 @@
 
 <launch>
 
-<node pkg="hardware_driver" type="pylaunch.py" name="pylaunch" respawn="false" />
+<node pkg="hardware_driver" type="pylaunch.py" name="pylaunch" output="screen" respawn="false" />
 
 </launch>
