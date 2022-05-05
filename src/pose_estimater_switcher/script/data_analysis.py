@@ -34,6 +34,7 @@ ax5 = fig4.add_subplot(1,1,1)
 isfolder = os.path.isdir(output_path)
 
 
+
 def main():
     if not isfolder:
         os.mkdir(output_path)
@@ -46,7 +47,11 @@ def main():
     number_of_files = 0
     output_file_name = 'outputdata.csv'
     path_out = str(Path.home().joinpath("test_data", output_file_name))
-    os.remove(path_out)
+
+    path_output_file = Path(path_out)
+    print(path_output_file.is_file())
+    if path_output_file.is_file():
+        os.remove(path_out)
 
 
     while os.path.exists(path % number_of_files):
@@ -511,7 +516,9 @@ def main():
         #wo_mean = np.mean([without_x,without_y])
         fieldnames = ["variance_w_x","std_w_x","mean_w_x","variance_w_y","std_w_y","mean_w_y","variance_wo_x","std_wo_x","mean_wo_x","variance_wo_y","std_wo_y","mean_wo_y","variance_wo","std_wo","mean_wo","variance_w","std_w","mean_w"]
         if os.path.exists(path_out) == False:
-            with open(path_out, 'a') as csv_file:
+            with open(path_out, 'w') as csv_file:
+                csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                csv_writer.writeheader()
                 pass
         with open(path_out, 'a') as csv_file:
             csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)

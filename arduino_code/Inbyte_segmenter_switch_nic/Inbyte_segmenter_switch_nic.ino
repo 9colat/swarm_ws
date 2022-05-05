@@ -63,8 +63,9 @@ void seperator(unsigned char array_input[], int lgt) {
       beacon_data.ID = hex_to_useable_data_test(array_input[i*6+9],array_input[i*6+10],array_input[i*6+11]);
       beacon_data.RSSI = hex_to_useable_data_test(array_input[i*6+8],0,0);
       beacon_data.distance = 0.343 * hex_to_useable_data_test(array_input[i*6+12],array_input[i*6+13],0);
-      beacon_data_pub.publish(&beacon_data);
-
+      if(beacon_data.ID != 44540){
+        beacon_data_pub.publish(&beacon_data);
+      }
     }
   }
 }
