@@ -11,9 +11,9 @@
 
 <node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar" output="screen" respawn="true">
 </node>
-<!--
-<node pkg="pose_estimater_switcher" type="data_publisher.py" name="data_pub" respawn="true">
-</node>-->
+
+<node pkg="pose_estimater_switcher" type="simple_pose_esti.py" name="simple_pose_esti" respawn="true">
+</node>
 
 
 <node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="with_lidar" output="screen" respawn="true">

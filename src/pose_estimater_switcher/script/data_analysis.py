@@ -41,7 +41,7 @@ def main():
         print("making directory")
     beacon_id =   [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
     beacon_x =    [11700, 16244,  7824,   2000,   21369,  26163,  26163,  31000,  35766,  35766,  40205,  40204,  16560]    #[11700  , 16244 , 7824  , 2000  , 21369 , 26163 , 26163 , 31000 , 35766 , 35766 , 40205 , 40204 , 16560 ]beacon_
-    beacon_y =    [5999,  10150,  5726,   4499,   6534,   9939,   3699,   6519,   10012,  3522,   11684,  4363,   3549]    #[5999   , 10150 , 5726  , 4499  , 6534  , 9939  , 3699  , 6519  , 10012  , 10012 , 11684 , 4363  , 3549 ]
+    beacon_y =    [5999,  10150,  5726,   4499,   x,   9939,   3699,   6519,   10012,  3522,   11684,  4363,   3549]    #[5999   , 10150 , 5726  , 4499  , 6534  , 9939  , 3699  , 6519  , 10012  , 10012 , 11684 , 4363  , 3549 ]
     beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
     global path, folder_path
     number_of_files = 0
@@ -467,7 +467,7 @@ def main():
         ax3.plot(time_array,delta)
         ax4.scatter(with_x, with_y, c='b')
         ax4.scatter(without_x, without_y, c='r')
-        frames_per_figure = 10
+        frames_per_figure = 1
         def animate(i):
             ax5.clear()
 
@@ -493,7 +493,7 @@ def main():
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
         fig2.savefig(output_path + name_of_file_2 % number_of_files)
         fig3.savefig(output_path + name_of_file_3 % number_of_files)
-        writergif = animation.PillowWriter(fps=30)
+        #writergif = animation.PillowWriter(fps=1)
         #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
         w_x_variance = np.var(with_x)
