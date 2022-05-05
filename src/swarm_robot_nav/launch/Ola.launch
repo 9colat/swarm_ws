@@ -7,14 +7,16 @@
   <param name="frame_id"            type="string" value="laser"/>
   <param name="inverted"            type="bool"   value="false"/>
   <param name="angle_compensate"    type="bool"   value="true"/>
-  <param name="scan_mode"           type="string"   value="Standard"/>
+  <param name="scan_mode"           type="string"   value="Legacy"/>
   <!--
+
   Standard: max_distance: 12.0 m, Point number: 2.0K
 	Express: max_distance: 12.0 m, Point number: 4.0K
 	Boost: max_distance: 12.0 m, Point number: 8.0K
 	Stability: max_distance: 12.0 m, Point number: 4.0K
  -->
   </node>
+  <!--
 
 <node pkg="rosserial_python" type="serial_node.py" name="GOT" output="screen">
    <param name="port" value="/dev/ttyACM0" />
@@ -24,9 +26,8 @@
 </node>
 
 
-
 <node pkg="hardware_driver" type="logger_static_node.py" name="logger_static_node">
 </node>
-
+-->
 
 </launch>
