@@ -137,6 +137,6 @@ rosrun hardware_driver pylaunch.py
 ```
 ## linear motion Test launch procedure
 ```
-sudo nmcli dev wifi connect "Smart production" password "aau smart production lab"
+sudo nmcli dev wifi connect "smart_production_WIFI" password "aau smart production lab"
 ```
 sudo nmcli dev wifi connect "Piss off_my_hotspot" password "hello there"
