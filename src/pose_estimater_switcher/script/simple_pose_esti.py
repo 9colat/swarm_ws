@@ -5,7 +5,6 @@ from estimator_function import Pose_Calculator
 pose = np.array([0,0,0])
 
 PC = Pose_Calculator()
-PC.pose_estimator(ID[j], meas)
 
 def callback_distance(data):
     global pose
