@@ -84,7 +84,7 @@ def main():
         state = w1.state_prediction(dT)
         pose_est.position.x = state[0]
         pose_est.position.y = state[1]
-        pose_est.position.x = state[2]
+        #pose_est.position.z = state[2]
         pose_est.orientation.x = state[3]
         pose_est.orientation.y = state[4]
         pub.publish(pose_est)

@@ -72,7 +72,7 @@ def main():
         pose_est.position.x = int(state[0][0])
         pose_est.position.y = int(state[1][0])
         print("ROS x: ",pose_est.position.x, "y: ",pose_est.position.y)
-        pose_est.position.x = state[2][0]
+        #pose_est.position.z = state[2][0]
         pose_est.orientation.x = state[3][0]
         pose_est.orientation.y = state[4][0]
         pub.publish(pose_est)
