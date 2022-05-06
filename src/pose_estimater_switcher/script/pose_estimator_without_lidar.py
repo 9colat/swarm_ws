@@ -68,11 +68,11 @@ def main():
         dT = local_time - global_time
         global_time = local_time
         state = w1.state_prediction(dT)
-        pose_est.position.x = state[0]
-        pose_est.position.y = state[1]
-        pose_est.position.x = state[2]
-        pose_est.orientation.x = state[3]
-        pose_est.orientation.y = state[4]
+        pose_est.position.x = state[0][0]
+        pose_est.position.y = state[1][0]
+        pose_est.position.x = state[2][0]
+        pose_est.orientation.x = state[3][0]
+        pose_est.orientation.y = state[4][0]
         pub.publish(pose_est)
         #print("without: ", state[0],state[1])
         rate.sleep()
