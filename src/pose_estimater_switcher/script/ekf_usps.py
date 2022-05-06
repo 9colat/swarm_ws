@@ -135,7 +135,6 @@ class EKF:
         # output update
         self.state_predicted = self.state_predicted + np.dot(K, estimation_difference)
         self.predicted_position[0] = self.state_predicted[0]
-        print(self.predicted_position[0],self.state_predicted[0])
         self.predicted_position[1] = self.state_predicted[1]
         self.predicted_velocity = float(self.state_predicted[2])
         self.predicted_heading[0] = self.state_predicted[3] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
@@ -199,7 +198,7 @@ class EKF:
         self.predicted_heading[1] = self.state_predicted[4] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
         self.state_predicted[3] = self.predicted_heading[0]
         self.state_predicted[4] = self.predicted_heading[1]
-
+        print(self.predicted_position[0],self.state_predicted[0])
         #covariance update
         P = np.dot(np.identity(5) - (np.dot(K, self.H_beacon)), P)
 
