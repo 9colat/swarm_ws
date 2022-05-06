@@ -21,18 +21,20 @@ mag_heading = [0]*2
 # gettng data from the beacons
 def callback_distance(data):
     global w1, w2, global_time, lidar_array, state, mag_heading
-    projected_distance = w2.projection(data.ID, data.distance)
-    if mag_heading[0] != 0:
-        updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0], w1.state_predicted[1]], mag_heading, data.distance) # measurement 'variance/trust' updated
-        w1.R_beacon = updated_R
-        local_time = time.time()
-        dT = local_time - global_time
-        global_time = local_time
+    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
+    if data.ID in beacon_id:
+        projected_distance = w2.projection(data.ID, data.distance)
+        if mag_heading[0] != 0:
+            updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0], w1.state_predicted[1]], mag_heading, data.distance) # measurement 'variance/trust' updated
+            w1.R_beacon = updated_R
+            local_time = time.time()
+            dT = local_time - global_time
+            global_time = local_time
 
-        state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-    # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
+            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+        # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
 
-# getting data from the IMU
+    # getting data from the IMU
 def callback_imu(data):
     global w1, global_time, mag_heading
 

@@ -18,13 +18,15 @@ state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 # gettng data from the beacons
 def callback_distance(data):
     global w1, w2, global_time
-    projected_distance = w2.projection(data.ID, data.distance)
+    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
+    if data.ID in beacon_id:
+        projected_distance = w2.projection(data.ID, data.distance)
 
-    local_time = time.time()
-    dT = local_time - global_time
-    global_time = local_time
+        local_time = time.time()
+        dT = local_time - global_time
+        global_time = local_time
 
-    state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+        state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
     # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
 
 def callback_terminating_signal(data):

@@ -69,7 +69,9 @@ def file_iterator():
 
 def callback_distance(data):
     global beacon_data
-    beacon_data = [data.ID, data.distance]
+    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
+    if data.ID in beacon_id:
+        beacon_data = [data.ID, data.distance]
 
 def callback_imu(data):
     global IMU_data

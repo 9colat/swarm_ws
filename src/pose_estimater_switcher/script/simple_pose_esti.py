@@ -11,6 +11,8 @@ PC = Pose_Calculator()
 
 def callback_distance(data):
     global pose
+    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
+    if data.ID in beacon_id:
     pose = PC.pose_estimator(data.ID, data.distance)
 
 
