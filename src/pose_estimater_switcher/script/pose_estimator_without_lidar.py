@@ -27,7 +27,7 @@ def callback_distance(data):
         global_time = local_time
 
         state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        print(state)
+        print(state[0])
     # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
 
 def callback_terminating_signal(data):
