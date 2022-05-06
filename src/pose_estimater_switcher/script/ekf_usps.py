@@ -151,7 +151,7 @@ class EKF:
 
 
     def beacon_measurement_updater_EKF(self, id, DISTANCE, delta_time):
-
+        print(DISTANCE)
 
         self.state_prediction(delta_time)
 
