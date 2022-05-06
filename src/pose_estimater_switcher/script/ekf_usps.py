@@ -35,6 +35,7 @@ class EKF:
         self.floor_corection_array = np.array([[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]])
         self.floor_corection = np.array([0.0,0.0,0.0])
         self.R_beacon = 0.01
+        self.beacon_estimation_difference = 0.0
 
         # self stuff for IMU
         self.imu_acc = np.array([[0.0, 0.0, 0.0]]).T
@@ -181,16 +182,16 @@ class EKF:
         # measurements based on the beacon readings
         self.measurement = pow(DISTANCE, 2)
         self.measurement_estimated = pow(np.linalg.norm(self.predicted_position - BEACON), 2)
-        estimation_difference = self.measurement - self.measurement_estimated
+        self.beacon_estimation_difference = self.measurement - self.measurement_estimated
         #print(self.measurement,self.measurement_estimated)
-        #print(estimation_difference)
+        #print(self.beacon_estimation_difference)
         # kalman magic
         P = np.dot(np.dot(self.F, P), np.transpose(self.F)) + Q
         S = np.dot(np.dot(self.H_beacon, P), np.transpose(self.H_beacon)) + self.R_beacon
         K = np.dot(np.dot(P, np.transpose(self.H_beacon)), np.linalg.inv(S))
 
         # output update
-        self.state_predicted = self.state_predicted + np.dot(K, estimation_difference)
+        self.state_predicted = self.state_predicted + np.dot(K, self.beacon_estimation_difference)
         self.predicted_position[0] = self.state_predicted[0]
         self.predicted_position[1] = self.state_predicted[1]
         self.predicted_velocity = float(self.state_predicted[2])
