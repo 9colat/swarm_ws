@@ -151,7 +151,7 @@ class EKF:
 
 
     def beacon_measurement_updater_EKF(self, id, DISTANCE, delta_time):
-        print(DISTANCE)
+        print(DISTANCE,id)
 
         self.state_prediction(delta_time)
 
@@ -182,7 +182,7 @@ class EKF:
         self.measurement = pow(DISTANCE, 2)
         self.measurement_estimated = pow(np.linalg.norm(self.predicted_position - BEACON), 2)
         estimation_difference = self.measurement - self.measurement_estimated
-        print(self.measurement,self.measurement_estimated)
+        #print(self.measurement,self.measurement_estimated)
         #print(estimation_difference)
         # kalman magic
         P = np.dot(np.dot(self.F, P), np.transpose(self.F)) + Q
