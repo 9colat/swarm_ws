@@ -69,8 +69,8 @@ def main():
         global_time = local_time
         state = w1.state_prediction(dT)
         print(state[0][0])
-        pose_est.position.x = state[0][0]
-        pose_est.position.y = state[1][0]
+        pose_est.position.x = state[0][0]/1000
+        pose_est.position.y = state[1][0]/1000
         pose_est.position.x = state[2][0]
         pose_est.orientation.x = state[3][0]
         pose_est.orientation.y = state[4][0]
