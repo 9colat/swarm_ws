@@ -54,7 +54,7 @@ class EKF:
 
 
     def updating_imu(self, imu_acc, imu_gyro):
-        self.imu_acc = imu_acc
+        self.imu_acc = imu_acc * 1000 # the acceleration has the [m/s^2] and the system works with [mm/s^2]
         self.imu_gyro = imu_gyro
 
     def angle_to_vector(self, theta):
