@@ -25,7 +25,10 @@ class Laser_component:
     def bell_function(self, max_occlusion_height): #input is in meters
         t = pow(max_occlusion_height-self.mean,2)/(pow(self.std,2))
         y = (1/(self.std * math.sqrt(2*math.pi)))*pow(math.e,(1/2)*t)
-        return y
+        bell_procent = - math.erf((math.sqrt(2)*(-math.inf + self.mean))/(2*self.std))/2 - math.erf((math.sqrt(2)*(max_occlusion_height - self.mean))/(2*self.std))/2
+        new_y = bell_procent/100 + 0.01
+        print(new_y)
+        return new_y
 
     def assumed_dist(self, id, robot_pose):
         index_of_data = self.beacon_id.index(id)
