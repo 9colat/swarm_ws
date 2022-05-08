@@ -125,7 +125,7 @@ class EKF:
 
 
         estimation_difference = self.measurement - measurement_estimated_normalised
-        print(math.atan2(estimation_difference[1], estimation_difference[0]))
+        #print(math.atan2(estimation_difference[1], estimation_difference[0]))
 
 
         # kalman magic
@@ -199,7 +199,7 @@ class EKF:
         self.predicted_heading[1] = self.state_predicted[4] / math.sqrt(pow(self.state_predicted[3], 2) + pow(self.state_predicted[4], 2))
         self.state_predicted[3] = self.predicted_heading[0]
         self.state_predicted[4] = self.predicted_heading[1]
-        print(self.predicted_position[0],self.state_predicted[0])
+        #print(self.predicted_position[0],self.state_predicted[0])
         #covariance update
         P = np.dot(np.identity(5) - (np.dot(K, self.H_beacon)), P)
 
