@@ -8,7 +8,7 @@
 </node>
 
 <include file="$(find rplidar_ros)/launch/rplidar.launch"/>
-
+<!--
 <node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar_node" output="screen" respawn="true">
 </node>
 
@@ -18,12 +18,12 @@
 
 <node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="with_lidar_node" output="screen" respawn="true">
 </node>
-
+-->
 <node pkg="pose_estimater_switcher" type="pose_estimator_multi_kalman.py" name="kalman_bank" output="screen" respawn="true">
 </node>
-
+<!--
 <node pkg="hardware_driver" type="logger_static_node.py" name="logger_static_node" output="screen" respawn="true">
 </node>
-
+-->
 
 </launch>
