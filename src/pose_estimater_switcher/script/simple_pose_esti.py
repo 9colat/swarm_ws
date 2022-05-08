@@ -33,7 +33,7 @@ def main():
         # time update for ONLY the predictor function in EKF
         pose_est.position.x = pose[0]
         pose_est.position.y = pose[1]
-        pose_est.position.x = pose[2]
+        #pose_est.position.x = pose[2]
         pub.publish(pose_est)
         #print("without: ", state[0],state[1])
         rate.sleep()

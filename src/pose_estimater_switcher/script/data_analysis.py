@@ -67,6 +67,10 @@ def main():
         data = pd.read_csv(local_path)
         lidar_array = [[0] * len(data["lidar0"])]*360
         delta = [0] * len(data["lidar0"])
+        delta_x = [0] * len(data["lidar0"])
+        delta_y = [0] * len(data["lidar0"])
+        delta_x_kalman_bank = [0] * len(data["lidar0"])
+        delta_y_kalman_bank = [0] * len(data["lidar0"])
         time_array = np.linspace(1, len(data["lidar0"]), num=len(data["lidar0"]))
         with_x = data["with_x"]
         with_y = data["with_y"]
@@ -90,9 +94,9 @@ def main():
         angular_speed = data["angular_speed"]
         simple_x = data["simple_x"]
         simple_y = data["simple_y"]
-        multi_x = data["muti_kalman_x"]
-        multi_y = data["muti_kalman_y"]
-        good_lidar = data["muti_kalman_y"]
+        #multi_x = data["muti_kalman_x"]
+        #multi_y = data["muti_kalman_y"]
+        good_lidar = data["lidar_good"]
         lidar_array[0] = data["lidar0"]
         lidar_array[1] = data["lidar1"]
         lidar_array[2] = data["lidar2"]
@@ -493,18 +497,18 @@ def main():
         ax1.scatter(with_x, with_y)
         ax2.scatter(without_x, without_y)
         ax10.scatter(simple_x, simple_y)
-        ax11.scatter(multi_x, multi_y)
+        #ax11.scatter(multi_x, multi_y)
         for i in range(len(with_x)):
             delta[i] = math.sqrt(pow(with_x[i],2)+pow(with_y[i],2))-math.sqrt(pow(without_x[i],2)+pow(without_y[i],2))
             delta_x[i] = with_x[i] - without_x[i]
             delta_y[i] = with_y[i] - without_y[i]
-            delta_x_kalman_bank[i] = with_x[i] - multi_x[i]
-            delta_y_kalman_bank[i] = with_y[i] - multi_y[i]
+            #delta_x_kalman_bank[i] = with_x[i] - multi_x[i]
+            #delta_y_kalman_bank[i] = with_y[i] - multi_y[i]
         ax3.plot(time_array,delta)
         ax6.plot(time_array,delta_x)
         ax7.plot(time_array,delta_y)
-        ax8.plot(time_array,delta_x_kalman_bank)
-        ax9.plot(time_array,delta_y_kalman_bank)
+        #ax8.plot(time_array,delta_x_kalman_bank)
+        #ax9.plot(time_array,delta_y_kalman_bank)
         ax4.scatter(with_x, with_y, c='b')
         ax4.scatter(without_x, without_y, c='r')
         frames_per_figure = 1
@@ -563,12 +567,12 @@ def main():
         simple_y_std = np.std(simple_y)
         simple_y_mean = np.mean(simple_y)
 
-        multi_x_variance = np.var(multi_x)
-        multi_x_std = np.std(multi_x)
-        multi_x_mean = np.mean(multi_x)
-        multi_y_variance = np.var(multi_y)
-        multi_y_std = np.std(multi_y)
-        multi_y_mean = np.mean(multi_y)
+        #multi_x_variance = np.var(multi_x)
+        #multi_x_std = np.std(multi_x)
+        #multi_x_mean = np.mean(multi_x)
+        #multi_y_variance = np.var(multi_y)
+        #multi_y_std = np.std(multi_y)
+        #multi_y_mean = np.mean(multi_y)
 
         fieldnames = ["variance_w_x","std_w_x","mean_w_x","variance_w_y","std_w_y","mean_w_y","variance_wo_x","std_wo_x","mean_wo_x","variance_wo_y","std_wo_y","mean_wo_y","variance_simple_x","std_simple_x","mean_simple_x","variance_simple_y","std_simple_y","mean_simple_y","variance_multi_x","std_multi_x","mean_multi_x","variance_multi_y","std_multi_y","mean_multi_y"]
         if os.path.exists(path_out) == False:
@@ -596,13 +600,13 @@ def main():
                 "mean_simple_x": simple_x_mean,
                 "variance_simple_y": simple_y_variance,
                 "std_simple_y": simple_y_std,
-                "mean_simple_y": simple_y_mean,
-                "variance_multi_x": multi_x_variance,
-                "std_multi_x": multi_x_std,
-                "mean_multi_x": multi_x_mean,
-                "variance_multi_y": multi_y_variance,
-                "std_multi_y": multi_y_std,
-                "mean_multi_y": multi_y_mean
+                "mean_simple_y": simple_y_mean
+                #"variance_multi_x": multi_x_variance,
+                #"std_multi_x": multi_x_std,
+                #"mean_multi_x": multi_x_mean,
+                #"variance_multi_y": multi_y_variance,
+                #"std_multi_y": multi_y_std,
+                #"mean_multi_y": multi_y_mean
 
                 }
             csv_writer.writerow(info)
