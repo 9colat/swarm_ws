@@ -225,7 +225,7 @@ def callback_distance(data):
         temp_array[12] = w12.beacon_estimation_difference
 
 
-        dist_sort = sorted(dist_array) # for sorting
+        dist_sort = sorted(temp_array) # for sorting
 
         if temp_array.index(dist_sort[0]) == 0:
             state = w0.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
