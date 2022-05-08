@@ -18,10 +18,12 @@ path_output = str(Path.home().joinpath("test_data", "static_output%s.csv"))
 folder_path = str(Path.home().joinpath("test_data"))
 output_path = str(Path.home()) + '/' + "figure/"
 plt.style.use('fivethirtyeight')
-fig1 = plt.figure(figsize=(20,10))
+fig1 = plt.figure(figsize=(20,20))
 fig1.suptitle('Position plot test')
-ax1 = fig1.add_subplot(1,2,1)
-ax2 = fig1.add_subplot(1,2,2)
+ax1 = fig1.add_subplot(2,2,1)
+ax2 = fig1.add_subplot(2,2,2)
+ax10 = fig1.add_subplot(2,2,3)
+ax11 = fig1.add_subplot(2,2,4)
 fig2 = plt.figure(figsize=(10,10))
 fig2.suptitle('Delta position')
 ax3 = fig2.add_subplot(1,1,1)
@@ -31,6 +33,12 @@ ax4 = fig3.add_subplot(1,1,1)
 fig4 = plt.figure(figsize=(10,10))
 fig4.suptitle('LiDAR over time')
 ax5 = fig4.add_subplot(1,1,1)
+fig5 = plt.figure(figsize=(20,20))
+fig5.suptitle('Position coordinate delta plot')
+ax6 = fig5.add_subplot(2,2,1)
+ax7 = fig5.add_subplot(2,2,2)
+ax8 = fig5.add_subplot(2,2,3)
+ax9 = fig5.add_subplot(2,2,4)
 isfolder = os.path.isdir(output_path)
 
 
@@ -80,7 +88,11 @@ def main():
         distance = data["distance"]
         linear_speed = data["linear_speed"]
         angular_speed = data["angular_speed"]
-        good_lidar = data["lidar_good"]
+        simple_x = data["simple_x"]
+        simple_y = data["simple_y"]
+        multi_x = data["muti_kalman_x"]
+        multi_y = data["muti_kalman_y"]
+        good_lidar = data["muti_kalman_y"]
         lidar_array[0] = data["lidar0"]
         lidar_array[1] = data["lidar1"]
         lidar_array[2] = data["lidar2"]
@@ -447,24 +459,52 @@ def main():
         ax3.clear()
         ax4.clear()
         ax5.clear()
+        ax6.clear()
+        ax7.clear()
+        ax8.clear()
+        ax9.clear()
+        ax10.clear()
+        ax11.clear()
         ax1.set_title("Position with LiDAR")
         ax1.set_xlabel("X - coordinate [mm]")
         ax1.set_ylabel("Y - coordinate [mm]")
         ax2.set_title("Position without LiDAR")
         ax2.set_xlabel("X - coordinate [mm]")
         ax2.set_ylabel("Y - coordinate [mm]")
+        ax10.set_title("Position with simple")
+        ax10.set_xlabel("X - coordinate [mm]")
+        ax10.set_ylabel("Y - coordinate [mm]")
+        ax11.set_title("Position with kalman bank")
+        ax11.set_xlabel("X - coordinate [mm]")
+        ax11.set_ylabel("Y - coordinate [mm]")
         ax3.set_title("Position difference over time")
         ax3.set_xlabel("Time [s]")
         ax3.set_ylabel("Difference between position[mm]")
         ax4.set_title("Both positions in the same plot")
         ax4.set_xlabel("X - coordinate [mm]")
         ax4.set_ylabel("Y - coordinate [mm]")
+        ax6.set_title("X coordinate difference over time")
+        ax6.set_xlabel("Time [s]")
+        ax6.set_ylabel("Difference between position[mm]")
+        ax7.set_title("Y coordinate difference over time")
+        ax7.set_xlabel("Time [s]")
+        ax7.set_ylabel("Difference between position[mm]")
 
         ax1.scatter(with_x, with_y)
         ax2.scatter(without_x, without_y)
+        ax10.scatter(simple_x, simple_y)
+        ax11.scatter(multi_x, multi_y)
         for i in range(len(with_x)):
             delta[i] = math.sqrt(pow(with_x[i],2)+pow(with_y[i],2))-math.sqrt(pow(without_x[i],2)+pow(without_y[i],2))
+            delta_x[i] = with_x[i] - without_x[i]
+            delta_y[i] = with_y[i] - without_y[i]
+            delta_x_kalman_bank[i] = with_x[i] - multi_x[i]
+            delta_y_kalman_bank[i] = with_y[i] - multi_y[i]
         ax3.plot(time_array,delta)
+        ax6.plot(time_array,delta_x)
+        ax7.plot(time_array,delta_y)
+        ax8.plot(time_array,delta_x_kalman_bank)
+        ax9.plot(time_array,delta_y_kalman_bank)
         ax4.scatter(with_x, with_y, c='b')
         ax4.scatter(without_x, without_y, c='r')
         frames_per_figure = 1
@@ -485,6 +525,10 @@ def main():
         ax2.set_ylim(0,12000)
         ax4.set_xlim(0,45000)
         ax4.set_ylim(0,12000)
+        ax10.set_xlim(0,45000)
+        ax10.set_ylim(0,12000)
+        ax11.set_xlim(0,45000)
+        ax11.set_ylim(0,12000)
         name_of_file_1 = 'position_plot%s.svg'
         name_of_file_2 = 'position_delta%s.svg'
         name_of_file_3 = 'position_in_the_same_plot%s.svg'
@@ -511,10 +555,22 @@ def main():
         wo_y_variance = np.var(without_y)
         wo_y_std = np.std(without_y)
         wo_y_mean = np.mean(without_y)
-        #wo_variance = np.var([without_x,without_y])
-        #wo_std = np.std([without_x,without_y])
-        #wo_mean = np.mean([without_x,without_y])
-        fieldnames = ["variance_w_x","std_w_x","mean_w_x","variance_w_y","std_w_y","mean_w_y","variance_wo_x","std_wo_x","mean_wo_x","variance_wo_y","std_wo_y","mean_wo_y","variance_wo","std_wo","mean_wo","variance_w","std_w","mean_w"]
+
+        simple_x_variance = np.var(simple_x)
+        simple_x_std = np.std(simple_x)
+        simple_x_mean = np.mean(simple_x)
+        simple_y_variance = np.var(simple_y)
+        simple_y_std = np.std(simple_y)
+        simple_y_mean = np.mean(simple_y)
+
+        multi_x_variance = np.var(multi_x)
+        multi_x_std = np.std(multi_x)
+        multi_x_mean = np.mean(multi_x)
+        multi_y_variance = np.var(multi_y)
+        multi_y_std = np.std(multi_y)
+        multi_y_mean = np.mean(multi_y)
+
+        fieldnames = ["variance_w_x","std_w_x","mean_w_x","variance_w_y","std_w_y","mean_w_y","variance_wo_x","std_wo_x","mean_wo_x","variance_wo_y","std_wo_y","mean_wo_y","variance_simple_x","std_simple_x","mean_simple_x","variance_simple_y","std_simple_y","mean_simple_y","variance_multi_x","std_multi_x","mean_multi_x","variance_multi_y","std_multi_y","mean_multi_y"]
         if os.path.exists(path_out) == False:
             with open(path_out, 'w') as csv_file:
                 csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
@@ -534,13 +590,20 @@ def main():
                 "mean_wo_x": wo_x_mean,
                 "variance_wo_y": wo_y_variance,
                 "std_wo_y": wo_y_std,
-                "mean_wo_y": wo_y_mean
-                #"variance_wo": wo_variance,
-                #"std_wo": wo_std,
-                #"mean_wo": wo_mean,
-                #"variance_w": w_variance,
-                #"std_w": w_std,
-                #"mean_w": w_mean
+                "mean_wo_y": wo_y_mean,
+                "variance_simple_x": simple_x_variance,
+                "std_simple_x": simple_x_std,
+                "mean_simple_x": simple_x_mean,
+                "variance_simple_y": simple_y_variance,
+                "std_simple_y": simple_y_std,
+                "mean_simple_y": simple_y_mean,
+                "variance_multi_x": multi_x_variance,
+                "std_multi_x": multi_x_std,
+                "mean_multi_x": multi_x_mean,
+                "variance_multi_y": multi_y_variance,
+                "std_multi_y": multi_y_std,
+                "mean_multi_y": multi_y_mean
+
                 }
             csv_writer.writerow(info)
 

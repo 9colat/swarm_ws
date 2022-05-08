@@ -134,7 +134,7 @@ def main():
         csv_writer.writeheader()
     #rospy.Subscriber("chatter", String, callback)
     #v = 1
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         #print("i am boot")
         rospy.Subscriber("scan", LaserScan, callback_lidar)
@@ -548,6 +548,7 @@ def main():
                 f.write(str(lidar_array[k])+',')
             f.write(str(lidar_array[-1]) + '\n')
             f.close()
+            
 
         if terminate_time < time.time():
             term_sig = Bool()
