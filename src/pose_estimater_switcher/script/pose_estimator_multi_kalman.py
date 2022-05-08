@@ -295,10 +295,10 @@ def main():
         dT = local_time - global_time
         global_time = local_time
         state = w1.state_prediction(dT)
-        print("State x: ",state[0][0], "y: ",state[1][0])
+        #print("State x: ",state[0][0], "y: ",state[1][0])
         pose_est.position.x = int(state[0][0])
         pose_est.position.y = int(state[1][0])
-        print("ROS x: ",pose_est.position.x, "y: ",pose_est.position.y)
+        #print("ROS x: ",pose_est.position.x, "y: ",pose_est.position.y)
         #pose_est.position.z = state[2][0]
         pose_est.orientation.x = state[3][0]
         pose_est.orientation.y = state[4][0]
