@@ -5,9 +5,6 @@ import math
 
 # constants
 rotated_matrix = np.array([[0.0, -1.0], [1.0, 0.0]])
-mag_x_calibrated = 0.0
-mag_y_calibrated = 0.0
-pi = 3.141593
 
 
 
@@ -29,7 +26,7 @@ class EKF:
         self.time_i = np.array([3.0, 2.0, 1.0])
         self.acc_meas = np.array([0.0, 0.0, 0.0])
         self.omega = np.array([0.0, 0.0])
-        selfWheel_r = 0.04
+        self.Wheel_r = 0.04
         self.l = 0.229
         self.callibration_factor_acc = 1.0
         self.floor_corection_array = np.array([[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]])
@@ -51,7 +48,10 @@ class EKF:
         self.H_beacon = np.array([0.0]*5)
         self.H_magnetometer = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]]*2)
         self.F = np.array([0.0]*5)
-
+        self.P_b = np.identity(5)
+        self.Q_b = 100 * np.identity(5)
+        self.P_m = np.identity(5)
+        self.Q_m = 100 * np.identity(5)
 
 
     def updating_imu(self, imu_acc, imu_gyro):
@@ -90,8 +90,6 @@ class EKF:
         # noise
         R = np.identity(2)*0.1
         #print(R)
-        P = np.identity(5)
-        Q = 100 * np.identity(5)
 
 
         # jacobians
@@ -129,9 +127,9 @@ class EKF:
 
 
         # kalman magic
-        P = np.dot(np.dot(self.F, P), np.transpose(self.F)) + Q
-        S = np.dot(np.dot(self.H_magnetometer, P), np.transpose(self.H_magnetometer)) + R
-        K = np.dot(np.dot(P, np.transpose(self.H_magnetometer)), np.linalg.inv(S))
+        self.P_m = np.dot(np.dot(self.F, self.P_m), np.transpose(self.F)) + self.Q_m
+        S = np.dot(np.dot(self.H_magnetometer, self.P_m), np.transpose(self.H_magnetometer)) + R
+        K = np.dot(np.dot(self.P_m, np.transpose(self.H_magnetometer)), np.linalg.inv(S))
 
         # output update
         self.state_predicted = self.state_predicted + np.dot(K, estimation_difference)
@@ -145,7 +143,7 @@ class EKF:
         #print("dist: ", math.sqrt(pow(self.predicted_heading[0], 2) + pow(self.predicted_heading[1], 2)))
         #print("x: ",self.predicted_heading[0]," y: ",self.predicted_heading[1])
         #covariance update
-        P = np.dot(np.identity(5) - (np.dot(K, self.H_magnetometer)), P)
+        self.P_m = np.dot(np.identity(5) - (np.dot(K, self.H_magnetometer)), self.P_m)
 
 
         return self.state_predicted
@@ -162,9 +160,6 @@ class EKF:
 
 
         # noise
-
-        P = np.identity(5)
-        Q = 100 * np.identity(5)
 
 
         # jacobians
@@ -186,9 +181,9 @@ class EKF:
         #print(self.measurement,self.measurement_estimated)
         #print(self.beacon_estimation_difference)
         # kalman magic
-        P = np.dot(np.dot(self.F, P), np.transpose(self.F)) + Q
-        S = np.dot(np.dot(self.H_beacon, P), np.transpose(self.H_beacon)) + self.R_beacon
-        K = np.dot(np.dot(P, np.transpose(self.H_beacon)), np.linalg.inv(S))
+        self.P_b = np.dot(np.dot(self.F, self.P_b), np.transpose(self.F)) + self.Q_b
+        S = np.dot(np.dot(self.H_beacon, self.P_b), np.transpose(self.H_beacon)) + self.R_beacon
+        K = np.dot(np.dot(self.P_b, np.transpose(self.H_beacon)), np.linalg.inv(S))
 
         # output update
         self.state_predicted = self.state_predicted + np.dot(K, self.beacon_estimation_difference)
@@ -201,6 +196,6 @@ class EKF:
         self.state_predicted[4] = self.predicted_heading[1]
         #print(self.predicted_position[0],self.state_predicted[0])
         #covariance update
-        P = np.dot(np.identity(5) - (np.dot(K, self.H_beacon)), P)
+        self.P_b = np.dot(np.identity(5) - (np.dot(K, self.H_beacon)), self.P_b)
 
         return self.state_predicted
