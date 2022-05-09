@@ -352,7 +352,7 @@ void cmd_velocity(geometry_msgs::Twist& cmd_goal) {
   //if(tele_op_toggel == 0.5 || tele_op_toggel == -0.5){
   //  bool_tele_op_toggel = !bool_tele_op_toggel;
   //}
-  wheel_speed_set(goal_vel_x, goal_omega, bool_tele_op_toggel);
+  wheel_speed_set(goal_vel_x/2, goal_omega/2, bool_tele_op_toggel);
 }
 
 
