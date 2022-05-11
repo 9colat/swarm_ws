@@ -5,7 +5,7 @@ import time
 import sys
 from pathlib import Path
 from std_msgs.msg import Int16
-print("hello")
+#print("hello")
 path = str(Path.home().joinpath("swarm_ws/src/swarm_robot_nav/launch","StaticTestigAndLog.launch"))
 
 rospy.init_node('en_Mapping', anonymous=True)
@@ -14,11 +14,11 @@ indicator = Int16()
 
 uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
 roslaunch.configure_logging(uuid)
-print("there")
+#print("there")
 launch = roslaunch.parent.ROSLaunchParent(uuid, [path])
-print("general")
+#print("general")
 launch.start()
-print("kenobi")
+#print("kenobi")
 local_time = time.time()
 pub_time = 5
 first_time = True

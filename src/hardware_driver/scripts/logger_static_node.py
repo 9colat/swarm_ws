@@ -99,6 +99,7 @@ def callback_pose_estimator_without_lidar(data):
 
 def callback_lidar(data):#####
     global lidar_array, first_time
+    print("data1")
     lidar_array = [0] * int(2 * math.pi/data.angle_increment)
     #print("laser data recived")
     for i in range(len(data.ranges)):
@@ -122,7 +123,7 @@ def callback_input_speed(data):
 
 def main():
     global path, folder_path, isfolder, number_of_files, seperator,input_speed, angular_speed, lidar_array,without_lidar_data, with_lidar_data, IMU_data, beacon_data, fieldnames
-    print("started correctly")
+    #print("started correctly")
     if not isfolder:
         os.mkdir(folder_path)
         print("making directory")
@@ -137,7 +138,7 @@ def main():
     #v = 1
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
-        print("i am boot")
+        #print("i am boot")
         rospy.Subscriber("scan", LaserScan, callback_lidar)
         rospy.Subscriber("cmd_vel", Twist, callback_input_speed)
         rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
