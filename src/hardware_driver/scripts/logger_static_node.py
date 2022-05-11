@@ -122,7 +122,7 @@ def callback_input_speed(data):
 
 def main():
     global path, folder_path, isfolder, number_of_files, seperator,input_speed, angular_speed, lidar_array,without_lidar_data, with_lidar_data, IMU_data, beacon_data, fieldnames
-    ptint("started correctly")
+    print("started correctly")
     if not isfolder:
         os.mkdir(folder_path)
         print("making directory")
