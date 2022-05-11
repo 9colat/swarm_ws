@@ -85,6 +85,7 @@ def callback_pose_estimator_with_lidar(data):
 
 def callback_simple_pose_esti(data):
     global simple_pose_esti
+    print("simple")
     simple_pose_esti = [data.position.x,data.position.y,data.position.z]
 
 def callback_multi_kalman(data):
