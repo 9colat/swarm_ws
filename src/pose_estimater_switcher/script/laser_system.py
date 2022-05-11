@@ -94,6 +94,6 @@ class Laser_component:
                     beacon_h_minus_robot = (beacon_z[index_of_data] - self.r_h)/1000
                     angle_to_beacon = math.tan(beacon_h_minus_robot/dist_projeted)
                     height_to_occlusion = min_laser_measure/math.tan(angle_to_beacon)
-                    bell = self.bell_function(height_to_occlusion)*100
+                    bell = self.bell_function(height_to_occlusion)*10
             return bell
         #print("all good")
