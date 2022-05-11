@@ -78,7 +78,7 @@ class Laser_component:
             assumed_dist_m = assumed_dist - (assumed_dist/100)*5    # The min distance with 5% error tolerance
             if assumed_dist_p < dist or assumed_dist_m > dist:      # This if statmant will take objects that is not connected to the foor in to acount
                 #print("bell value set to a value: ",bell)
-                bell = 1000 # chage later to make sence ;)
+                bell = 100 # chage later to make sence ;)
             area_of_intreast = 2
             stored_dist = [12]*(2*area_of_intreast+1)
             j = 0
@@ -94,6 +94,6 @@ class Laser_component:
                     beacon_h_minus_robot = (beacon_z[index_of_data] - self.r_h)/1000
                     angle_to_beacon = math.tan(beacon_h_minus_robot/dist_projeted)
                     height_to_occlusion = min_laser_measure/math.tan(angle_to_beacon)
-                    bell = self.bell_function(height_to_occlusion)
+                    bell = self.bell_function(height_to_occlusion)*100
             return bell
         #print("all good")
