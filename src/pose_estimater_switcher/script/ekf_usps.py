@@ -31,7 +31,7 @@ class EKF:
         self.callibration_factor_acc = 1.0
         self.floor_corection_array = np.array([[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]])
         self.floor_corection = np.array([0.0,0.0,0.0])
-        self.R_beacon = 0.1
+        self.R_beacon = 0.01
         self.beacon_estimation_difference = 0.0
 
         # self stuff for IMU
