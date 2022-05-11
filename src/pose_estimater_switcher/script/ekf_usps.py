@@ -31,7 +31,7 @@ class EKF:
         self.callibration_factor_acc = 1.0
         self.floor_corection_array = np.array([[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]])
         self.floor_corection = np.array([0.0,0.0,0.0])
-        self.R_beacon = 1
+        self.R_beacon = 0.1
         self.beacon_estimation_difference = 0.0
 
         # self stuff for IMU
@@ -49,7 +49,7 @@ class EKF:
         self.H_magnetometer = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]]*2)
         self.F = np.array([0.0]*5)
         self.P_b = np.identity(5)
-        self.Q_b = 10 * np.identity(5)
+        self.Q_b = 100 * np.identity(5)
         self.P_m = np.identity(5)
         self.Q_m = 100 * np.identity(5)
 
