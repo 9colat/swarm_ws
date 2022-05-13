@@ -20,7 +20,7 @@ launch = roslaunch.parent.ROSLaunchParent(uuid, [path])
 launch.start()
 #print("kenobi")
 local_time = time.time()
-pub_time = 5
+pub_time = 10
 first_time = True
 desired_time = 20 * 60 # we want the test to be run for 20 min, and convert it to seconds
 test_time_with_over_head_takken_to_a_count = desired_time + (desired_time/100)*25 # we add 25% time to acount for overhead.
