@@ -9,7 +9,7 @@
 
 <include file="$(find rplidar_ros)/launch/rplidar.launch"/>
 
-<!--<include file="$(find ds4_driver)/launch/ds4_twist.launch"/>-->
+<include file="$(find ds4_driver)/launch/ds4_twist.launch"/>
 
 <node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar_node" output="screen" respawn="true">
 </node>
