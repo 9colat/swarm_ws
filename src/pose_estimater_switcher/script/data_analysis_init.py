@@ -13,8 +13,8 @@ import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 
 ##### setting up the path for the data file and folder #####
-path = str(Path.home().joinpath("test_data", "init_dyn_log%s.csv"))
-path_output = str(Path.home().joinpath("test_data", "static_init_output%s.csv"))
+path = str(Path.home().joinpath("test_data", "LoS_dyn_log%s.csv"))
+path_output = str(Path.home().joinpath("test_data", "LoS_dyn_log_output%s.csv"))
 folder_path = str(Path.home().joinpath("test_data"))
 output_path = str(Path.home()) + '/' + "figure/"
 plt.style.use('fivethirtyeight')
@@ -63,7 +63,7 @@ def main():
     beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
     global path, folder_path
     number_of_files = 0
-    output_file_name = 'outputdata.csv'
+    output_file_name = 'LoS_dyn_log_outputdata.csv'
     path_out = str(Path.home().joinpath("test_data", output_file_name))
 
     path_output_file = Path(path_out)
@@ -595,7 +595,8 @@ def main():
         frames_per_figure = 1
         def animate(i):
             ax5.clear()
-
+            ax5.set_xlim(-12,12)
+            ax5.set_ylim(-12,12)
             i = int(i/frames_per_figure)
             for l in range(360):
                 if i%2 == 0:
@@ -614,13 +615,13 @@ def main():
         ax10.set_ylim(0,12000)
         ax11.set_xlim(0,45000)
         ax11.set_ylim(0,12000)
-        name_of_file_1 = 'init_position_plot%s.png'
-        name_of_file_2 = 'init_position_delta%s.png'
-        name_of_file_3 = 'init_position_in_the_same_plot%s.png'
-        name_of_file_4 = 'init_lidar%s.gif'
-        name_of_file_5 = 'init_delta_coordinate_w_respect_to_with_lidar%s.png'
-        name_of_file_6 = 'init_vel_over%s.png'
-        name_of_file_7 = 'init_coordinate_over_time%s.png'
+        name_of_file_1 = 'LoS_dyn_position_plot%s.png'
+        name_of_file_2 = 'LoS_dyn_position_delta%s.png'
+        name_of_file_3 = 'LoS_dyn_position_in_the_same_plot%s.png'
+        name_of_file_4 = 'LoS_dyn_lidar%s.gif'
+        name_of_file_5 = 'LoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
+        name_of_file_6 = 'LoS_dyn_vel_over%s.png'
+        name_of_file_7 = 'LoS_dyn_coordinate_over_time%s.png'
 
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
         fig2.savefig(output_path + name_of_file_2 % number_of_files)
@@ -628,8 +629,9 @@ def main():
         fig5.savefig(output_path + name_of_file_5 % number_of_files)
         fig6.savefig(output_path + name_of_file_6 % number_of_files)
         fig7.savefig(output_path + name_of_file_7 % number_of_files)
-        #writergif = animation.PillowWriter(fps=1)
-        #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
+        if number_of_files == 1:
+            writergif = animation.PillowWriter(fps=10)
+            ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
 
         w_x_variance = np.var(with_x)
