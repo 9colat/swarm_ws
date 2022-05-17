@@ -39,7 +39,7 @@ from custom_msgs.msg import USPS_msgs
 input_speed = 0
 angular_speed = 0
 
-path = Path.home().joinpath("test_data", "dynanic_log%s.csv")
+path = Path.home().joinpath("test_data", "init_dyn_log%s.csv")
 path_lidar = str(Path.home().joinpath("test_data", "dyn_lidar%s.txt"))
 folder_path = str(Path.home().joinpath("test_data"))
 isfolder = os.path.isdir(folder_path)
