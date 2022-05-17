@@ -14,7 +14,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 ##### setting up the path for the data file and folder #####
 path = str(Path.home().joinpath("test_data", "init_dyn_log%s.csv"))
-path_output = str(Path.home().joinpath("test_data", "static_output%s.csv"))
+path_output = str(Path.home().joinpath("test_data", "static_init_output%s.csv"))
 folder_path = str(Path.home().joinpath("test_data"))
 output_path = str(Path.home()) + '/' + "figure/"
 plt.style.use('fivethirtyeight')
@@ -586,7 +586,7 @@ def main():
         ax16.plot(time_array, kalman_y,c='b',label='Kalman')
         ax16.plot(time_array, kalman_y_lidar, c='g',label='Kalman w. Lidar')
         ax16.plot(time_array, kalman_y_bank, c='r', label='Kalman Bank')
-        ax16.plot(time_array, simple_y_data, c='c',label='Kalman w. Lidar')
+        ax16.plot(time_array, simple_y_data, c='c',label='recursive monolateration')
         ax4.legend()
         ax14.legend()
         ax15.legend()
@@ -614,13 +614,13 @@ def main():
         ax10.set_ylim(0,12000)
         ax11.set_xlim(0,45000)
         ax11.set_ylim(0,12000)
-        name_of_file_1 = 'position_plot%s.png'
-        name_of_file_2 = 'position_delta%s.png'
-        name_of_file_3 = 'position_in_the_same_plot%s.png'
-        name_of_file_4 = 'lidar%s.gif'
-        name_of_file_5 = 'delta_coordinate_w_respect_to_with_lidar%s.png'
-        name_of_file_6 = 'vel_over%s.png'
-        name_of_file_7 = 'coordinate_over_time%s.png'
+        name_of_file_1 = 'init_position_plot%s.png'
+        name_of_file_2 = 'init_position_delta%s.png'
+        name_of_file_3 = 'init_position_in_the_same_plot%s.png'
+        name_of_file_4 = 'init_lidar%s.gif'
+        name_of_file_5 = 'init_delta_coordinate_w_respect_to_with_lidar%s.png'
+        name_of_file_6 = 'init_vel_over%s.png'
+        name_of_file_7 = 'init_coordinate_over_time%s.png'
 
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
         fig2.savefig(output_path + name_of_file_2 % number_of_files)

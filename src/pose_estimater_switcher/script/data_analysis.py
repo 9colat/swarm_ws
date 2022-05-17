@@ -586,7 +586,7 @@ def main():
         ax16.plot(time_array, kalman_y,c='b',label='Kalman')
         ax16.plot(time_array, kalman_y_lidar, c='g',label='Kalman w. Lidar')
         ax16.plot(time_array, kalman_y_bank, c='r', label='Kalman Bank')
-        ax16.plot(time_array, simple_y_data, c='c',label='Kalman w. Lidar')
+        ax16.plot(time_array, simple_y_data, c='c',label='recursive monolateration')
         ax4.legend()
         ax14.legend()
         ax15.legend()
