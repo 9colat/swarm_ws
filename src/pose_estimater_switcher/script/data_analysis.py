@@ -44,6 +44,11 @@ ax13 = fig5.add_subplot(3,2,6)
 fig6 = plt.figure(figsize=(10,10))
 fig6.suptitle('velocity in 1 plot')
 ax14 = fig6.add_subplot(1,1,1)
+fig7 = plt.figure(figsize=(20,10))
+fig7.suptitle('X and Y over time')
+ax15 = fig7.add_subplot(1,2,1)
+ax16 = fig7.add_subplot(1,2,2)
+
 isfolder = os.path.isdir(output_path)
 
 
@@ -65,9 +70,10 @@ def main():
     print(path_output_file.is_file())
     if path_output_file.is_file():
         os.remove(path_out)
-
+    print(path % number_of_files)
 
     while os.path.exists(path % number_of_files):
+        print(number_of_files)
         local_path = path %  number_of_files
         data = pd.read_csv(local_path)
         lidar_array = [[0] * len(data["lidar0"])]*360
@@ -81,6 +87,14 @@ def main():
         vel_input = [0] * len(data["lidar0"])
         vel_with = [0] * len(data["lidar0"])
         vel_without = [0] * len(data["lidar0"])
+        kalman_x = [0] * len(data["lidar0"])
+        kalman_y = [0] * len(data["lidar0"])
+        kalman_x_lidar = [0] * len(data["lidar0"])
+        kalman_y_lidar = [0] * len(data["lidar0"])
+        kalman_x_bank = [0] * len(data["lidar0"])
+        kalman_y_bank = [0] * len(data["lidar0"])
+        simple_x_data = [0] * len(data["lidar0"])
+        simple_y_data = [0] * len(data["lidar0"])
         time_array = np.linspace(1, len(data["lidar0"]), num=len(data["lidar0"]))
         with_x = data["with_x"]
         with_y = data["with_y"]
@@ -482,6 +496,8 @@ def main():
         ax12.clear()
         ax13.clear()
         ax14.clear()
+        ax15.clear()
+        ax16.clear()
         ax1.set_title("Position with LiDAR")
         ax1.set_xlabel("X - coordinate [mm]")
         ax1.set_ylabel("Y - coordinate [mm]")
@@ -521,6 +537,12 @@ def main():
         ax14.set_title("velocity over time")
         ax14.set_xlabel("Time [s]")
         ax14.set_ylabel("speed [mm/s]")
+        ax15.set_title("X over time")
+        ax15.set_xlabel("Time [s]")
+        ax15.set_ylabel("X coordinate [mm]")
+        ax16.set_title("Y over time")
+        ax16.set_xlabel("Time [s]")
+        ax16.set_ylabel("Y coordinate [mm]")
 
         ax1.scatter(with_x, with_y)
         ax2.scatter(without_x, without_y)
@@ -537,6 +559,14 @@ def main():
             vel_input[i] = linear_speed[i]
             vel_with[i] = with_v[i]
             vel_without[i] = without_v[i]
+            kalman_x[i] = without_x[i]
+            kalman_y[i] = without_y[i]
+            kalman_x_lidar[i] = with_x[i]
+            kalman_y_lidar[i] = with_y[i]
+            kalman_x_bank[i] = multi_x[i]
+            kalman_y_bank[i] = multi_y[i]
+            simple_x_data[i] = simple_x[i]
+            simple_y_data[i] = simple_y[i]
         ax3.plot(time_array,delta)
         ax6.plot(time_array,delta_x)
         ax7.plot(time_array,delta_y)
@@ -544,11 +574,23 @@ def main():
         ax9.plot(time_array,delta_y_kalman_bank)
         ax12.plot(time_array,delta_x_kalman_bank)
         ax13.plot(time_array,delta_y_kalman_bank)
-        ax4.scatter(with_x, with_y, c='b')
-        ax4.scatter(without_x, without_y, c='r')
-        ax14.plot(time_array,vel_input,c='b')
-        ax14.plot(time_array, vel_with, c='g')
-        ax14.plot(time_array, vel_without, c='r')
+        ax4.scatter(with_x, with_y, c='b',label='Kalman w. Lidar')
+        ax4.scatter(without_x, without_y, c='r',label='Kalman')
+        #ax14.plot(time_array,vel_input,c='b')
+        ax14.plot(time_array, vel_with, c='g',label='Kalman w. Lidar')
+        ax14.plot(time_array, vel_without, c='r',label='Kalman')
+        ax15.plot(time_array, kalman_x,c='b',label='Kalman')
+        ax15.plot(time_array, kalman_x_lidar, c='g',label='Kalman w. Lidar')
+        ax15.plot(time_array, kalman_x_bank, c='r', label='Kalman Bank')
+        ax15.plot(time_array, simple_x_data, c='c', label='recursive monolateration')
+        ax16.plot(time_array, kalman_y,c='b',label='Kalman')
+        ax16.plot(time_array, kalman_y_lidar, c='g',label='Kalman w. Lidar')
+        ax16.plot(time_array, kalman_y_bank, c='r', label='Kalman Bank')
+        ax16.plot(time_array, simple_y_data, c='c',label='Kalman w. Lidar')
+        ax4.legend()
+        ax14.legend()
+        ax15.legend()
+        ax16.legend()
 
         frames_per_figure = 1
         def animate(i):
@@ -572,18 +614,20 @@ def main():
         ax10.set_ylim(0,12000)
         ax11.set_xlim(0,45000)
         ax11.set_ylim(0,12000)
-        name_of_file_1 = 'position_plot%s.svg'
-        name_of_file_2 = 'position_delta%s.svg'
-        name_of_file_3 = 'position_in_the_same_plot%s.svg'
+        name_of_file_1 = 'position_plot%s.png'
+        name_of_file_2 = 'position_delta%s.png'
+        name_of_file_3 = 'position_in_the_same_plot%s.png'
         name_of_file_4 = 'lidar%s.gif'
-        name_of_file_5 = 'delta_coordinate_w_respect_to_with_lidar%s.svg'
-        name_of_file_6 = 'vel_over%s.svg'
+        name_of_file_5 = 'delta_coordinate_w_respect_to_with_lidar%s.png'
+        name_of_file_6 = 'vel_over%s.png'
+        name_of_file_7 = 'coordinate_over_time%s.png'
 
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
         fig2.savefig(output_path + name_of_file_2 % number_of_files)
         fig3.savefig(output_path + name_of_file_3 % number_of_files)
         fig5.savefig(output_path + name_of_file_5 % number_of_files)
         fig6.savefig(output_path + name_of_file_6 % number_of_files)
+        fig7.savefig(output_path + name_of_file_7 % number_of_files)
         #writergif = animation.PillowWriter(fps=1)
         #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
