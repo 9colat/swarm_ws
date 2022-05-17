@@ -24,6 +24,7 @@ pub_time = 10
 first_time = True
 desired_time = 20 * 60 # we want the test to be run for 20 min, and convert it to seconds
 test_time_with_over_head_takken_to_a_count = desired_time + (desired_time/100)*25 # we add 25% time to acount for overhead.
+test_time_with_over_head_takken_to_a_count = 30 * 60
 rate = rospy.Rate(1)
 while not rospy.is_shutdown():
     if (time.time() - local_time) > pub_time and first_time:
