@@ -13,8 +13,8 @@ import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 
 ##### setting up the path for the data file and folder #####
-path = str(Path.home().joinpath("test_data", "LoS_dyn_log%s.csv"))
-path_output = str(Path.home().joinpath("test_data", "LoS_dyn_log_output%s.csv"))
+path = str(Path.home().joinpath("test_data", "NLoS_dyn_log%s.csv"))
+path_output = str(Path.home().joinpath("test_data", "NLoS_dyn_output%s.csv"))
 folder_path = str(Path.home().joinpath("test_data"))
 output_path = str(Path.home()) + '/' + "figure/"
 plt.style.use('fivethirtyeight')
@@ -49,6 +49,8 @@ fig7.suptitle('X and Y over time')
 ax15 = fig7.add_subplot(1,2,1)
 ax16 = fig7.add_subplot(1,2,2)
 
+
+
 isfolder = os.path.isdir(output_path)
 
 
@@ -63,14 +65,14 @@ def main():
     beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
     global path, folder_path
     number_of_files = 0
-    output_file_name = 'LoS_dyn_log_outputdata.csv'
+    output_file_name = 'NLoS_dyn_outputdata.csv'
     path_out = str(Path.home().joinpath("test_data", output_file_name))
 
     path_output_file = Path(path_out)
     print(path_output_file.is_file())
     if path_output_file.is_file():
         os.remove(path_out)
-    print(path % number_of_files)
+
 
     while os.path.exists(path % number_of_files):
         print(number_of_files)
@@ -539,10 +541,10 @@ def main():
         ax14.set_ylabel("speed [mm/s]")
         ax15.set_title("X over time")
         ax15.set_xlabel("Time [s]")
-        ax15.set_ylabel("X coordinate [mm]")
+        ax15.set_ylabel("speed [mm/s]")
         ax16.set_title("Y over time")
         ax16.set_xlabel("Time [s]")
-        ax16.set_ylabel("Y coordinate [mm]")
+        ax16.set_ylabel("speed [mm/s]")
 
         ax1.scatter(with_x, with_y)
         ax2.scatter(without_x, without_y)
@@ -586,7 +588,7 @@ def main():
         ax16.plot(time_array, kalman_y,c='b',label='Kalman')
         ax16.plot(time_array, kalman_y_lidar, c='g',label='Kalman w. Lidar')
         ax16.plot(time_array, kalman_y_bank, c='r', label='Kalman Bank')
-        ax16.plot(time_array, simple_y_data, c='c',label='recursive monolateration')
+        ax16.plot(time_array, simple_y_data, c='c',label='Kalman w. Lidar')
         ax4.legend()
         ax14.legend()
         ax15.legend()
@@ -595,8 +597,7 @@ def main():
         frames_per_figure = 1
         def animate(i):
             ax5.clear()
-            ax5.set_xlim(-12,12)
-            ax5.set_ylim(-12,12)
+
             i = int(i/frames_per_figure)
             for l in range(360):
                 ax5.scatter(math.cos(math.radians(l)) * lidar_array[l][i], math.sin(math.radians(l)) * lidar_array[l][i], c='r')
@@ -612,13 +613,13 @@ def main():
         ax10.set_ylim(0,12000)
         ax11.set_xlim(0,45000)
         ax11.set_ylim(0,12000)
-        name_of_file_1 = 'LoS_dyn_position_plot%s.png'
-        name_of_file_2 = 'LoS_dyn_position_delta%s.png'
-        name_of_file_3 = 'LoS_dyn_position_in_the_same_plot%s.png'
-        name_of_file_4 = 'LoS_dyn_lidar%s.gif'
-        name_of_file_5 = 'LoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
-        name_of_file_6 = 'LoS_dyn_vel_over%s.png'
-        name_of_file_7 = 'LoS_dyn_coordinate_over_time%s.png'
+        name_of_file_1 = 'NLoS_dyn_position_plot%s.png'
+        name_of_file_2 = 'NLoS_dyn_position_delta%s.png'
+        name_of_file_3 = 'NLoS_dyn_position_in_the_same_plot%s.png'
+        name_of_file_4 = 'NLoS_dyn_lidar%s.gif'
+        name_of_file_5 = 'NLoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
+        name_of_file_6 = 'NLoS_dyn_vel_over%s.png'
+        name_of_file_7 = 'NLoS_dyn_coordinate_over_time%s.png'
 
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
         fig2.savefig(output_path + name_of_file_2 % number_of_files)
@@ -626,9 +627,8 @@ def main():
         fig5.savefig(output_path + name_of_file_5 % number_of_files)
         fig6.savefig(output_path + name_of_file_6 % number_of_files)
         fig7.savefig(output_path + name_of_file_7 % number_of_files)
-        if number_of_files == 1:
-            writergif = animation.PillowWriter(fps=10)
-            ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
+        #writergif = animation.PillowWriter(fps=1)
+        #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
 
         w_x_variance = np.var(with_x)

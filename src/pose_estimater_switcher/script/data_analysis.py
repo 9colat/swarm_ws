@@ -595,13 +595,10 @@ def main():
         frames_per_figure = 1
         def animate(i):
             ax5.clear()
-
-            i = int(i/frames_per_figure)
+            ax5.set_xlim(-12,12)
+            ax5.set_ylim(-12,12)
             for l in range(360):
-                if i%2 == 0:
-                    ax5.scatter(math.cos(math.radians(l)) * lidar_array[l][i], math.sin(math.radians(l)) * lidar_array[l][i], c='b')
-                if i%2 == 1:
-                    ax5.scatter(math.cos(math.radians(l)) * lidar_array[l][i], math.sin(math.radians(l)) * lidar_array[l][i], c='r')
+                ax5.scatter(math.cos(math.radians(l)) * lidar_array[l][i], math.sin(math.radians(l)) * lidar_array[l][i], c='r')
         ani = FuncAnimation(fig4, animate, frames = frames_per_figure * len(data["lidar0"]))
 
         ax1.set_xlim(0,45000)
@@ -628,8 +625,9 @@ def main():
         fig5.savefig(output_path + name_of_file_5 % number_of_files)
         fig6.savefig(output_path + name_of_file_6 % number_of_files)
         fig7.savefig(output_path + name_of_file_7 % number_of_files)
-        #writergif = animation.PillowWriter(fps=1)
-        #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
+        writergif = animation.PillowWriter(fps=10)
+        if number_of_files > 69:
+            ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
 
         w_x_variance = np.var(with_x)
