@@ -95,7 +95,7 @@ def main():
         kalman_y_bank = [0] * len(data["lidar0"])
         simple_x_data = [0] * len(data["lidar0"])
         simple_y_data = [0] * len(data["lidar0"])
-        time_array = np.linspace(1, len(data["lidar0"]), num=len(data["lidar0"]))
+        time_array = np.linspace(1, len(data["lidar0"]/10), num=len(data["lidar0"]))
         with_x = data["with_x"]
         with_y = data["with_y"]
         with_v = data["with_v"]

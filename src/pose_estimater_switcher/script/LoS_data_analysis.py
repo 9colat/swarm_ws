@@ -71,6 +71,8 @@ def main():
     if path_output_file.is_file():
         os.remove(path_out)
     print(path % number_of_files)
+    true_x = [22653, 22673]
+    true_y = [1039, 3822]
 
     while os.path.exists(path % number_of_files):
         print(number_of_files)
@@ -95,7 +97,7 @@ def main():
         kalman_y_bank = [0] * len(data["lidar0"])
         simple_x_data = [0] * len(data["lidar0"])
         simple_y_data = [0] * len(data["lidar0"])
-        time_array = np.linspace(1, len(data["lidar0"]), num=len(data["lidar0"]))
+        time_array = np.linspace(1, len(data["lidar0"]/10), num=len(data["lidar0"]))
         with_x = data["with_x"]
         with_y = data["with_y"]
         with_v = data["with_v"]
@@ -498,16 +500,16 @@ def main():
         ax14.clear()
         ax15.clear()
         ax16.clear()
-        ax1.set_title("Position with LiDAR")
+        ax1.set_title("EKF Augmented with LiDAR")
         ax1.set_xlabel("X - coordinate [mm]")
         ax1.set_ylabel("Y - coordinate [mm]")
-        ax2.set_title("Position without LiDAR")
+        ax2.set_title("EKF")
         ax2.set_xlabel("X - coordinate [mm]")
         ax2.set_ylabel("Y - coordinate [mm]")
-        ax10.set_title("Position with simple")
+        ax10.set_title("Recursive Monolateration")
         ax10.set_xlabel("X - coordinate [mm]")
         ax10.set_ylabel("Y - coordinate [mm]")
-        ax11.set_title("Position with kalman bank")
+        ax11.set_title("EKF bank")
         ax11.set_xlabel("X - coordinate [mm]")
         ax11.set_ylabel("Y - coordinate [mm]")
         ax3.set_title("Position difference over time")
@@ -545,9 +547,13 @@ def main():
         ax16.set_ylabel("Y coordinate [mm]")
 
         ax1.scatter(with_x, with_y)
+        ax1.plot(true_x, true_y, '-o', c='r', label='True path')
         ax2.scatter(without_x, without_y)
+        ax2.plot(true_x, true_y, '-o', c='r', label='True path')
         ax10.scatter(simple_x, simple_y)
+        ax10.plot(true_x, true_y, '-o', c='r', label='True path')
         ax11.scatter(multi_x, multi_y)
+        ax11.plot(true_x, true_y, '-o', c='r', label='True path')
         for i in range(len(with_x)):
             delta[i] = math.sqrt(pow(with_x[i],2)+pow(with_y[i],2))-math.sqrt(pow(without_x[i],2)+pow(without_y[i],2))
             delta_x[i] = with_x[i] - without_x[i]
@@ -576,21 +582,26 @@ def main():
         ax13.plot(time_array,delta_y_kalman_bank)
         ax4.scatter(with_x, with_y, c='b',label='Kalman w. Lidar')
         ax4.scatter(without_x, without_y, c='r',label='Kalman')
+        ax4.plot(true_x, true_y, '-o', c='r', label='True path')
         #ax14.plot(time_array,vel_input,c='b')
         ax14.plot(time_array, vel_with, c='g',label='Kalman w. Lidar')
         ax14.plot(time_array, vel_without, c='r',label='Kalman')
         ax15.plot(time_array, kalman_x,c='b',label='Kalman')
         ax15.plot(time_array, kalman_x_lidar, c='g',label='Kalman w. Lidar')
-        ax15.plot(time_array, kalman_x_bank, c='r', label='Kalman Bank')
-        ax15.plot(time_array, simple_x_data, c='c', label='recursive monolateration')
+        #ax15.plot(time_array, kalman_x_bank, c='r', label='Kalman Bank')
+        #ax15.plot(time_array, simple_x_data, c='c', label='recursive monolateration')
         ax16.plot(time_array, kalman_y,c='b',label='Kalman')
         ax16.plot(time_array, kalman_y_lidar, c='g',label='Kalman w. Lidar')
-        ax16.plot(time_array, kalman_y_bank, c='r', label='Kalman Bank')
-        ax16.plot(time_array, simple_y_data, c='c',label='recursive monolateration')
+        #ax16.plot(time_array, kalman_y_bank, c='r', label='Kalman Bank')
+        #ax16.plot(time_array, simple_y_data, c='c',label='recursive monolateration')
         ax4.legend()
         ax14.legend()
         ax15.legend()
         ax16.legend()
+        ax1.legend()
+        ax2.legend()
+        ax10.legend()
+        ax11.legend()
 
         frames_per_figure = 1
         def animate(i):
@@ -628,7 +639,7 @@ def main():
         fig7.savefig(output_path + name_of_file_7 % number_of_files)
         if number_of_files == 1:
             writergif = animation.PillowWriter(fps=10)
-            ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
+            #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
 
         w_x_variance = np.var(with_x)

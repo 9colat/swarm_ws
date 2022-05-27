@@ -13,10 +13,10 @@ import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 
 ##### setting up the path for the data file and folder #####
-path = str(Path.home().joinpath("test_data", "NLoS_dyn_log%s.csv"))
-path_output = str(Path.home().joinpath("test_data", "NLoS_dyn_output%s.csv"))
-folder_path = str(Path.home().joinpath("test_data"))
-output_path = str(Path.home()) + '/' + "figure/"
+path = str(Path.home().joinpath("test_data/1_filtered_data", "filtered_NLoS_dyn_log%s.csv"))
+path_output = str(Path.home().joinpath("test_data/1_filtered_data", "filtered_NLoS_dyn_output%s.csv"))
+folder_path = str(Path.home().joinpath("test_data/1_filtered_data"))
+output_path = str(Path.home()) + '/' + "figure/1_filtered_data/"
 plt.style.use('fivethirtyeight')
 fig1 = plt.figure(figsize=(20,20))
 fig1.suptitle('Position plot test')
@@ -66,7 +66,7 @@ def main():
     global path, folder_path
     number_of_files = 0
     output_file_name = 'NLoS_dyn_outputdata.csv'
-    path_out = str(Path.home().joinpath("test_data", output_file_name))
+    path_out = str(Path.home().joinpath("test_data/1_filtered_data", output_file_name))
 
     path_output_file = Path(path_out)
     print(path_output_file.is_file())
@@ -502,16 +502,16 @@ def main():
         ax14.clear()
         ax15.clear()
         ax16.clear()
-        ax1.set_title("Position with LiDAR")
+        ax1.set_title("EKF Augmented with LiDAR")
         ax1.set_xlabel("X - coordinate [mm]")
         ax1.set_ylabel("Y - coordinate [mm]")
-        ax2.set_title("Position without LiDAR")
+        ax2.set_title("EKF")
         ax2.set_xlabel("X - coordinate [mm]")
         ax2.set_ylabel("Y - coordinate [mm]")
-        ax10.set_title("Position with simple")
+        ax10.set_title("Recursive Monolateration")
         ax10.set_xlabel("X - coordinate [mm]")
         ax10.set_ylabel("Y - coordinate [mm]")
-        ax11.set_title("Position with kalman bank")
+        ax11.set_title("EKF bank")
         ax11.set_xlabel("X - coordinate [mm]")
         ax11.set_ylabel("Y - coordinate [mm]")
         ax3.set_title("Position difference over time")
@@ -624,13 +624,13 @@ def main():
         ax10.set_ylim(0,12000)
         ax11.set_xlim(0,45000)
         ax11.set_ylim(0,12000)
-        name_of_file_1 = 'NLoS_dyn_position_plot%s.png'
-        name_of_file_2 = 'NLoS_dyn_position_delta%s.png'
-        name_of_file_3 = 'NLoS_dyn_position_in_the_same_plot%s.png'
-        name_of_file_4 = 'NLoS_dyn_lidar%s.gif'
-        name_of_file_5 = 'NLoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
-        name_of_file_6 = 'NLoS_dyn_vel_over%s.png'
-        name_of_file_7 = 'NLoS_dyn_coordinate_over_time%s.png'
+        name_of_file_1 = 'NLoS_filtered_dyn_position_plot%s.png'
+        name_of_file_2 = 'NLoS_filtered_dyn_position_delta%s.png'
+        name_of_file_3 = 'NLoS_filtered_dyn_position_in_the_same_plot%s.png'
+        name_of_file_4 = 'NLoS_filtered_dyn_lidar%s.gif'
+        name_of_file_5 = 'NLoS_filtered_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
+        name_of_file_6 = 'NLoS_filtered_dyn_vel_over%s.png'
+        name_of_file_7 = 'NLoS_filtered_dyn_coordinate_over_time%s.png'
 
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
         fig2.savefig(output_path + name_of_file_2 % number_of_files)
@@ -706,6 +706,7 @@ def main():
 
                 }
             csv_writer.writerow(info)
+
         number_of_files = number_of_files + 1
     number_of_files = number_of_files + 1
     with open(path_out, 'a') as csv_file:

@@ -48,6 +48,9 @@ fig7 = plt.figure(figsize=(20,10))
 fig7.suptitle('X and Y over time')
 ax15 = fig7.add_subplot(1,2,1)
 ax16 = fig7.add_subplot(1,2,2)
+fig8 = plt.figure(figsize=(20,20))
+fig8.suptitle('X and Y over time')
+ax20 = fig8.add_subplot(1,1,1)
 
 isfolder = os.path.isdir(output_path)
 
@@ -71,6 +74,8 @@ def main():
     if path_output_file.is_file():
         os.remove(path_out)
     print(path % number_of_files)
+    true_x = 22663
+    true_y = 2349
 
     while os.path.exists(path % number_of_files):
         print(number_of_files)
@@ -95,7 +100,8 @@ def main():
         kalman_y_bank = [0] * len(data["lidar0"])
         simple_x_data = [0] * len(data["lidar0"])
         simple_y_data = [0] * len(data["lidar0"])
-        time_array = np.linspace(1, len(data["lidar0"]), num=len(data["lidar0"]))
+        lidar_single = [0] * 360
+        time_array = np.linspace(1, len(data["lidar0"])/10, num=len(data["lidar0"]))
         with_x = data["with_x"]
         with_y = data["with_y"]
         with_v = data["with_v"]
@@ -498,16 +504,16 @@ def main():
         ax14.clear()
         ax15.clear()
         ax16.clear()
-        ax1.set_title("Position with LiDAR")
+        ax1.set_title("EKF Augmented with LiDAR")
         ax1.set_xlabel("X - coordinate [mm]")
         ax1.set_ylabel("Y - coordinate [mm]")
-        ax2.set_title("Position without LiDAR")
+        ax2.set_title("EKF")
         ax2.set_xlabel("X - coordinate [mm]")
         ax2.set_ylabel("Y - coordinate [mm]")
-        ax10.set_title("Position with simple")
+        ax10.set_title("Recursive Monolateration")
         ax10.set_xlabel("X - coordinate [mm]")
         ax10.set_ylabel("Y - coordinate [mm]")
-        ax11.set_title("Position with kalman bank")
+        ax11.set_title("EKF bank")
         ax11.set_xlabel("X - coordinate [mm]")
         ax11.set_ylabel("Y - coordinate [mm]")
         ax3.set_title("Position difference over time")
@@ -544,10 +550,10 @@ def main():
         ax16.set_xlabel("Time [s]")
         ax16.set_ylabel("Y coordinate [mm]")
 
-        ax1.scatter(with_x, with_y)
-        ax2.scatter(without_x, without_y)
-        ax10.scatter(simple_x, simple_y)
-        ax11.scatter(multi_x, multi_y)
+        ax1.scatter(with_x, with_y,label='Kalman w. Lidar')
+        ax2.scatter(without_x, without_y,label='Kalman')
+        ax10.scatter(simple_x, simple_y,label='recursive monolateration')
+        ax11.scatter(multi_x, multi_y,label='Kalman Bank')
         for i in range(len(with_x)):
             delta[i] = math.sqrt(pow(with_x[i],2)+pow(with_y[i],2))-math.sqrt(pow(without_x[i],2)+pow(without_y[i],2))
             delta_x[i] = with_x[i] - without_x[i]
@@ -567,6 +573,7 @@ def main():
             kalman_y_bank[i] = multi_y[i]
             simple_x_data[i] = simple_x[i]
             simple_y_data[i] = simple_y[i]
+
         ax3.plot(time_array,delta)
         ax6.plot(time_array,delta_x)
         ax7.plot(time_array,delta_y)
@@ -576,6 +583,31 @@ def main():
         ax13.plot(time_array,delta_y_kalman_bank)
         ax4.scatter(with_x, with_y, c='b',label='Kalman w. Lidar')
         ax4.scatter(without_x, without_y, c='r',label='Kalman')
+        if number_of_files > 69:
+            ax4.plot(true_x, true_y, c='r', label='True point', linewidth=10)
+            ax1.scatter(true_x, true_y, c='r', label='True point')
+            ax2.scatter(true_x, true_y, c='r', label='True point')
+            ax10.scatter(true_x, true_y, c='r', label='True point')
+            ax11.scatter(true_x, true_y, c='r', label='True point')
+            if number_of_files == 80:
+                for h in range(len(lidar_single)):
+                    lidar_single[h] = lidar_array[h][80]
+
+                ax20.set_title("Lidar snapshot")
+                ax20.set_xlabel("X - coordinate [mm]")
+                ax20.set_ylabel("Y - coordinate [mm]")
+                ax20.set_xlim(-12,12)
+                ax20.set_ylim(-12,12)
+                ax20.scatter(math.cos(math.radians(h)) * lidar_single[h], math.sin(math.radians(h)) * lidar_single[h], c='r', label='True path')
+                ax20.plot([0,0],[beacon_x[beacon_id.index(42928)],beacon_y[beacon_id.index(42928)]],'-o', c='g')
+                ax20.plot([0,0],[beacon_x[beacon_id.index(42867)],beacon_y[beacon_id.index(42867)]],'-o', c='g')
+                ax20.plot([0,0],[beacon_x[beacon_id.index(44531)],beacon_y[beacon_id.index(44531)]],'-o', c='g')
+                ax20.plot([0,0],[beacon_x[beacon_id.index(44533)],beacon_y[beacon_id.index(44533)]],'-o', c='g')
+                ax20.plot([0,0],[beacon_x[beacon_id.index(44534)],beacon_y[beacon_id.index(44534)]],'-o', c='g', label='direct line between robot and beacon')
+                ax11.legend()
+                fig8.savefig(output_path + "lidar_snapshot.png")
+
+
         #ax14.plot(time_array,vel_input,c='b')
         ax14.plot(time_array, vel_with, c='g',label='Kalman w. Lidar')
         ax14.plot(time_array, vel_without, c='r',label='Kalman')
@@ -591,6 +623,11 @@ def main():
         ax14.legend()
         ax15.legend()
         ax16.legend()
+        if number_of_files > 69:
+            ax1.legend()
+            ax2.legend()
+            ax10.legend()
+            ax11.legend()
 
         frames_per_figure = 1
         def animate(i):
@@ -611,6 +648,15 @@ def main():
         ax10.set_ylim(0,12000)
         ax11.set_xlim(0,45000)
         ax11.set_ylim(0,12000)
+        if number_of_files > 69:
+            ax1.set_xlim(20000,25500)
+            ax1.set_ylim(0,4500)
+            ax2.set_xlim(20000,25500)
+            ax2.set_ylim(0,4500)
+            ax10.set_xlim(20000,25500)
+            ax10.set_ylim(0,4500)
+            ax11.set_xlim(20000,25500)
+            ax11.set_ylim(0,4500)
         name_of_file_1 = 'position_plot%s.png'
         name_of_file_2 = 'position_delta%s.png'
         name_of_file_3 = 'position_in_the_same_plot%s.png'
@@ -620,14 +666,14 @@ def main():
         name_of_file_7 = 'coordinate_over_time%s.png'
 
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
-        fig2.savefig(output_path + name_of_file_2 % number_of_files)
+        #fig2.savefig(output_path + name_of_file_2 % number_of_files)
         fig3.savefig(output_path + name_of_file_3 % number_of_files)
-        fig5.savefig(output_path + name_of_file_5 % number_of_files)
-        fig6.savefig(output_path + name_of_file_6 % number_of_files)
+        #fig5.savefig(output_path + name_of_file_5 % number_of_files)
+        #fig6.savefig(output_path + name_of_file_6 % number_of_files)
         fig7.savefig(output_path + name_of_file_7 % number_of_files)
-        writergif = animation.PillowWriter(fps=10)
-        if number_of_files > 69:
-            ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
+        #writergif = animation.PillowWriter(fps=10)
+        #if number_of_files > 69:
+            #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
 
         w_x_variance = np.var(with_x)
@@ -696,6 +742,37 @@ def main():
             csv_writer.writerow(info)
 
         number_of_files = number_of_files + 1
+    number_of_files = number_of_files + 1
+    with open(path_out, 'a') as csv_file:
+        #print("opening file")
+        csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        info = {
+            "variance_w_x": "=AVERAGE(A71:A%s)" % number_of_files,
+            "std_w_x": "=AVERAGE(B71:B%s)" % number_of_files,
+            "mean_w_x": "=AVERAGE(C71:C%s)" % number_of_files,
+            "variance_w_y": "=AVERAGE(D71:D%s)" % number_of_files,
+            "std_w_y": "=AVERAGE(E71:E%s)" % number_of_files,
+            "mean_w_y": "=AVERAGE(F71:F%s)" % number_of_files,
+            "variance_wo_x": "=AVERAGE(G71:G%s)" % number_of_files,
+            "std_wo_x": "=AVERAGE(H71:H%s)" % number_of_files,
+            "mean_wo_x": "=AVERAGE(I71:I%s)" % number_of_files,
+            "variance_wo_y": "=AVERAGE(J71:J%s)" % number_of_files,
+            "std_wo_y": "=AVERAGE(K71:K%s)" % number_of_files,
+            "mean_wo_y": "=AVERAGE(L71:L%s)" % number_of_files,
+            "variance_simple_x": "=AVERAGE(M71:M%s)" % number_of_files,
+            "std_simple_x": "=AVERAGE(N71:N%s)" % number_of_files,
+            "mean_simple_x": "=AVERAGE(O71:O%s)" % number_of_files,
+            "variance_simple_y": "=AVERAGE(P71:P%s)" % number_of_files,
+            "std_simple_y": "=AVERAGE(Q71:Q%s)" % number_of_files,
+            "mean_simple_y": "=AVERAGE(R71:R%s)" % number_of_files,
+            "variance_multi_x": "=AVERAGE(S71:S%s)" % number_of_files,
+            "std_multi_x": "=AVERAGE(T71:T%s)" % number_of_files,
+            "mean_multi_x": "=AVERAGE(U71:U%s)" % number_of_files,
+            "variance_multi_y": "=AVERAGE(V71:V%s)" % number_of_files,
+            "std_multi_y": "=AVERAGE(W71:W%s)" % number_of_files,
+            "mean_multi_y": "=AVERAGE(X71:X%s)" % number_of_files
+            }
+        csv_writer.writerow(info)
     print("im done baby ;)")
 
 
