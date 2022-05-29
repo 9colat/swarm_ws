@@ -51,7 +51,8 @@ def main():
     per_y = [158.10276679, 0.7186489399]
 
 
-    while os.path.exists(path_NLoS % number_of_files):
+    #while os.path.exists(path_NLoS % number_of_files):
+    if os.path.exists(path_NLoS % 0):
         print(number_of_files)
         t_1 = 0
         t_2 = 0
