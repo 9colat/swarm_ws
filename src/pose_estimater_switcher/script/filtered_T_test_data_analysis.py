@@ -124,8 +124,8 @@ def main():
         LoS_multi_y = data_LoS["muti_kalman_y"]
         LoS_with_lidar_dist_1 = data_lidar_LoS["dist1"]
         LoS_with_lidar_angle_1 = data_lidar_LoS["angle1"]
-        LoS_with_lidar_dist_2 = data_lidar_LoS["dist2"]
-        LoS_with_lidar_angle_2 = data_lidar_LoS["angle2"]
+        LoS_with_lidar_dist_2 = data_lidar_LoS["dist1"]
+        LoS_with_lidar_angle_2 = data_lidar_LoS["angle1"]
 
         NLoS_with_x = data_NLoS["with_x"]
         NLoS_with_y = data_NLoS["with_y"]
@@ -137,8 +137,8 @@ def main():
         NLoS_multi_y = data_NLoS["muti_kalman_y"]
         NLoS_with_lidar_dist_1 = data_lidar_NLoS["dist1"]
         NLoS_with_lidar_angle_1 = data_lidar_NLoS["angle1"]
-        NLoS_with_lidar_dist_2 = data_lidar_NLoS["dist2"]
-        NLoS_with_lidar_angle_2 = data_lidar_NLoS["angle2"]
+        NLoS_with_lidar_dist_2 = data_lidar_NLoS["dist1"]
+        NLoS_with_lidar_angle_2 = data_lidar_NLoS["angle1"]
 
 
 
@@ -161,37 +161,37 @@ def main():
 
 
         for z in range(len(LoS_with_lidar_dist_1)-1):
-            LoS_x1_k = LoS_with_lidar_dist_1[z] * math.cos(LoS_with_lidar_angle_1[z])
-            LoS_x2_k = LoS_with_lidar_dist_2[z] * math.cos(LoS_with_lidar_angle_2[z])
-            LoS_y1_k = LoS_with_lidar_dist_1[z] * math.sin(LoS_with_lidar_angle_1[z])
-            LoS_y2_k = LoS_with_lidar_dist_2[z] * math.sin(LoS_with_lidar_angle_2[z])
+            LoS_x1_k = LoS_with_lidar_dist_1[z]
+            LoS_x2_k = LoS_with_lidar_dist_2[z]
+            LoS_y1_k = LoS_with_lidar_angle_1[z]
+            LoS_y2_k = LoS_with_lidar_angle_2[z]
 
-            LoS_x1_k1 = LoS_with_lidar_dist_1[z+1] * math.cos(LoS_with_lidar_angle_1[z+1])
-            LoS_x2_k1 = LoS_with_lidar_dist_2[z+1] * math.cos(LoS_with_lidar_angle_2[z+1])
-            LoS_y1_k1 = LoS_with_lidar_dist_1[z+1] * math.sin(LoS_with_lidar_angle_1[z+1])
-            LoS_y2_k1 = LoS_with_lidar_dist_2[z+1] * math.sin(LoS_with_lidar_angle_2[z+1])
+            LoS_x1_k1 = LoS_with_lidar_dist_1[z+1]
+            LoS_x2_k1 = LoS_with_lidar_dist_2[z+1]
+            LoS_y1_k1 = LoS_with_lidar_angle_1[z+1]
+            LoS_y2_k1 = LoS_with_lidar_angle_2[z+1]
 
             delta_lidar_LoS = (math.sqrt(pow(LoS_x1_k1-LoS_x1_k,2)+pow(LoS_y1_k1-LoS_y1_k,2))+math.sqrt(pow(LoS_x2_k1-LoS_x2_k,2)+pow(LoS_y2_k1-LoS_y2_k,2)))/2
 
-            LoS_kalman_error[z] = delta_lidar_LoS - LoS_dist_from_path_kalman_per[z]
-            LoS_lidar_error[z] = delta_lidar_LoS - LoS_dist_from_path_lidar_per[z]
+            LoS_kalman_error[z] = delta_lidar_LoS * 1000 - LoS_dist_from_path_kalman_per[z]
+            LoS_lidar_error[z] = delta_lidar_LoS * 1000 - LoS_dist_from_path_lidar_per[z]
 
 
         for p in range(len(NLoS_with_lidar_dist_1)-1):
-            NLoS_x1_k = NLoS_with_lidar_dist_1[z] * math.cos(NLoS_with_lidar_angle_1[z])
-            NLoS_x2_k = NLoS_with_lidar_dist_2[z] * math.cos(NLoS_with_lidar_angle_2[z])
-            NLoS_y1_k = NLoS_with_lidar_dist_1[z] * math.sin(NLoS_with_lidar_angle_1[z])
-            NLoS_y2_k = NLoS_with_lidar_dist_2[z] * math.sin(NLoS_with_lidar_angle_2[z])
+            NLoS_x1_k = NLoS_with_lidar_dist_1[z]
+            NLoS_x2_k = NLoS_with_lidar_dist_2[z]
+            NLoS_y1_k = NLoS_with_lidar_angle_1[z]
+            NLoS_y2_k = NLoS_with_lidar_angle_2[z]
 
-            NLoS_x1_k1 = LoS_with_lidar_dist_1[z+1] * math.cos(NLoS_with_lidar_angle_1[z+1])
-            NLoS_x2_k1 = NLoS_with_lidar_dist_2[z+1] * math.cos(NLoS_with_lidar_angle_2[z+1])
-            NLoS_y1_k1 = NLoS_with_lidar_dist_1[z+1] * math.sin(NLoS_with_lidar_angle_1[z+1])
-            NLoS_y2_k1 = NLoS_with_lidar_dist_2[z+1] * math.sin(NLoS_with_lidar_angle_2[z+1])
+            NLoS_x1_k1 = LoS_with_lidar_dist_1[z+1]
+            NLoS_x2_k1 = NLoS_with_lidar_dist_2[z+1]
+            NLoS_y1_k1 = NLoS_with_lidar_angle_1[z+1]
+            NLoS_y2_k1 = NLoS_with_lidar_angle_2[z+1]
 
             delta_lidar_NLoS = (math.sqrt(pow(NLoS_x1_k1-NLoS_x1_k,2)+pow(NLoS_y1_k1-NLoS_y1_k,2))+math.sqrt(pow(NLoS_x2_k1-NLoS_x2_k,2)+pow(NLoS_y2_k1-NLoS_y2_k,2)))/2
 
-            NLoS_kalman_error[p] = delta_lidar_NLoS - NLoS_dist_from_path_kalman_per[p]
-            NLoS_lidar_error[p] = delta_lidar_NLoS - NLoS_dist_from_path_lidar_per[p]
+            NLoS_kalman_error[p] = delta_lidar_NLoS * 1000 - NLoS_dist_from_path_kalman_per[p]
+            NLoS_lidar_error[p] = delta_lidar_NLoS * 1000 - NLoS_dist_from_path_lidar_per[p]
 
 
         k = len(LoS_dist_from_path_kalman)+len(NLoS_dist_from_path_kalman) - 2
