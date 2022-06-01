@@ -67,7 +67,7 @@ class Laser_component:
 
             return -1
         else:
-            bell = 1 # chage later to make sence ;)
+            bell = 0.01 # chage later to make sence ;)
             index_of_data = self.beacon_id.index(id)
             theta = int(math.degrees(self.calculated_local_angle(id, robot_pose, mag_heading)))
             #dist = (math.dist(self.beacon[:,index_of_data],robot_pose))/1000
@@ -78,7 +78,7 @@ class Laser_component:
             assumed_dist_m = assumed_dist - (assumed_dist/100)*5    # The min distance with 5% error tolerance
             if assumed_dist_p < dist or assumed_dist_m > dist:      # This if statmant will take objects that is not connected to the foor in to acount
                 #print("bell value set to a value: ",bell)
-                bell = 100 # chage later to make sence ;)
+                bell = 1000 # chage later to make sence ;)
             area_of_intreast = 2
             stored_dist = [12]*(2*area_of_intreast+1)
             j = 0

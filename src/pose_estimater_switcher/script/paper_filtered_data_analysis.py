@@ -7,7 +7,7 @@ import csv
 from pathlib import Path
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
@@ -26,6 +26,7 @@ ax1 = fig1.add_subplot(2,2,1)
 ax2 = fig1.add_subplot(2,2,2)
 ax3 = fig1.add_subplot(2,2,3)
 ax4 = fig1.add_subplot(2,2,4)
+plt.rcParams.update({'font.size':20})
 
 isfolder = os.path.isdir(output_path)
 
@@ -64,6 +65,9 @@ def main():
         NLoS_with_y = data_NLoS["with_y"]
         NLoS_without_x = data_NLoS["without_x"]
         NLoS_without_y = data_NLoS["without_y"]
+
+        plt.rc('xtick', labelsize=30)
+        plt.rc('ytick', labelsize=30)
 
 
         ax1.set_title("LoS",fontdict=fontdict_me)
@@ -111,10 +115,11 @@ def main():
     ax3.set_ylim(0,6000)
     ax4.set_xlim(20000,25500)
     ax4.set_ylim(0,6000)
+
     name_of_file_1 = 'grit_pose_plot.png'
 
 
-    fig1.savefig(output_path + name_of_file_1)
+    fig1.savefig(output_path + name_of_file_1,transparent=True)
 
 
 

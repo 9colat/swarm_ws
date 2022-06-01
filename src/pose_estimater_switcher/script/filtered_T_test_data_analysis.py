@@ -32,7 +32,7 @@ isfolder = os.path.isdir(output_path)
 def main():
     if not isfolder:
         os.mkdir(output_path)
-        print("making directory")
+        #print("making directory")
     beacon_id =   [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
     beacon_x =    [11700, 16244,  7824,   2000,   21369,  26163,  26163,  31000,  35766,  35766,  40205,  40204,  16560]    #[11700  , 16244 , 7824  , 2000  , 21369 , 26163 , 26163 , 31000 , 35766 , 35766 , 40205 , 40204 , 16560 ]beacon_
     beacon_y =    [5999,  10150,  5726,   4499,   6534,   9939,   3699,   6519,   10012,  3522,   11684,  4363,   3549]    #[5999   , 10150 , 5726  , 4499  , 6534  , 9939  , 3699  , 6519  , 10012  , 10012 , 11684 , 4363  , 3549 ]
@@ -52,34 +52,36 @@ def main():
 
 
     #while os.path.exists(path_NLoS % number_of_files):
-    if os.path.exists(path_NLoS % 0):
+    for number_of_files in range(0,5):
         print(number_of_files)
         t_1 = 0
         t_2 = 0
         t_3 = 0
         t_4 = 0
 
-        local_path_LoS = path_NLoS %  number_of_files
-        local_path_NLoS = path_LoS %  number_of_files
+        local_path_LoS = path_LoS %  number_of_files
+        local_path_NLoS = path_NLoS %  number_of_files
         local_path_LoS_lidar = path_LoS_lidar %  number_of_files
         local_path_NLoS_lidar = path_NLoS_lidar %  number_of_files
         local_path_lidar = path_LoS_lidar %  number_of_files
         data_LoS = pd.read_csv(local_path_LoS)
         data_NLoS = pd.read_csv(local_path_NLoS)
         data_lidar_LoS = pd.read_csv(local_path_LoS_lidar)
+        print(local_path_NLoS_lidar)
         data_lidar_NLoS = pd.read_csv(local_path_NLoS_lidar)
+        print("hello")
 
-        LoS_dist_from_path_kalman = [0]*len(data_LoS["with_x"])
-        NLoS_dist_from_path_kalman = [0]*len(data_NLoS["with_x"])
-        LoS_dist_from_path_lidar = [0]*len(data_LoS["without_x"])
-        NLoS_dist_from_path_lidar = [0]*len(data_NLoS["without_x"])
-        LoS_dist_from_path_bank = [0]*len(data_LoS["without_x"])
-        NLoS_dist_from_path_bank = [0]*len(data_NLoS["without_x"])
+        LoS_dist_from_path_kalman = [0]*len(data_lidar_LoS["dist1"])
+        NLoS_dist_from_path_kalman = [0]*len(data_lidar_NLoS["dist1"])
+        LoS_dist_from_path_lidar = [0]*len(data_lidar_LoS["dist1"])
+        NLoS_dist_from_path_lidar = [0]*len(data_lidar_NLoS["dist1"])
+        LoS_dist_from_path_bank = [0]*len(data_lidar_LoS["dist1"])
+        NLoS_dist_from_path_bank = [0]*len(data_lidar_NLoS["dist1"])
 
-        LoS_dist_from_path_kalman_per = [0]* len(data_LoS["with_x"])
-        NLoS_dist_from_path_kalman_per = [0]* len(data_NLoS["with_x"])
-        LoS_dist_from_path_lidar_per  = [0]* len(data_LoS["with_x"])
-        NLoS_dist_from_path_lidar_per = [0]* len(data_NLoS["with_x"])
+        LoS_dist_from_path_kalman_per = [0]* len(data_lidar_LoS["dist1"])
+        NLoS_dist_from_path_kalman_per = [0]* len(data_lidar_NLoS["dist1"])
+        LoS_dist_from_path_lidar_per  = [0]* len(data_lidar_LoS["dist1"])
+        NLoS_dist_from_path_lidar_per = [0]* len(data_lidar_NLoS["dist1"])
 
 
         LoS_dist_s_kalman = 0
@@ -106,10 +108,10 @@ def main():
         NLoS_y2_k1 = 0
         delta_lidar_LoS = 0
         delta_lidar_NLoS = 0
-        LoS_kalman_error = [0]*len(LoS_with_lidar_dist_1)-1
-        LoS_lidar_error = [0]*len(LoS_with_lidar_dist_1)-1
-        NLoS_kalman_error = [0]*len(NLoS_with_lidar_dist_1)-1
-        NLoS_lidar_error = [0]*len(NLoS_with_lidar_dist_1)-1
+        LoS_kalman_error = [0]*(len(data_lidar_LoS["dist1"])-1)
+        LoS_lidar_error = [0]*(len(data_lidar_LoS["dist1"])-1)
+        NLoS_kalman_error = [0]*(len(data_lidar_NLoS["dist1"])-1)
+        NLoS_lidar_error = [0]*(len(data_lidar_NLoS["dist1"])-1)
 
 
 
@@ -151,7 +153,8 @@ def main():
             LoS_dist_from_path_lidar_per[i] = abs((per_x[1]-per_x[0])*(per_y[0]-LoS_with_y[i])-(per_x[0]-LoS_with_x[i])*(per_y[1]-per_y[0]))/math.sqrt(pow(per_x[1]-per_x[0],2)+pow(per_y[1]-per_y[0],2))
 
 
-        for s in range(len(NLoS_without_y)):
+        for s in range(len(NLoS_without_y)-1):
+            #print(len(NLoS_dist_from_path_kalman),len(NLoS_without_y))
             NLoS_dist_from_path_kalman[s] = abs((true_x[1]-true_x[0])*(true_y[0]-NLoS_without_y[s])-(true_x[0]-NLoS_without_x[s])*(true_y[1]-true_y[0]))/math.sqrt(pow(true_x[1]-true_x[0],2)+pow(true_y[1]-true_y[0],2))
             NLoS_dist_from_path_lidar[s] = abs((true_x[1]-true_x[0])*(true_y[0]-NLoS_with_y[s])-(true_x[0]-NLoS_with_x[s])*(true_y[1]-true_y[0]))/math.sqrt(pow(true_x[1]-true_x[0],2)+pow(true_y[1]-true_y[0],2))
             NLoS_dist_from_path_bank[s] = abs((true_x[1]-true_x[0])*(true_y[0]-NLoS_multi_y[s])-(true_x[0]-NLoS_multi_x[s])*(true_y[1]-true_y[0]))/math.sqrt(pow(true_x[1]-true_x[0],2)+pow(true_y[1]-true_y[0],2))
@@ -172,21 +175,22 @@ def main():
             LoS_y2_k1 = LoS_with_lidar_angle_2[z+1]
 
             delta_lidar_LoS = (math.sqrt(pow(LoS_x1_k1-LoS_x1_k,2)+pow(LoS_y1_k1-LoS_y1_k,2))+math.sqrt(pow(LoS_x2_k1-LoS_x2_k,2)+pow(LoS_y2_k1-LoS_y2_k,2)))/2
-
+            #print(len(LoS_with_lidar_dist_1)-1,len(LoS_dist_from_path_lidar_per),len(data_LoS["with_x"]))
             LoS_kalman_error[z] = delta_lidar_LoS * 1000 - LoS_dist_from_path_kalman_per[z]
             LoS_lidar_error[z] = delta_lidar_LoS * 1000 - LoS_dist_from_path_lidar_per[z]
 
 
         for p in range(len(NLoS_with_lidar_dist_1)-1):
-            NLoS_x1_k = NLoS_with_lidar_dist_1[z]
-            NLoS_x2_k = NLoS_with_lidar_dist_2[z]
-            NLoS_y1_k = NLoS_with_lidar_angle_1[z]
-            NLoS_y2_k = NLoS_with_lidar_angle_2[z]
+            #print(len(NLoS_with_lidar_dist_1)-1)
+            NLoS_x1_k = NLoS_with_lidar_dist_1[p]
+            NLoS_x2_k = NLoS_with_lidar_dist_2[p]
+            NLoS_y1_k = NLoS_with_lidar_angle_1[p]
+            NLoS_y2_k = NLoS_with_lidar_angle_2[p]
 
-            NLoS_x1_k1 = LoS_with_lidar_dist_1[z+1]
-            NLoS_x2_k1 = NLoS_with_lidar_dist_2[z+1]
-            NLoS_y1_k1 = NLoS_with_lidar_angle_1[z+1]
-            NLoS_y2_k1 = NLoS_with_lidar_angle_2[z+1]
+            NLoS_x1_k1 = NLoS_with_lidar_dist_1[p+1]
+            NLoS_x2_k1 = NLoS_with_lidar_dist_2[p+1]
+            NLoS_y1_k1 = NLoS_with_lidar_angle_1[p+1]
+            NLoS_y2_k1 = NLoS_with_lidar_angle_2[p+1]
 
             delta_lidar_NLoS = (math.sqrt(pow(NLoS_x1_k1-NLoS_x1_k,2)+pow(NLoS_y1_k1-NLoS_y1_k,2))+math.sqrt(pow(NLoS_x2_k1-NLoS_x2_k,2)+pow(NLoS_y2_k1-NLoS_y2_k,2)))/2
 
@@ -295,7 +299,7 @@ def main():
 
                 }
             csv_writer.writerow(info)
-        number_of_files = number_of_files + 1
+        #number_of_files = number_of_files + 1
     number_of_files = number_of_files + 1
     with open(path_out, 'a') as csv_file:
         #print("opening file")
