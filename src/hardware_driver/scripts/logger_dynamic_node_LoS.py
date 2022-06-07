@@ -95,7 +95,7 @@ def callback_multi_kalman(data):
 
 def callback_slam(data):
     global slam_pose
-    slam_pose = [data.position.x,data.position.y,data.position.z]
+    slam_pose = [data.pose.position.x,data.pose.position.y,data.pose.position.z]
 
 
 
