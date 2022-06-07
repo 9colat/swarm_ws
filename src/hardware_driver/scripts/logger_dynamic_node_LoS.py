@@ -13,6 +13,7 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Pose
 from custom_msgs.msg import odom_and_imu
 from custom_msgs.msg import USPS_msgs
+from geometry_msgs.msg import PoseStamped
 
 
 
@@ -150,7 +151,7 @@ def main():
         rospy.Subscriber("without_lidar", Pose, callback_pose_estimator_without_lidar)
         rospy.Subscriber("simple_pose_esti", Pose, callback_simple_pose_esti)
         rospy.Subscriber("multi_kalman", Pose, callback_multi_kalman)
-        rospy.Subscriber("slam_out_pose", Pose, callback_slam)
+        rospy.Subscriber("slam_out_pose", PoseStamped, callback_slam)
         pub = rospy.Publisher('terminating_signal', Bool, queue_size=10)
         if first_time == False:
             good_lidar = 0
