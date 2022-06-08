@@ -74,6 +74,9 @@ class Laser_component:
 
             return -1
         else:
+            indicator.data = 255
+            pub1.publish(indicator)
+            rospy.spin()
             bell = 0.01 # chage later to make sence ;)
             index_of_data = self.beacon_id.index(id)
             theta = int(math.degrees(self.calculated_local_angle(id, robot_pose, mag_heading)))
@@ -95,6 +98,7 @@ class Laser_component:
                     if first_time and indi:
                         indicator.data = 5
                         pub1.publish(indicator)
+                        rospy.spin()
 
                     stored_dist[j] = lidar_array[i]
                     j = j + 1

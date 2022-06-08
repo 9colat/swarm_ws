@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import rospy
 import time
+import sys
 import numpy as np
 from custom_msgs.msg import odom_and_imu
 from custom_msgs.msg import USPS_msgs
@@ -12,7 +13,11 @@ from laser_system import Laser_component
 
 w1 = EKF()
 w2 = Laser_component()
-
+detect_indicator = False
+if len(sys.argv) > 1:
+    #print(sys.argv)
+    detect_indicator = sys.argv[2].lower() == 'true'
+print(detect_indicator)
 lidar_array = [0.0]*360
 global_time = time.time() # this should be already in seconds, initialised
 state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
@@ -25,7 +30,7 @@ def callback_distance(data):
     if data.ID in beacon_id:
         projected_distance = w2.projection(data.ID, data.distance) * 1000 # w2.projection() output is in m and there for it need to be converted to mm
         if mag_heading[0] != 0:
-            updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0], w1.state_predicted[1]], mag_heading, data.distance) # measurement 'variance/trust' updated
+            updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0], w1.state_predicted[1]], mag_heading, data.distance,detect_indicator) # measurement 'variance/trust' updated
             w1.R_beacon = updated_R
             local_time = time.time()
             dT = local_time - global_time
