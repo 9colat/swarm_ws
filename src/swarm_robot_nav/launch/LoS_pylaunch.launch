@@ -1,0 +1,6 @@
+
+<launch>
+
+<node pkg="hardware_driver" type="pylaunch_dynamic_LoS.py" name="pylaunch" output="screen" respawn="false" />
+
+</launch>

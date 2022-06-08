@@ -326,6 +326,24 @@ void callback_indicator(std_msgs::Int16& data){
   if(data.data == 1){
     RGB_led_set("orange");
   }
+  if(data.data == 5){
+    RGB_led_set("red");
+  }
+  if(data.data == 10){
+    RGB_led_set("yellow");
+  }
+  if(data.data == 15){
+    RGB_led_set("blue");
+  }
+  if(data.data == 20){
+    RGB_led_set("cyan");
+  }
+  if(data.data == 25){
+    RGB_led_set("White");
+  }
+  if(data.data == 30){
+    RGB_led_set("purple");
+  }
   if(data.data == 255){
     RGB_led_set("green");
   }

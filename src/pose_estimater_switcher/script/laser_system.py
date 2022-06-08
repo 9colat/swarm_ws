@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
+import rospy
 import math
 import numpy as np
+from std_msgs.msg import Int16
+
 
 
 
@@ -60,7 +63,11 @@ class Laser_component:
                 #print(beacon_theta)
             return beacon_theta
 
-    def potential_occlusion_check(self, lidar_array, id, robot_pose, mag_heading, dist):
+    def potential_occlusion_check(self, lidar_array, id, robot_pose, mag_heading, dist, indi = False):
+        rospy.init_node('en_Mapping', anonymous=True)
+        pub1 = rospy.Publisher('indicator_color', Int16, queue_size=10)
+        indicator = Int16()
+        first_time = True
         beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
         if len(robot_pose) != 2 and len(mag_heading) != 2 and lidar_array != 360:
             print("sorry the input length was weird give that a look ;)")
@@ -85,6 +92,10 @@ class Laser_component:
             for i in range(theta - area_of_intreast, theta + area_of_intreast):
                 i = i % 359
                 if lidar_array[i] < dist_projeted:
+                    if first_time and indi:
+                        indicator.data = 5
+                        pub1.publish(indicator)
+
                     stored_dist[j] = lidar_array[i]
                     j = j + 1
                     #print(bell)

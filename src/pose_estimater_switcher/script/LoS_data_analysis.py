@@ -708,6 +708,10 @@ def main():
 
         if number_of_files > 19:
             print(len(time_slam), len(slam_x_time))
+            ax17.clear()
+            ax18.clear()
+            ax19.clear()
+            ax20.clear()
             ax17.plot(time_slam, slam_y_time,c='r',label='slam_y')
             ax17.plot(time_slam, kalman_slam_x_time,c='b',label='Kalman')
             ax17.plot(time_slam, lidar_kalman_slam_x_time,c='g',label='Lidar aug')
