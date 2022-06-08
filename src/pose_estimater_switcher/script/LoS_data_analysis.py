@@ -596,6 +596,7 @@ def main():
 
         kalman_mean_x = np.mean(lidar_mean_x_array)
         kalman_mean_y = np.mean(lidar_mean_y_array)
+        #print(kalman_mean_x)
 
         for i in range(len(with_x)):
             delta[i] = math.sqrt(pow(with_x[i],2)+pow(with_y[i],2))-math.sqrt(pow(without_x[i],2)+pow(without_y[i],2))
@@ -618,8 +619,13 @@ def main():
             simple_y_data[i] = simple_y[i]
             if number_of_files > 19:
                 if i > 100:
-                    slam_x_time[i-101] = - slam_x[i] * 1000 + kalman_mean_y
-                    slam_y_time[i-101] = - slam_y[i] * 1000 + kalman_mean_x
+                    if kalman_mean_y < 3000:
+                        slam_x_time[i-101] = - slam_x[i] * 1000 + kalman_mean_y
+                        slam_y_time[i-101] = - slam_y[i] * 1000 + kalman_mean_x
+                    if kalman_mean_y > 3000:
+                        slam_x_time[i-101] =  slam_x[i] * 1000 + kalman_mean_y
+                        slam_y_time[i-101] =  slam_y[i] * 1000 + kalman_mean_x
+                        
                     lidar_kalman_slam_x_time[i-101] = with_x[i]
                     lidar_kalman_slam_y_time[i-101] = with_y[i]
                     kalman_slam_x_time[i-101] = without_x[i]
