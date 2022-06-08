@@ -48,7 +48,14 @@ fig7 = plt.figure(figsize=(20,10))
 fig7.suptitle('X and Y over time')
 ax15 = fig7.add_subplot(1,2,1)
 ax16 = fig7.add_subplot(1,2,2)
-
+fig8 = plt.figure(figsize=(20,10))
+fig8.suptitle('X and Y over time')
+ax17 = fig8.add_subplot(1,2,1)
+ax18 = fig8.add_subplot(1,2,2)
+fig9 = plt.figure(figsize=(20,10))
+#fig9.suptitle('X and Y over time')
+ax19 = fig9.add_subplot(1,2,1)
+ax20 = fig9.add_subplot(1,2,2)
 
 
 isfolder = os.path.isdir(output_path)
@@ -64,7 +71,7 @@ def main():
     beacon_y =    [5999,  10150,  5726,   4499,   6534,   9939,   3699,   6519,   10012,  3522,   11684,  4363,   3549]    #[5999   , 10150 , 5726  , 4499  , 6534  , 9939  , 3699  , 6519  , 10012  , 10012 , 11684 , 4363  , 3549 ]
     beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
     global path, folder_path
-    number_of_files = 0
+    number_of_files = 20
     output_file_name = 'NLoS_dyn_outputdata.csv'
     path_out = str(Path.home().joinpath("test_data", output_file_name))
 
@@ -99,6 +106,19 @@ def main():
         kalman_y_bank = [0] * len(data["lidar0"])
         simple_x_data = [0] * len(data["lidar0"])
         simple_y_data = [0] * len(data["lidar0"])
+        slam_x_time = [0] * (len(data["lidar0"])-101)
+        slam_y_time = [0] * (len(data["lidar0"])-101)
+        time_slam = np.linspace(1, len(data["lidar0"]-101/10), num=(len(data["lidar0"])-101))
+        lidar_kalman_slam_x_time = [0] * (len(data["lidar0"])-101)
+        lidar_kalman_slam_y_time = [0] * (len(data["lidar0"])-101)
+        kalman_slam_x_time = [0] * (len(data["lidar0"])-101)
+        kalman_slam_y_time = [0] * (len(data["lidar0"])-101)
+        slam_delta_l = [0] * (len(data["lidar0"])-102)
+        kalman_delta_l = [0] * (len(data["lidar0"])-102)
+        lidar_delta_l = [0] * (len(data["lidar0"])-102)
+        time_slam_l = np.linspace(1, len(data["lidar0"]-101/10), num=(len(data["lidar0"])-102))
+        lidar_mean_x_array = [0]*100
+        lidar_mean_y_array = [0]*100
         time_array = np.linspace(1, len(data["lidar0"]/10), num=len(data["lidar0"]))
         with_x = data["with_x"]
         with_y = data["with_y"]
@@ -124,6 +144,9 @@ def main():
         simple_y = data["simple_y"]
         multi_x = data["muti_kalman_x"]
         multi_y = data["muti_kalman_y"]
+        if number_of_files > 19:
+            slam_x = data["slam_x"]
+            slam_y = data["slam_y"]
         good_lidar = data["lidar_good"]
         lidar_array[0] = data["lidar0"]
         lidar_array[1] = data["lidar1"]
@@ -502,16 +525,16 @@ def main():
         ax14.clear()
         ax15.clear()
         ax16.clear()
-        ax1.set_title("Position with LiDAR")
+        ax1.set_title("EKF Augmented with LiDAR")
         ax1.set_xlabel("X - coordinate [mm]")
         ax1.set_ylabel("Y - coordinate [mm]")
-        ax2.set_title("Position without LiDAR")
+        ax2.set_title("EKF")
         ax2.set_xlabel("X - coordinate [mm]")
         ax2.set_ylabel("Y - coordinate [mm]")
-        ax10.set_title("Position with simple")
+        ax10.set_title("Recursive Monolateration")
         ax10.set_xlabel("X - coordinate [mm]")
         ax10.set_ylabel("Y - coordinate [mm]")
-        ax11.set_title("Position with kalman bank")
+        ax11.set_title("EKF bank")
         ax11.set_xlabel("X - coordinate [mm]")
         ax11.set_ylabel("Y - coordinate [mm]")
         ax3.set_title("Position difference over time")
@@ -547,6 +570,18 @@ def main():
         ax16.set_title("Y over time")
         ax16.set_xlabel("Time [s]")
         ax16.set_ylabel("Y coordinate [mm]")
+        ax17.set_title("X")
+        ax17.set_xlabel("Time [s]")
+        ax17.set_ylabel("pose component[mm]")
+        ax18.set_title("Y")
+        ax18.set_xlabel("Time [s]")
+        ax18.set_ylabel("pose component[mm]")
+        ax19.set_title("Delta error between slam and other systems")
+        ax19.set_xlabel("Time [s]")
+        ax19.set_ylabel("Delta error[mm]")
+        ax20.set_title("Delta error between slam and other systems")
+        ax20.set_xlabel("Time [s]")
+        ax20.set_ylabel("Delta error[mm]")
 
         ax1.scatter(with_x, with_y)
         ax1.plot(true_x, true_y, '-o', c='r', label='True path')
@@ -556,6 +591,13 @@ def main():
         ax10.plot(true_x, true_y, '-o', c='r', label='True path')
         ax11.scatter(multi_x, multi_y)
         ax11.plot(true_x, true_y, '-o', c='r', label='True path')
+        for b in range(101,201):
+            lidar_mean_x_array[b-101] = without_x[b]
+            lidar_mean_y_array[b-101] = without_y[b]
+
+        kalman_mean_x = np.mean(lidar_mean_x_array)
+        kalman_mean_y = np.mean(lidar_mean_y_array)
+
         for i in range(len(with_x)):
             delta[i] = math.sqrt(pow(with_x[i],2)+pow(with_y[i],2))-math.sqrt(pow(without_x[i],2)+pow(without_y[i],2))
             delta_x[i] = with_x[i] - without_x[i]
@@ -575,6 +617,28 @@ def main():
             kalman_y_bank[i] = multi_y[i]
             simple_x_data[i] = simple_x[i]
             simple_y_data[i] = simple_y[i]
+            if number_of_files > 19:
+                if i > 100:
+                    slam_x_time[i-101] = - slam_x[i] * 1000 + kalman_mean_y
+                    slam_y_time[i-101] = - slam_y[i] * 1000 + kalman_mean_x
+                    lidar_kalman_slam_x_time[i-101] = with_x[i]
+                    lidar_kalman_slam_y_time[i-101] = with_y[i]
+                    kalman_slam_x_time[i-101] = without_x[i]
+                    kalman_slam_y_time[i-101] = without_y[i]
+
+
+
+
+        for k in range(len(slam_x_time)-1):
+            slam_delta = math.sqrt(pow(slam_x_time[k+1]-slam_x_time[k],2)+pow(slam_y_time[k+1]-slam_y_time[k],2))
+            lidar_delta = math.sqrt(pow(lidar_kalman_slam_x_time[k+1]-lidar_kalman_slam_x_time[k],2)+pow(lidar_kalman_slam_y_time[k+1]-lidar_kalman_slam_y_time[k],2))
+            kalman_delta = math.sqrt(pow(kalman_slam_x_time[k+1]-kalman_slam_x_time[k],2)+pow(kalman_slam_y_time[k+1]-kalman_slam_y_time[k],2))
+
+            lidar_delta_l[k] = lidar_delta - slam_delta
+            kalman_delta_l[k] = kalman_delta - slam_delta
+
+
+
         ax3.plot(time_array,delta)
         ax6.plot(time_array,delta_x)
         ax7.plot(time_array,delta_y)
@@ -595,7 +659,9 @@ def main():
         ax16.plot(time_array, kalman_y,c='b',label='Kalman')
         ax16.plot(time_array, kalman_y_lidar, c='g',label='Kalman w. Lidar')
         #ax16.plot(time_array, kalman_y_bank, c='r', label='Kalman Bank')
-        #ax16.plot(time_array, simple_y_data, c='c',label='Kalman w. Lidar')
+        #ax16.plot(time_array, simple_y_data, c='c',label='recursive monolateration')
+
+
         ax4.legend()
         ax14.legend()
         ax15.legend()
@@ -605,10 +671,12 @@ def main():
         ax10.legend()
         ax11.legend()
 
+
         frames_per_figure = 1
         def animate(i):
             ax5.clear()
-
+            ax5.set_xlim(-12,12)
+            ax5.set_ylim(-12,12)
             i = int(i/frames_per_figure)
             for l in range(360):
                 ax5.scatter(math.cos(math.radians(l)) * lidar_array[l][i], math.sin(math.radians(l)) * lidar_array[l][i], c='r')
@@ -624,13 +692,23 @@ def main():
         ax10.set_ylim(0,12000)
         ax11.set_xlim(0,45000)
         ax11.set_ylim(0,12000)
-        name_of_file_1 = 'NLoS_dyn_position_plot%s.png'
-        name_of_file_2 = 'NLoS_dyn_position_delta%s.png'
-        name_of_file_3 = 'NLoS_dyn_position_in_the_same_plot%s.png'
-        name_of_file_4 = 'NLoS_dyn_lidar%s.gif'
-        name_of_file_5 = 'NLoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
-        name_of_file_6 = 'NLoS_dyn_vel_over%s.png'
-        name_of_file_7 = 'NLoS_dyn_coordinate_over_time%s.png'
+        if number_of_files >= 0 or number_of_files <= 19:
+            name_of_file_1 = 'NLoS_dyn_position_plot%s.png'
+            name_of_file_2 = 'NLoS_dyn_position_delta%s.png'
+            name_of_file_3 = 'NLoS_dyn_position_in_the_same_plot%s.png'
+            name_of_file_4 = 'NLoS_dyn_lidar%s.gif'
+            name_of_file_5 = 'NLoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
+            name_of_file_6 = 'NLoS_dyn_vel_over%s.png'
+            name_of_file_7 = 'NLoS_dyn_coordinate_over_time%s.png'
+        if number_of_files > 19:
+            name_of_file_1 = '1_new_data/NLoS_dyn_position_plot%s.png'
+            name_of_file_2 = '1_new_data/NLoS_dyn_position_delta%s.png'
+            name_of_file_3 = '1_new_data/NLoS_dyn_position_in_the_same_plot%s.png'
+            name_of_file_4 = '1_new_data/NLoS_dyn_lidar%s.gif'
+            name_of_file_5 = '1_new_data/NLoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
+            name_of_file_6 = '1_new_data/NLoS_dyn_vel_over%s.png'
+            name_of_file_7 = '1_new_data/NLoS_dyn_coordinate_over_time%s.png'
+
 
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
         fig2.savefig(output_path + name_of_file_2 % number_of_files)
@@ -638,8 +716,34 @@ def main():
         fig5.savefig(output_path + name_of_file_5 % number_of_files)
         fig6.savefig(output_path + name_of_file_6 % number_of_files)
         fig7.savefig(output_path + name_of_file_7 % number_of_files)
-        #writergif = animation.PillowWriter(fps=1)
-        #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
+
+        if number_of_files > 19:
+            print(len(time_slam), len(slam_x_time))
+            ax17.clear()
+            ax18.clear()
+            ax19.clear()
+            ax20.clear()
+            ax17.plot(time_slam, slam_y_time,c='r',label='slam_y')
+            ax17.plot(time_slam, kalman_slam_x_time,c='b',label='Kalman')
+            ax17.plot(time_slam, lidar_kalman_slam_x_time,c='g',label='Lidar aug')
+            ax18.plot(time_slam, slam_x_time, c='r',label='slam_x')
+            ax18.plot(time_slam, kalman_slam_y_time, c='b',label='Kalman')
+            ax18.plot(time_slam, lidar_kalman_slam_y_time, c='g',label='Lidar aug')
+            ax19.plot(time_slam_l, lidar_delta_l,c='g',label='lidar')
+            ax20.plot(time_slam_l, kalman_delta_l,c='b',label='kalman')
+
+
+            ax17.legend()
+            ax18.legend()
+            ax19.legend()
+            ax20.legend()
+            name_of_file_8 = '1_new_data/slam_time%s.png'
+            name_of_file_9 = '1_new_data/error_time%s.png'
+            fig8.savefig(output_path + name_of_file_8 % number_of_files)
+            fig9.savefig(output_path + name_of_file_9 % number_of_files)
+        if number_of_files == 1:
+            writergif = animation.PillowWriter(fps=10)
+            #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
 
         w_x_variance = np.var(with_x)

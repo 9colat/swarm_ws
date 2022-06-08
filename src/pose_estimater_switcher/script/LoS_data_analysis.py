@@ -116,6 +116,8 @@ def main():
         kalman_delta_l = [0] * (len(data["lidar0"])-102)
         lidar_delta_l = [0] * (len(data["lidar0"])-102)
         time_slam_l = np.linspace(1, len(data["lidar0"]-101/10), num=(len(data["lidar0"])-102))
+        lidar_mean_x_array = [0]*100
+        lidar_mean_y_array = [0]*100
         time_array = np.linspace(1, len(data["lidar0"]/10), num=len(data["lidar0"]))
         with_x = data["with_x"]
         with_y = data["with_y"]
@@ -588,6 +590,13 @@ def main():
         ax10.plot(true_x, true_y, '-o', c='r', label='True path')
         ax11.scatter(multi_x, multi_y)
         ax11.plot(true_x, true_y, '-o', c='r', label='True path')
+        for b in range(101,201):
+            lidar_mean_x_array[b-101] = without_x[b]
+            lidar_mean_y_array[b-101] = without_y[b]
+
+        kalman_mean_x = np.mean(lidar_mean_x_array)
+        kalman_mean_y = np.mean(lidar_mean_y_array)
+
         for i in range(len(with_x)):
             delta[i] = math.sqrt(pow(with_x[i],2)+pow(with_y[i],2))-math.sqrt(pow(without_x[i],2)+pow(without_y[i],2))
             delta_x[i] = with_x[i] - without_x[i]
@@ -609,12 +618,14 @@ def main():
             simple_y_data[i] = simple_y[i]
             if number_of_files > 19:
                 if i > 100:
-                    slam_x_time[i-101] = - slam_x[i] * 1000 + true_y[0]
-                    slam_y_time[i-101] = - slam_y[i] * 1000 + true_x[0]
+                    slam_x_time[i-101] = - slam_x[i] * 1000 + kalman_mean_y
+                    slam_y_time[i-101] = - slam_y[i] * 1000 + kalman_mean_x
                     lidar_kalman_slam_x_time[i-101] = with_x[i]
                     lidar_kalman_slam_y_time[i-101] = with_y[i]
                     kalman_slam_x_time[i-101] = without_x[i]
                     kalman_slam_y_time[i-101] = without_y[i]
+
+
 
 
         for k in range(len(slam_x_time)-1):
