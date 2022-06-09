@@ -96,7 +96,7 @@ class Laser_component:
             for i in range(theta - area_of_intreast, theta + area_of_intreast):
                 i = i % 359
                 if lidar_array[i] < dist_projeted:
-                    if first_time and indi:
+                    #if first_time and indi:
                         #indicator.data = 5
                         #pub1.publish(indicator)
                         #rospy.spin()
