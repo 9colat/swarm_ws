@@ -49,7 +49,7 @@ class EKF:
         self.H_magnetometer = np.array([[0.0, 0.0, 0.0, 0.0, 0.0]]*2)
         self.F = np.array([0.0]*5)
         self.P_b = np.identity(5)
-        self.Q_b = 1000 * np.identity(5)
+        self.Q_b = 500 * np.identity(5)
         self.P_m = np.identity(5)
         self.Q_m = 100 * np.identity(5)
 
