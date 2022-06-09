@@ -32,7 +32,7 @@ while not rospy.is_shutdown():
         print("it is now time for a sleep")
     if (time.time() - local_time) > setling_time and second_time:
         print("im awake again")
-        indicator.data = 30
+        indicator.data = 40
         pub1.publish(indicator)
         second_time = False
 
