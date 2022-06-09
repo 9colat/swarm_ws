@@ -2,6 +2,7 @@
 import rospy
 import time
 import numpy as np
+from pathlib import Path
 from custom_msgs.msg import odom_and_imu
 from custom_msgs.msg import USPS_msgs
 from std_msgs.msg import Bool
@@ -18,6 +19,7 @@ state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 # gettng data from the beacons
 def callback_distance(data):
     global w1, w2, global_time
+    path = str(Path.home().joinpath("my_list.txt"))
     beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540] #44540 - over tbl; 44535- gone ; 44539 - not on list
     if data.ID in beacon_id:
         projected_distance = w2.projection(data.ID, data.distance) * 1000 # w2.projection() output is in m and there for it need to be converted to mm
@@ -27,7 +29,7 @@ def callback_distance(data):
         global_time = local_time
 
         state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        file1 = open('~/myfile.txt', 'w')
+        file1 = open(path, 'w')
         s = str(data.ID)+','+ str(data.distance) + ',' + str(state[0]) + ',' + str(state[1])
         file1.write(s)
         file1.close()
