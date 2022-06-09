@@ -680,7 +680,7 @@ def main():
         ax12.plot(time_array,delta_x_kalman_bank)
         ax13.plot(time_array,delta_y_kalman_bank)
         ax4.scatter(with_x, with_y, c='b',label='Kalman w. Lidar')
-        ax4.scatter(without_x, without_y, c='r',label='Kalman')
+        ax4.scatter(without_x, without_y, c='g',label='Kalman')
         ax4.plot(true_x, true_y, '-o', c='r', label='True path')
         #ax14.plot(time_array,vel_input,c='b')
         ax14.plot(time_array, vel_with, c='g',label='Kalman w. Lidar')
