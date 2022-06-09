@@ -35,7 +35,7 @@ def callback_distance(data):
         if first_time:
             file1 = open(path, 'w')
             first_time = False
-        s = str(data.ID)+','+ str(data.distance) + ',' + str(state[0]) + ',' + str(state[1])
+        s = str(data.ID)+','+ str(data.distance) + ',' + str(int(state[0]) + ',' + str(int(state[1])) + "\n"
         file1.write(s)
         file1.close()
         #print(state[0])
