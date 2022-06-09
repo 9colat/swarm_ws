@@ -25,6 +25,7 @@ setling_time = 40
 #test_time_with_over_head_takken_to_a_count = desired_time + (desired_time/100)*25 # we add 25% time to acount for overhead.
 #rate = rospy.Rate(1)
 while not rospy.is_shutdown():
+    print("im running")
     if (time.time() - local_time) > pub_time and first_time:
         indicator.data = 1
         pub1.publish(indicator)
