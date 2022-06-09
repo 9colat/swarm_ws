@@ -22,7 +22,7 @@ class Laser_component:
         #dist = math.sqrt(pow(beacon_x[index_of_data] - pose[0],2) + pow(beacon_y[index_of_data] - pose[1],2)+pow(beacon_z[index_of_data] - pose[2],2))
         d_z = (beacon_z[index_of_data] - self.r_h)/1000
         dist = (dist/1000)
-        x = math.sqrt(pow(dist,2)-pow(d_z,2))
+        x = math.sqrt(abs(pow(dist,2)-pow(d_z,2)))
         return x
 
     def bell_function(self, max_occlusion_height): #input is in meters
