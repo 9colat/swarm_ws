@@ -64,9 +64,13 @@ class Laser_component:
             return beacon_theta
 
     def potential_occlusion_check(self, lidar_array, id, robot_pose, mag_heading, dist, indi = False):
-        #try:
-        #    rospy.init_node('laser_node', anonymous=True)
+
         pub1 = rospy.Publisher('indicator_color', Int16, queue_size=10)
+        try:
+            rospy.init_node('laser_node', anonymous=True)
+        except rosnodeinit:
+            pass
+
         indicator = Int16()
         first_time = True
         beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
