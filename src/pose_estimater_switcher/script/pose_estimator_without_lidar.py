@@ -15,10 +15,11 @@ w2 = Laser_component()
 
 global_time = time.time() # this should be already in seconds, initialised
 state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+first_time = True
 
 # gettng data from the beacons
 def callback_distance(data):
-    global w1, w2, global_time
+    global w1, w2, global_time, first_time
     path = str(Path.home().joinpath("my_list.txt"))
     beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540] #44540 - over tbl; 44535- gone ; 44539 - not on list
     if data.ID in beacon_id:
@@ -29,7 +30,11 @@ def callback_distance(data):
         global_time = local_time
 
         state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        file1 = open(path, 'w')
+        if not first_time:
+            file1 = open(path, 'w')
+        if first_time:
+            file1 = open(path, 'w')
+            first_time = False
         s = str(data.ID)+','+ str(data.distance) + ',' + str(state[0]) + ',' + str(state[1])
         file1.write(s)
         file1.close()
