@@ -51,6 +51,7 @@ without_lidar_data = [0] * 5
 with_lidar_data = [0] * 5
 simple_pose_esti = [0] * 3
 multi_kalman = [0] * 3
+slam_pose = [0] * 3
 test_run_time = 120
 terminate_time = time.time() + test_run_time
 print(terminate_time)
