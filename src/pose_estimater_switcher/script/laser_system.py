@@ -68,7 +68,7 @@ class Laser_component:
         pub1 = rospy.Publisher('indicator_color', Int16, queue_size=10)
         try:
             rospy.init_node('laser_node', anonymous=True)
-        except rosnodeinit:
+        except:
             pass
 
         indicator = Int16()
