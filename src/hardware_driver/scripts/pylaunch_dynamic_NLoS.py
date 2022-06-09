@@ -17,7 +17,7 @@ roslaunch.configure_logging(uuid)
 launch = roslaunch.parent.ROSLaunchParent(uuid, [path])
 launch.start()
 local_time = time.time()
-pub_time = 5
+pub_time = 10
 first_time = True
 second_time = True
 setling_time = 40
