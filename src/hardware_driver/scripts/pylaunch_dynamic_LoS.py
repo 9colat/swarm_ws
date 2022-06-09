@@ -23,7 +23,8 @@ second_time = True
 setling_time = 40
 #desired_time = 20 * 60 # we want the test to be run for 20 min, and convert it to seconds
 #test_time_with_over_head_takken_to_a_count = desired_time + (desired_time/100)*25 # we add 25% time to acount for overhead.
-#rate = rospy.Rate(1)
+rate = rospy.Rate(1)
+
 while not rospy.is_shutdown():
     print("im running")
     if (time.time() - local_time) > pub_time and first_time:
@@ -40,5 +41,5 @@ while not rospy.is_shutdown():
         second_time = False
 
 
-    rospy.spin()
-    #rate.sleep()
+    #rospy.spin()
+    rate.sleep()
