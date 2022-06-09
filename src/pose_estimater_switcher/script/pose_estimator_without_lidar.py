@@ -27,7 +27,7 @@ def callback_distance(data):
         global_time = local_time
 
         state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        file1 = open('myfile.txt', 'w')
+        file1 = open('~/myfile.txt', 'w')
         s = str(data.ID)+','+ str(data.distance) + ',' + str(state[0]) + ',' + str(state[1])
         file1.write(s)
         file1.close()
