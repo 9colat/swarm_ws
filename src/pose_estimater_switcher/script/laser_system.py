@@ -93,7 +93,7 @@ class Laser_component:
             assumed_dist_m = assumed_dist - (assumed_dist/100)*5    # The min distance with 5% error tolerance
             if assumed_dist_p < dist or assumed_dist_m > dist:      # This if statmant will take objects that is not connected to the foor in to acount
                 #print("bell value set to a value: ",bell)
-                bell = 1000 # chage later to make sence ;)
+                bell = 2000 # chage later to make sence ;)
             area_of_intreast = 2
             stored_dist = [12]*(2*area_of_intreast+1)
             j = 0
