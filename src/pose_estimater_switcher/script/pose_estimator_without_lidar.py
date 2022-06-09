@@ -30,7 +30,7 @@ def callback_distance(data):
         global_time = local_time
 
         state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if not first_time:
+        if first_time == False:
             file1 = open(path, 'a')
             s = str(data.ID)+','+ str(data.distance) + ',' + str(int(state[0]) + ',' + str(int(state[1])) + '\n'
             file1.write(s)
