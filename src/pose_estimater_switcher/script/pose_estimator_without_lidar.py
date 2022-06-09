@@ -18,7 +18,7 @@ state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 # gettng data from the beacons
 def callback_distance(data):
     global w1, w2, global_time
-    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
+    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540] #44540 - over tbl; 44535- gone ; 44539 - not on list
     if data.ID in beacon_id:
         projected_distance = w2.projection(data.ID, data.distance) * 1000 # w2.projection() output is in m and there for it need to be converted to mm
 
