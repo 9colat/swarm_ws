@@ -56,6 +56,12 @@ fig9 = plt.figure(figsize=(20,10))
 #fig9.suptitle('X and Y over time')
 ax19 = fig9.add_subplot(1,2,1)
 ax20 = fig9.add_subplot(1,2,2)
+fig10 = plt.figure(figsize=(20,20))
+fig10.suptitle('Position plot test')
+ax21 = fig10.add_subplot(2,2,1)
+ax22 = fig10.add_subplot(2,2,2)
+ax23 = fig10.add_subplot(2,2,3)
+ax24 = fig10.add_subplot(2,2,4)
 
 isfolder = os.path.isdir(output_path)
 
@@ -112,6 +118,10 @@ def main():
         lidar_kalman_slam_y_time = [0] * (len(data["lidar0"])-101)
         kalman_slam_x_time = [0] * (len(data["lidar0"])-101)
         kalman_slam_y_time = [0] * (len(data["lidar0"])-101)
+        kalman_x_bank_slam = [0] * (len(data["lidar0"])-101)
+        kalman_y_bank_slam = [0] * (len(data["lidar0"])-101)
+        simple_x_data_slam = [0] * (len(data["lidar0"])-101)
+        simple_y_data_slam = [0] * (len(data["lidar0"])-101)
         slam_delta_l = [0] * (len(data["lidar0"])-102)
         kalman_delta_l = [0] * (len(data["lidar0"])-102)
         lidar_delta_l = [0] * (len(data["lidar0"])-102)
@@ -536,6 +546,18 @@ def main():
         ax11.set_title("EKF bank")
         ax11.set_xlabel("X - coordinate [mm]")
         ax11.set_ylabel("Y - coordinate [mm]")
+        ax21.set_title("EKF Augmented with LiDAR")
+        ax21.set_xlabel("X - coordinate [mm]")
+        ax21.set_ylabel("Y - coordinate [mm]")
+        ax22.set_title("EKF")
+        ax22.set_xlabel("X - coordinate [mm]")
+        ax22.set_ylabel("Y - coordinate [mm]")
+        ax23.set_title("Recursive Monolateration")
+        ax23.set_xlabel("X - coordinate [mm]")
+        ax23.set_ylabel("Y - coordinate [mm]")
+        ax24.set_title("EKF bank")
+        ax24.set_xlabel("X - coordinate [mm]")
+        ax24.set_ylabel("Y - coordinate [mm]")
         ax3.set_title("Position difference over time")
         ax3.set_xlabel("Time [s]")
         ax3.set_ylabel("Difference between position[mm]")
@@ -625,11 +647,17 @@ def main():
                     if kalman_mean_y > 3000:
                         slam_x_time[i-101] =  slam_x[i] * 1000 + kalman_mean_y
                         slam_y_time[i-101] =  slam_y[i] * 1000 + kalman_mean_x
-                        
+
                     lidar_kalman_slam_x_time[i-101] = with_x[i]
                     lidar_kalman_slam_y_time[i-101] = with_y[i]
                     kalman_slam_x_time[i-101] = without_x[i]
                     kalman_slam_y_time[i-101] = without_y[i]
+
+                    kalman_x_bank_slam[i-101] = multi_x[i]
+                    kalman_y_bank_slam[i-101] = multi_y[i]
+                    simple_x_data_slam[i-101] = simple_x[i]
+                    simple_y_data_slam[i-101] = simple_y[i]
+
 
 
 
@@ -729,6 +757,10 @@ def main():
             ax18.clear()
             ax19.clear()
             ax20.clear()
+            ax21.clear()
+            ax22.clear()
+            ax23.clear()
+            ax24.clear()
             ax17.plot(time_slam, slam_y_time,c='r',label='slam_y')
             ax17.plot(time_slam, kalman_slam_x_time,c='b',label='Kalman')
             ax17.plot(time_slam, lidar_kalman_slam_x_time,c='g',label='Lidar aug')
@@ -737,16 +769,31 @@ def main():
             ax18.plot(time_slam, lidar_kalman_slam_y_time, c='g',label='Lidar aug')
             ax19.plot(time_slam_l, lidar_delta_l,c='g',label='lidar')
             ax20.plot(time_slam_l, kalman_delta_l,c='b',label='kalman')
+            ax21.scatter(lidar_kalman_slam_x_time, lidar_kalman_slam_y_time)
+            ax21.plot(slam_y_time, slam_x_time, '-o', c='r', label='SLAM path')
+            ax22.scatter(kalman_slam_x_time, kalman_slam_y_time)
+            ax22.plot(slam_y_time, slam_x_time, '-o', c='r', label='SLAM path')
+            ax23.scatter(simple_x_data_slam, simple_y_data_slam)
+            ax23.plot(slam_y_time, slam_x_time, '-o', c='r', label='SLAM path')
+            ax24.scatter(kalman_x_bank_slam, kalman_y_bank_slam)
+            ax24.plot(slam_y_time, slam_x_time, '-o', c='r', label='SLAM path')
 
 
             ax17.legend()
             ax18.legend()
             ax19.legend()
             ax20.legend()
+            ax21.legend()
+            ax22.legend()
+            ax23.legend()
+            ax24.legend()
             name_of_file_8 = '1_new_data/slam_time%s.png'
             name_of_file_9 = '1_new_data/error_time%s.png'
+            name_of_file_10 = '1_new_data/pose_with_slam_added%s.png'
+
             fig8.savefig(output_path + name_of_file_8 % number_of_files)
             fig9.savefig(output_path + name_of_file_9 % number_of_files)
+            fig10.savefig(output_path + name_of_file_10 % number_of_files)
         if number_of_files == 1:
             writergif = animation.PillowWriter(fps=10)
             #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
