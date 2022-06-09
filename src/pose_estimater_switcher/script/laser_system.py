@@ -66,10 +66,10 @@ class Laser_component:
     def potential_occlusion_check(self, lidar_array, id, robot_pose, mag_heading, dist, indi = False):
 
         pub1 = rospy.Publisher('indicator_color', Int16, queue_size=10)
-        try:
-            rospy.init_node('laser_node', anonymous=True)
-        except:
-            pass
+        #try:
+            #rospy.init_node('laser_node', anonymous=True)
+        #except:
+            #pass
 
         indicator = Int16()
         first_time = True
@@ -81,7 +81,7 @@ class Laser_component:
         else:
             indicator.data = 255
             pub1.publish(indicator)
-            rospy.spin()
+            #rospy.spin()
             bell = 0.01 # chage later to make sence ;)
             index_of_data = self.beacon_id.index(id)
             theta = int(math.degrees(self.calculated_local_angle(id, robot_pose, mag_heading)))
@@ -100,10 +100,10 @@ class Laser_component:
             for i in range(theta - area_of_intreast, theta + area_of_intreast):
                 i = i % 359
                 if lidar_array[i] < dist_projeted:
-                    if first_time and indi:
-                        indicator.data = 5
-                        pub1.publish(indicator)
-                        rospy.spin()
+                    #if first_time and indi:
+                        #indicator.data = 5
+                        #pub1.publish(indicator)
+                        #rospy.spin()
 
                     stored_dist[j] = lidar_array[i]
                     j = j + 1
