@@ -29,14 +29,14 @@ while not rospy.is_shutdown():
         indicator.data = 1
         pub1.publish(indicator)
         first_time = False
-        rospy.spin()
+        #rospy.spin()
         print("it is now time for a sleep")
     if (time.time() - local_time) > setling_time and second_time:
         print("im awake again")
         indicator.data = 30
         pub1.publish(indicator)
         second_time = False
-        rospy.spin()
+        #rospy.spin()
 
 
     rate.sleep()

@@ -5,6 +5,7 @@ import numpy as np
 from pathlib import Path
 from custom_msgs.msg import odom_and_imu
 from custom_msgs.msg import USPS_msgs
+from custom_msgs.msg import Q_R
 from std_msgs.msg import Bool
 from geometry_msgs.msg import Pose
 from ekf_usps import EKF
@@ -16,6 +17,7 @@ w2 = Laser_component()
 global_time = time.time() # this should be already in seconds, initialised
 state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 first_time = True
+ready_to_run = False
 
 # gettng data from the beacons
 def callback_distance(data):
@@ -41,6 +43,11 @@ def callback_distance(data):
         #print(state[0])
     # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
 
+def callback_q_r(data):
+    global ready_to_run
+    w1.q_and_r_update(data.Q.data, data.R.data)
+    ready_to_run = True
+
 def callback_terminating_signal(data):
     boll = data.data
     if boll == True:
@@ -65,30 +72,31 @@ def main():
     rospy.init_node('pose_estimator_without_lidar', anonymous=True) # initialize the node
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_imu)
+    rospy.Subscriber("q_and_r", Q_R, callback_q_r)
     rospy.Subscriber("terminating_signal", Bool, callback_terminating_signal)
     pub = rospy.Publisher('without_lidar', Pose, queue_size=10)
     rate = rospy.Rate(100) # 100hz
     pose_est = Pose()
 
 
+    if ready_to_run:
+        while not rospy.is_shutdown():
 
-    while not rospy.is_shutdown():
-
-        # time update for ONLY the predictor function in EKF
-        local_time = time.time()
-        dT = local_time - global_time
-        global_time = local_time
-        state = w1.state_prediction(dT)
-        #print("State x: ",state[0][0], "y: ",state[1][0])
-        pose_est.position.x = int(state[0][0])
-        pose_est.position.y = int(state[1][0])
-        #print("ROS x: ",pose_est.position.x, "y: ",pose_est.position.y)
-        #pose_est.position.z = state[2][0]
-        pose_est.orientation.x = state[3][0]
-        pose_est.orientation.y = state[4][0]
-        pub.publish(pose_est)
-        #print("without: ", state[0],state[1])
-        rate.sleep()
+            # time update for ONLY the predictor function in EKF
+            local_time = time.time()
+            dT = local_time - global_time
+            global_time = local_time
+            state = w1.state_prediction(dT)
+            #print("State x: ",state[0][0], "y: ",state[1][0])
+            pose_est.position.x = int(state[0][0])
+            pose_est.position.y = int(state[1][0])
+            #print("ROS x: ",pose_est.position.x, "y: ",pose_est.position.y)
+            #pose_est.position.z = state[2][0]
+            pose_est.orientation.x = state[3][0]
+            pose_est.orientation.y = state[4][0]
+            pub.publish(pose_est)
+            #print("without: ", state[0],state[1])
+            rate.sleep()
 
 
 if __name__ == '__main__':

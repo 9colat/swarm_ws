@@ -1,0 +1,54 @@
+
+<launch>
+<node pkg="rosserial_python" type="serial_node.py" name="teensy_0" output="screen">
+   <param name="port" value="/dev/ttyACM0" />
+</node>
+<node pkg="rosserial_python" type="serial_node.py" name="teensy_1" output="screen">
+   <param name="port" value="/dev/ttyACM1" />
+</node>
+
+<include file="$(find rplidar_ros)/launch/rplidar.launch"/>
+
+<include file="$(find ds4_driver)/launch/ds4_twist.launch"/>
+
+<node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar_node" output="screen" respawn="true">
+</node>
+
+<node pkg="pose_estimater_switcher" type="simple_pose_esti.py" name="simple_pose_esti_node" respawn="true">
+</node>
+
+
+<node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="with_lidar_node" output="screen" respawn="true">
+</node>
+
+<node pkg="pose_estimater_switcher" type="pose_estimator_multi_kalman.py" name="kalman_bank" output="screen" respawn="true">
+</node>
+
+<node pkg="hardware_driver" type="logger_turning.py" name="logger_dynamic_node" output="screen" respawn="true">
+</node>
+
+<arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
+
+<param name="/use_sim_time" value="false"/>
+<!--
+<node pkg="rviz" type="rviz" name="rviz"
+  args="-d $(find hector_slam_launch)/rviz_cfg/mapping_demo.rviz"/>
+-->
+<include file="$(find hector_mapping)/launch/mapping_default.launch"/>
+
+<include file="$(find hector_geotiff_launch)/launch/geotiff_mapper.launch">
+  <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
+  <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
+</include>
+
+
+  <!-- robot model and state publisher -->
+<arg
+  name="model" />
+<param
+  name="robot_description" textfile="$(find swarm_robot_nav)/robot_description/rudolph_v4/urdf/rudolph_v4.urdf" />
+
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+
+</launch>

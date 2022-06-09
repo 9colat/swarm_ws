@@ -603,6 +603,18 @@ def main():
         ax20.set_title("Delta error between slam and other systems")
         ax20.set_xlabel("Time [s]")
         ax20.set_ylabel("Delta error[mm]")
+        ax21.set_title("EKF Augmented with LiDAR")
+        ax21.set_xlabel("X - coordinate [mm]")
+        ax21.set_ylabel("Y - coordinate [mm]")
+        ax22.set_title("EKF")
+        ax22.set_xlabel("X - coordinate [mm]")
+        ax22.set_ylabel("Y - coordinate [mm]")
+        ax23.set_title("Recursive Monolateration")
+        ax23.set_xlabel("X - coordinate [mm]")
+        ax23.set_ylabel("Y - coordinate [mm]")
+        ax24.set_title("EKF bank")
+        ax24.set_xlabel("X - coordinate [mm]")
+        ax24.set_ylabel("Y - coordinate [mm]")
 
         ax1.scatter(with_x, with_y)
         ax1.plot(true_x, true_y, '-o', c='r', label='True path')
@@ -787,9 +799,9 @@ def main():
             ax22.legend()
             ax23.legend()
             ax24.legend()
-            name_of_file_8 = '1_new_data/slam_time%s.png'
-            name_of_file_9 = '1_new_data/error_time%s.png'
-            name_of_file_10 = '1_new_data/pose_with_slam_added%s.png'
+            name_of_file_8 = '1_new_data/LoS_slam_time%s.png'
+            name_of_file_9 = '1_new_data/LoS_error_time%s.png'
+            name_of_file_10 = '1_new_data/LoS_pose_with_slam_added%s.png'
 
             fig8.savefig(output_path + name_of_file_8 % number_of_files)
             fig9.savefig(output_path + name_of_file_9 % number_of_files)

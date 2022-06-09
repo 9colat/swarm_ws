@@ -13,8 +13,8 @@ import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 
 ##### setting up the path for the data file and folder #####
-path = str(Path.home().joinpath("test_data", "NLoS_dyn_log%s.csv"))
-path_output = str(Path.home().joinpath("test_data", "NLoS_dyn_output%s.csv"))
+path = str(Path.home().joinpath("test_data", "LoS_dyn_log%s.csv"))
+path_output = str(Path.home().joinpath("test_data", "LoS_dyn_log_output%s.csv"))
 folder_path = str(Path.home().joinpath("test_data"))
 output_path = str(Path.home()) + '/' + "figure/"
 plt.style.use('fivethirtyeight')
@@ -56,7 +56,12 @@ fig9 = plt.figure(figsize=(20,10))
 #fig9.suptitle('X and Y over time')
 ax19 = fig9.add_subplot(1,2,1)
 ax20 = fig9.add_subplot(1,2,2)
-
+fig10 = plt.figure(figsize=(20,20))
+fig10.suptitle('Position plot test')
+ax21 = fig10.add_subplot(2,2,1)
+ax22 = fig10.add_subplot(2,2,2)
+ax23 = fig10.add_subplot(2,2,3)
+ax24 = fig10.add_subplot(2,2,4)
 
 isfolder = os.path.isdir(output_path)
 
@@ -72,16 +77,16 @@ def main():
     beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
     global path, folder_path
     number_of_files = 20
-    output_file_name = 'NLoS_dyn_outputdata.csv'
+    output_file_name = 'LoS_dyn_log_outputdata.csv'
     path_out = str(Path.home().joinpath("test_data", output_file_name))
 
     path_output_file = Path(path_out)
     print(path_output_file.is_file())
     if path_output_file.is_file():
         os.remove(path_out)
+    print(path % number_of_files)
     true_x = [22653, 22673]
     true_y = [1039, 3822]
-
 
     while os.path.exists(path % number_of_files):
         print(number_of_files)
@@ -113,6 +118,10 @@ def main():
         lidar_kalman_slam_y_time = [0] * (len(data["lidar0"])-101)
         kalman_slam_x_time = [0] * (len(data["lidar0"])-101)
         kalman_slam_y_time = [0] * (len(data["lidar0"])-101)
+        kalman_x_bank_slam = [0] * (len(data["lidar0"])-101)
+        kalman_y_bank_slam = [0] * (len(data["lidar0"])-101)
+        simple_x_data_slam = [0] * (len(data["lidar0"])-101)
+        simple_y_data_slam = [0] * (len(data["lidar0"])-101)
         slam_delta_l = [0] * (len(data["lidar0"])-102)
         kalman_delta_l = [0] * (len(data["lidar0"])-102)
         lidar_delta_l = [0] * (len(data["lidar0"])-102)
@@ -537,6 +546,18 @@ def main():
         ax11.set_title("EKF bank")
         ax11.set_xlabel("X - coordinate [mm]")
         ax11.set_ylabel("Y - coordinate [mm]")
+        ax21.set_title("EKF Augmented with LiDAR")
+        ax21.set_xlabel("X - coordinate [mm]")
+        ax21.set_ylabel("Y - coordinate [mm]")
+        ax22.set_title("EKF")
+        ax22.set_xlabel("X - coordinate [mm]")
+        ax22.set_ylabel("Y - coordinate [mm]")
+        ax23.set_title("Recursive Monolateration")
+        ax23.set_xlabel("X - coordinate [mm]")
+        ax23.set_ylabel("Y - coordinate [mm]")
+        ax24.set_title("EKF bank")
+        ax24.set_xlabel("X - coordinate [mm]")
+        ax24.set_ylabel("Y - coordinate [mm]")
         ax3.set_title("Position difference over time")
         ax3.set_xlabel("Time [s]")
         ax3.set_ylabel("Difference between position[mm]")
@@ -595,7 +616,6 @@ def main():
         ax24.set_xlabel("X - coordinate [mm]")
         ax24.set_ylabel("Y - coordinate [mm]")
 
-
         ax1.scatter(with_x, with_y)
         ax1.plot(true_x, true_y, '-o', c='r', label='True path')
         ax2.scatter(without_x, without_y)
@@ -649,6 +669,7 @@ def main():
                     kalman_y_bank_slam[i-101] = multi_y[i]
                     simple_x_data_slam[i-101] = simple_x[i]
                     simple_y_data_slam[i-101] = simple_y[i]
+
 
 
 
@@ -717,21 +738,22 @@ def main():
         ax11.set_xlim(0,45000)
         ax11.set_ylim(0,12000)
         if number_of_files >= 0 or number_of_files <= 19:
-            name_of_file_1 = 'NLoS_dyn_position_plot%s.png'
-            name_of_file_2 = 'NLoS_dyn_position_delta%s.png'
-            name_of_file_3 = 'NLoS_dyn_position_in_the_same_plot%s.png'
-            name_of_file_4 = 'NLoS_dyn_lidar%s.gif'
-            name_of_file_5 = 'NLoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
-            name_of_file_6 = 'NLoS_dyn_vel_over%s.png'
-            name_of_file_7 = 'NLoS_dyn_coordinate_over_time%s.png'
+            name_of_file_1 = 'LoS_dyn_position_plot%s.png'
+            name_of_file_2 = 'LoS_dyn_position_delta%s.png'
+            name_of_file_3 = 'LoS_dyn_position_in_the_same_plot%s.png'
+            name_of_file_4 = 'LoS_dyn_lidar%s.gif'
+            name_of_file_5 = 'LoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
+            name_of_file_6 = 'LoS_dyn_vel_over%s.png'
+            name_of_file_7 = 'LoS_dyn_coordinate_over_time%s.png'
         if number_of_files > 19:
-            name_of_file_1 = '1_new_data/NLoS_dyn_position_plot%s.png'
-            name_of_file_2 = '1_new_data/NLoS_dyn_position_delta%s.png'
-            name_of_file_3 = '1_new_data/NLoS_dyn_position_in_the_same_plot%s.png'
-            name_of_file_4 = '1_new_data/NLoS_dyn_lidar%s.gif'
-            name_of_file_5 = '1_new_data/NLoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
-            name_of_file_6 = '1_new_data/NLoS_dyn_vel_over%s.png'
-            name_of_file_7 = '1_new_data/NLoS_dyn_coordinate_over_time%s.png'
+            name_of_file_1 = '1_new_data/LoS_dyn_position_plot%s.png'
+            name_of_file_2 = '1_new_data/LoS_dyn_position_delta%s.png'
+            name_of_file_3 = '1_new_data/LoS_dyn_position_in_the_same_plot%s.png'
+            name_of_file_4 = '1_new_data/LoS_dyn_lidar%s.gif'
+            name_of_file_5 = '1_new_data/LoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
+            name_of_file_6 = '1_new_data/LoS_dyn_vel_over%s.png'
+            name_of_file_7 = '1_new_data/LoS_dyn_coordinate_over_time%s.png'
+
 
 
         fig1.savefig(output_path + name_of_file_1 % number_of_files)
@@ -778,9 +800,9 @@ def main():
             ax23.legend()
             ax24.legend()
 
-            name_of_file_8 = '1_new_data/NLoS_slam_time%s.png'
-            name_of_file_9 = '1_new_data/NLoS_error_time%s.png'
-            name_of_file_10 = '1_new_data/NLoS_pose_with_slam_added%s.png'
+            name_of_file_8 = '1_new_data/turning_slam_time%s.png'
+            name_of_file_9 = '1_new_data/turning_error_time%s.png'
+            name_of_file_10 = '1_new_data/turning_pose_with_slam_added%s.png'
 
             fig8.savefig(output_path + name_of_file_8 % number_of_files)
             fig9.savefig(output_path + name_of_file_9 % number_of_files)
@@ -854,38 +876,8 @@ def main():
 
                 }
             csv_writer.writerow(info)
+
         number_of_files = number_of_files + 1
-    number_of_files = number_of_files + 1
-    with open(path_out, 'a') as csv_file:
-        #print("opening file")
-        csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        info = {
-            "variance_w_x": "=AVERAGE(A2:A%s)" % number_of_files,
-            "std_w_x": "=AVERAGE(B2:B%s)" % number_of_files,
-            "mean_w_x": "=AVERAGE(C2:C%s)" % number_of_files,
-            "variance_w_y": "=AVERAGE(D2:D%s)" % number_of_files,
-            "std_w_y": "=AVERAGE(E2:E%s)" % number_of_files,
-            "mean_w_y": "=AVERAGE(F2:F%s)" % number_of_files,
-            "variance_wo_x": "=AVERAGE(G2:G%s)" % number_of_files,
-            "std_wo_x": "=AVERAGE(H2:H%s)" % number_of_files,
-            "mean_wo_x": "=AVERAGE(I2:I%s)" % number_of_files,
-            "variance_wo_y": "=AVERAGE(J2:J%s)" % number_of_files,
-            "std_wo_y": "=AVERAGE(K2:K%s)" % number_of_files,
-            "mean_wo_y": "=AVERAGE(L2:L%s)" % number_of_files,
-            "variance_simple_x": "=AVERAGE(M2:M%s)" % number_of_files,
-            "std_simple_x": "=AVERAGE(N2:N%s)" % number_of_files,
-            "mean_simple_x": "=AVERAGE(O2:O%s)" % number_of_files,
-            "variance_simple_y": "=AVERAGE(P2:P%s)" % number_of_files,
-            "std_simple_y": "=AVERAGE(Q2:Q%s)" % number_of_files,
-            "mean_simple_y": "=AVERAGE(R2:R%s)" % number_of_files,
-            "variance_multi_x": "=AVERAGE(S2:S%s)" % number_of_files,
-            "std_multi_x": "=AVERAGE(T2:T%s)" % number_of_files,
-            "mean_multi_x": "=AVERAGE(U2:U%s)" % number_of_files,
-            "variance_multi_y": "=AVERAGE(V2:V%s)" % number_of_files,
-            "std_multi_y": "=AVERAGE(W2:W%s)" % number_of_files,
-            "mean_multi_y": "=AVERAGE(X2:X%s)" % number_of_files
-            }
-        csv_writer.writerow(info)
     print("im done baby ;)")
 
 

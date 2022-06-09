@@ -54,6 +54,11 @@ class EKF:
         self.Q_m = 100 * np.identity(5)
 
 
+    def q_and_r_update(self, q, r):
+        self.R_beacon = r
+        self.Q_b = q * np.identity(5)
+
+
     def updating_imu(self, imu_acc, imu_gyro):
         self.imu_acc = imu_acc * 1000 # the acceleration has the [m/s^2] and the system works with [mm/s^2]
         self.imu_gyro = imu_gyro
