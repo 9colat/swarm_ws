@@ -36,6 +36,7 @@ while not rospy.is_shutdown():
     if (time.time() - local_time) > setling_time and second_time:
         print("im awake again")
         indicator.data = 40
+        print(indicator.data)
         pub1.publish(indicator)
         #rospy.spin()
         second_time = False
