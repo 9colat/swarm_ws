@@ -54,7 +54,7 @@ find_package(catkin REQUIRED COMPONENTS
    Speed_tick.msg
    odom_and_imu.msg
    USPS_msgs.msg
-   Q_R.mgs
+   Q_R.msg
  )
 
 ## Generate services in the 'srv' folder
