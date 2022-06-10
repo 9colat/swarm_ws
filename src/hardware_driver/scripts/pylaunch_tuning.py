@@ -16,8 +16,10 @@ pub1 = rospy.Publisher('q_and_r', Q_R, queue_size=10)
 pub2 = rospy.Publisher('indicator_color', Int16, queue_size=10)
 fun = Int16()
 indicator = Q_R()
+r = 0.0001
 
-for r in range(0.0001, 1):
+#rate = rospy.Rate(1)
+while not rospy.is_shutdown():
     for q in range(200, 300):
         print("boot")
 
@@ -34,3 +36,4 @@ for r in range(0.0001, 1):
         pub2.publish(fun)
         launch.shutdown()
         time.sleep(10)
+        r += 0.0001
