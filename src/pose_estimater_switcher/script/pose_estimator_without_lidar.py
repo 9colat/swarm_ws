@@ -5,7 +5,7 @@ import numpy as np
 from pathlib import Path
 from custom_msgs.msg import odom_and_imu
 from custom_msgs.msg import USPS_msgs
-from custom_msgs.msg import Q_R
+#from custom_msgs.msg import Q_R
 from std_msgs.msg import Bool
 from geometry_msgs.msg import Pose
 from ekf_usps import EKF
@@ -43,10 +43,11 @@ def callback_distance(data):
         #print(state[0])
     # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
 
-def callback_q_r(data):
-    global ready_to_run
-    w1.q_and_r_update(data.Q.data, data.R.data)
-    ready_to_run = True
+#def callback_q_r(data):
+    #global ready_to_run
+    #w1.q_and_r_update(data.Q.data, data.R.data)
+    #ready_to_run = True
+
 
 def callback_terminating_signal(data):
     boll = data.data
@@ -72,7 +73,7 @@ def main():
     rospy.init_node('pose_estimator_without_lidar', anonymous=True) # initialize the node
     rospy.Subscriber("beacon_data", USPS_msgs, callback_distance)
     rospy.Subscriber("odometry_and_IMU", odom_and_imu, callback_imu)
-    rospy.Subscriber("q_and_r", Q_R, callback_q_r)
+    #rospy.Subscriber("q_and_r", Q_R, callback_q_r)
     rospy.Subscriber("terminating_signal", Bool, callback_terminating_signal)
     pub = rospy.Publisher('without_lidar', Pose, queue_size=10)
     rate = rospy.Rate(100) # 100hz
