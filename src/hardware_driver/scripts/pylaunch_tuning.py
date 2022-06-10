@@ -16,6 +16,7 @@ indicator = Q_R()
 
 for r in range(0.0001, 1):
     for q in range(200, 300):
+        print("boot")
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
         roslaunch.configure_logging(uuid)
         launch = roslaunch.parent.ROSLaunchParent(uuid, [path])

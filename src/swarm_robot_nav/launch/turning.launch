@@ -1,9 +1,9 @@
 
 <launch>
-<node pkg="rosserial_python" type="serial_node.py" name="teensy_0" output="screen">
+<node pkg="rosserial_python" type="serial_node.py" name="teensy_0" output="log">
    <param name="port" value="/dev/ttyACM0" />
 </node>
-<node pkg="rosserial_python" type="serial_node.py" name="teensy_1" output="screen">
+<node pkg="rosserial_python" type="serial_node.py" name="teensy_1" output="log">
    <param name="port" value="/dev/ttyACM1" />
 </node>
 
@@ -11,20 +11,20 @@
 
 <include file="$(find ds4_driver)/launch/ds4_twist.launch"/>
 
-<node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar_node" output="screen" respawn="true">
+<node pkg="pose_estimater_switcher" type="pose_estimator_without_lidar.py" name="without_lidar_node" output="log" respawn="true">
 </node>
 
 <node pkg="pose_estimater_switcher" type="simple_pose_esti.py" name="simple_pose_esti_node" respawn="true">
 </node>
 
 
-<node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="with_lidar_node" output="screen" respawn="true">
+<node pkg="pose_estimater_switcher" type="pose_estimator_with_lidar.py" name="with_lidar_node" output="log" respawn="true">
 </node>
 
-<node pkg="pose_estimater_switcher" type="pose_estimator_multi_kalman.py" name="kalman_bank" output="screen" respawn="true">
+<node pkg="pose_estimater_switcher" type="pose_estimator_multi_kalman.py" name="kalman_bank" output="log" respawn="true">
 </node>
 
-<node pkg="hardware_driver" type="logger_turning.py" name="logger_dynamic_node" output="screen" respawn="true">
+<node pkg="hardware_driver" type="logger_turning.py" name="logger_dynamic_node" output="log" respawn="true">
 </node>
 
 <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
