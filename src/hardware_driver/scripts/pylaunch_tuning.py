@@ -19,7 +19,9 @@ indicator = Q_R()
 r = 0.0001
 
 #rate = rospy.Rate(1)
+print('1')
 while not rospy.is_shutdown():
+    print("Orange")
     for q in range(200, 300):
         print("boot")
 
