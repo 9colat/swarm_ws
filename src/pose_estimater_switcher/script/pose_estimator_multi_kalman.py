@@ -39,227 +39,228 @@ def callback_distance(data):
     global w_laser, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w0, global_time
     beacon_id = [44539, 44050, 42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
     if data.ID in beacon_id:
-        projected_distance = w_laser.projection(data.ID, data.distance) * 1000 # w_laser.projection() output is in m and there for it need to be converted to mm
-        temp_array = [0] * len(beacon_id)
+        if data.distance < 11000
+            projected_distance = w_laser.projection(data.ID, data.distance) * 1000 # w_laser.projection() output is in m and there for it need to be converted to mm
+            temp_array = [0] * len(beacon_id)
 
-        local_time = time.time()
-        dT = local_time - global_time
-        global_time = local_time
+            local_time = time.time()
+            dT = local_time - global_time
+            global_time = local_time
 
-        if data.ID == beacon_id[0]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[1]:
-            state = w0.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[2]:
-            state = w0.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[3]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[4]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[5]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[6]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[7]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[8]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[9]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[10]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[11]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if data.ID == beacon_id[12]:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w0.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[0]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[1]:
+                state = w0.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[2]:
+                state = w0.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[3]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[4]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[5]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[6]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[7]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[8]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[9]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[10]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[11]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if data.ID == beacon_id[12]:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w0.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
 
-        temp_array[0] = w0.beacon_estimation_difference
-        temp_array[1] = w1.beacon_estimation_difference
-        temp_array[2] = w2.beacon_estimation_difference
-        temp_array[3] = w3.beacon_estimation_difference
-        temp_array[4] = w4.beacon_estimation_difference
-        temp_array[5] = w5.beacon_estimation_difference
-        temp_array[6] = w6.beacon_estimation_difference
-        temp_array[7] = w7.beacon_estimation_difference
-        temp_array[8] = w8.beacon_estimation_difference
-        temp_array[9] = w9.beacon_estimation_difference
-        temp_array[10] = w10.beacon_estimation_difference
-        temp_array[11] = w11.beacon_estimation_difference
-        temp_array[12] = w12.beacon_estimation_difference
+            temp_array[0] = w0.beacon_estimation_difference
+            temp_array[1] = w1.beacon_estimation_difference
+            temp_array[2] = w2.beacon_estimation_difference
+            temp_array[3] = w3.beacon_estimation_difference
+            temp_array[4] = w4.beacon_estimation_difference
+            temp_array[5] = w5.beacon_estimation_difference
+            temp_array[6] = w6.beacon_estimation_difference
+            temp_array[7] = w7.beacon_estimation_difference
+            temp_array[8] = w8.beacon_estimation_difference
+            temp_array[9] = w9.beacon_estimation_difference
+            temp_array[10] = w10.beacon_estimation_difference
+            temp_array[11] = w11.beacon_estimation_difference
+            temp_array[12] = w12.beacon_estimation_difference
 
 
-        dist_sort = sorted(temp_array) # for sorting
+            dist_sort = sorted(temp_array) # for sorting
 
-        if temp_array.index(dist_sort[0]) == 0:
-            state = w0.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 1:
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 2:
-            state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 3:
-            state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 4:
-            state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 5:
-            state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 6:
-            state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 7:
-            state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 8:
-            state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 9:
-            state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 10:
-            state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 11:
-            state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        if temp_array.index(dist_sort[0]) == 12:
-            state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
-        #print(state[0])
+            if temp_array.index(dist_sort[0]) == 0:
+                state = w0.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 1:
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 2:
+                state = w2.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 3:
+                state = w3.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 4:
+                state = w4.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 5:
+                state = w5.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 6:
+                state = w6.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 7:
+                state = w7.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 8:
+                state = w8.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 9:
+                state = w9.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 10:
+                state = w10.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 11:
+                state = w11.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            if temp_array.index(dist_sort[0]) == 12:
+                state = w12.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+            #print(state[0])
 
     # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
 

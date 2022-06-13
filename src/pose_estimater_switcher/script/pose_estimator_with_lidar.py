@@ -33,15 +33,16 @@ def callback_distance(data):
     global w1, w2, global_time, lidar_array, state, mag_heading
     beacon_id = [44539, 44050, 42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
     if data.ID in beacon_id:
-        projected_distance = w2.projection(data.ID, data.distance) * 1000 # w2.projection() output is in m and there for it need to be converted to mm
-        if mag_heading[0] != 0:
-            updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0], w1.state_predicted[1]], mag_heading, data.distance,detect_indicator) # measurement 'variance/trust' updated
-            w1.R_beacon = updated_R
-            local_time = time.time()
-            dT = local_time - global_time
-            global_time = local_time
+        if data.distance < 11000
+            projected_distance = w2.projection(data.ID, data.distance) * 1000 # w2.projection() output is in m and there for it need to be converted to mm
+            if mag_heading[0] != 0:
+                updated_R = w2.potential_occlusion_check(lidar_array, data.ID, [w1.state_predicted[0], w1.state_predicted[1]], mag_heading, data.distance,detect_indicator) # measurement 'variance/trust' updated
+                w1.R_beacon = updated_R
+                local_time = time.time()
+                dT = local_time - global_time
+                global_time = local_time
 
-            state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
+                state = w1.beacon_measurement_updater_EKF(data.ID, projected_distance, dT)
         # REMEMBER TO ADD UPDATED_R TO THE FUNCTIONS
 
     # getting data from the IMU
