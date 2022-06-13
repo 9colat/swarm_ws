@@ -23,10 +23,15 @@ global_time = time.time() # this should be already in seconds, initialised
 state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 mag_heading = [0]*2
 
+# missing beacons
+# id, x, y, z
+# 44050, 7825, 9999, 4286
+# 44539, 1999, 10677, 3531
+
 # gettng data from the beacons
 def callback_distance(data):
     global w1, w2, global_time, lidar_array, state, mag_heading
-    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
+    beacon_id = [44539, 44050, 42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
     if data.ID in beacon_id:
         projected_distance = w2.projection(data.ID, data.distance) * 1000 # w2.projection() output is in m and there for it need to be converted to mm
         if mag_heading[0] != 0:
