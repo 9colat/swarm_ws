@@ -32,7 +32,7 @@ mag_heading = [0]*2
 def callback_distance(data):
     global w1, w2, global_time, lidar_array, state, mag_heading
     beacon_id = [44539, 44050, 42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
-    if data.ID in beacon_id:
+    if data.ID in beacon_id and data.ID != 42867:
         if data.distance < 11000:
             projected_distance = w2.projection(data.ID, data.distance) * 1000 # w2.projection() output is in m and there for it need to be converted to mm
             if mag_heading[0] != 0:

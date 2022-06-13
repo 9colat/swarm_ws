@@ -38,7 +38,7 @@ state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 def callback_distance(data):
     global w_laser, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w0, global_time
     beacon_id = [44539, 44050, 42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
-    if data.ID in beacon_id:
+    if data.ID in beacon_id and data.ID != 42867:
         if data.distance < 11000:
             projected_distance = w_laser.projection(data.ID, data.distance) * 1000 # w_laser.projection() output is in m and there for it need to be converted to mm
             temp_array = [0] * len(beacon_id)
