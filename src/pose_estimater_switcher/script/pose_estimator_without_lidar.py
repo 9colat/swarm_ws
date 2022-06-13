@@ -19,11 +19,16 @@ state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 first_time = True
 ready_to_run = False
 
+# missing beacons
+# id, x, y, z
+# 44050, 7825, 9999, 4286
+# 44539, 1999, 10677, 3531
+
 # gettng data from the beacons
 def callback_distance(data):
     global w1, w2, global_time, first_time
     path = str(Path.home().joinpath("my_list.txt"))
-    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540] #44540 - over tbl; 44535- gone ; 44539 - not on list
+    beacon_id = [44539, 44050, 42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540] #44540 - over tbl; 44535- gone ; 44539 - not on list
     if data.ID in beacon_id:
         projected_distance = w2.projection(data.ID, data.distance) * 1000 # w2.projection() output is in m and there for it need to be converted to mm
 
