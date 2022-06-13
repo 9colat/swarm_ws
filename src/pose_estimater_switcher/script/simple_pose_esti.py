@@ -9,9 +9,14 @@ pose = np.array([0,0,0])
 
 PC = Pose_Calculator()
 
+# missing beacons
+# id, x, y, z
+# 44050, 7825, 9999, 4286
+# 44539, 1999, 10677, 3531
+
 def callback_distance(data):
     global pose
-    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
+    beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538, 44539,  44540, 44050]
     if data.ID in beacon_id:
         pose = PC.pose_estimator(data.ID, data.distance)
 
