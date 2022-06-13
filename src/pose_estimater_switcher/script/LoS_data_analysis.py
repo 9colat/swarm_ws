@@ -62,6 +62,9 @@ ax21 = fig10.add_subplot(2,2,1)
 ax22 = fig10.add_subplot(2,2,2)
 ax23 = fig10.add_subplot(2,2,3)
 ax24 = fig10.add_subplot(2,2,4)
+fig11 = plt.figure(figsize=(10,10))
+fig11.suptitle('Position plot test')
+ax25 = fig11.add_subplot(1,1,1)
 
 isfolder = os.path.isdir(output_path)
 
@@ -534,6 +537,7 @@ def main():
         ax14.clear()
         ax15.clear()
         ax16.clear()
+        ax25.clear()
         ax1.set_title("EKF Augmented with LiDAR")
         ax1.set_xlabel("X - coordinate [mm]")
         ax1.set_ylabel("Y - coordinate [mm]")
@@ -789,6 +793,7 @@ def main():
             ax23.plot(slam_y_time, slam_x_time, '-o', c='r', label='SLAM path')
             ax24.scatter(kalman_x_bank_slam, kalman_y_bank_slam)
             ax24.plot(slam_y_time, slam_x_time, '-o', c='r', label='SLAM path')
+            ax25.hist(kalman_delta_l)
 
 
             ax17.legend()
@@ -802,10 +807,12 @@ def main():
             name_of_file_8 = '1_new_data/LoS_slam_time%s.png'
             name_of_file_9 = '1_new_data/LoS_error_time%s.png'
             name_of_file_10 = '1_new_data/LoS_pose_with_slam_added%s.png'
+            name_of_file_11 = '1_new_data/LoS_hist%s.png'
 
             fig8.savefig(output_path + name_of_file_8 % number_of_files)
             fig9.savefig(output_path + name_of_file_9 % number_of_files)
             fig10.savefig(output_path + name_of_file_10 % number_of_files)
+            fig11.savefig(output_path + name_of_file_11 % number_of_files)
         if number_of_files == 1:
             writergif = animation.PillowWriter(fps=10)
             #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
