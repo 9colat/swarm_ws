@@ -29,7 +29,7 @@ def callback_distance(data):
     global w1, w2, global_time, first_time
     path = str(Path.home().joinpath("my_list.txt"))
     beacon_id = [44539, 44050, 42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540] #44540 - over tbl; 44535- gone ; 44539 - not on list
-    if data.ID in beacon_id && data.ID not 42867:
+    if data.ID in beacon_id and data.ID not 42867:
         if data.distance < 11000:
 
             projected_distance = w2.projection(data.ID, data.distance) * 1000 # w2.projection() output is in m and there for it need to be converted to mm
