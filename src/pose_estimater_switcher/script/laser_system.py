@@ -4,20 +4,23 @@ import math
 import numpy as np
 from std_msgs.msg import Int16
 
-
+# missing beacons
+# id, x, y, z
+# 44050, 7825, 9999, 4286
+# 44539, 1999, 10677, 3531
 
 
 class Laser_component:
     def __init__(self):
-        self.beacon_id = [42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
-        self.beacon =    np.array([[11700, 16244,  7824,   2000,   21369,  26163,  26163,  31000,  35766,  35766,  40205,  40204,  16560],[5999,  10150,  5726,   4499,   6534,   9939,   3699,   6519,   10012,  3522,   11684,  4363,   3549]])
+        self.beacon_id = [44539, 44050, 42867, 42928,  42929,  44530,  44531,  44532,  44533,  44534,  44535,  44536,  44537,  44538,  44540]
+        self.beacon =    np.array([[1999, 7825, 11700, 16244,  7824,   2000,   21369,  26163,  26163,  31000,  35766,  35766,  40205,  40204,  16560],[10677, 9999, 5999,  10150,  5726,   4499,   6534,   9939,   3699,   6519,   10012,  3522,   11684,  4363,   3549]])
         self.magnetometer_corection_factor = math.atan2(13.1,-149.4) # please remmeber to update me ;)
         self.r_h = 198 # please remmeber to update me ;)
         self.std = 0.7887537272 # please remmeber to update me ;)
         self.mean = 1.464210526
 
     def projection(self, id, dist):
-        beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
+        beacon_z =    [3531, 4286, 5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
         index_of_data = self.beacon_id.index(id)
         #dist = math.sqrt(pow(beacon_x[index_of_data] - pose[0],2) + pow(beacon_y[index_of_data] - pose[1],2)+pow(beacon_z[index_of_data] - pose[2],2))
         d_z = (beacon_z[index_of_data] - self.r_h)/1000
