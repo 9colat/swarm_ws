@@ -32,7 +32,7 @@ class Laser_component:
         t = pow(max_occlusion_height-self.mean,2)/(pow(self.std,2))
         y = (1/(self.std * math.sqrt(2*math.pi)))*pow(math.e,(1/2)*t)
         bell_procent = - math.erf((math.sqrt(2)*(-math.inf + self.mean))/(2*self.std))/2 - math.erf((math.sqrt(2)*(max_occlusion_height - self.mean))/(2*self.std))/2
-        new_y = bell_procent/10 + 0.01
+        new_y = bell_procent*10 + 0.01
         print("new y: ",new_y)
         return new_y
 
