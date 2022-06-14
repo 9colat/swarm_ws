@@ -85,10 +85,10 @@ def main():
     path_out = str(Path.home().joinpath("test_data", output_file_name))
 
     path_output_file = Path(path_out)
-    print(path_output_file.is_file())
+    #print(path_output_file.is_file())
     if path_output_file.is_file():
         os.remove(path_out)
-    print(path % number_of_files)
+    #print(path % number_of_files)
     true_x = [22653, 22673]
     true_y = [1039, 3822]
 
@@ -734,7 +734,7 @@ def main():
             Xsg_y[h] = Xsg[1][0]
 
 
-        print(Xsg[1][0])
+        #print(Xsg[1][0])
 
 
         for k in range(len(slam_x_time)-1):
