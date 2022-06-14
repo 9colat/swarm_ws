@@ -64,8 +64,11 @@ ax22 = fig10.add_subplot(2,2,2)
 ax23 = fig10.add_subplot(2,2,3)
 ax24 = fig10.add_subplot(2,2,4)
 fig11 = plt.figure(figsize=(10,10))
-fig11.suptitle('Position plot test')
+fig11.suptitle('SLAM histrogram')
 ax25 = fig11.add_subplot(1,1,1)
+fig12 = plt.figure(figsize=(20,10))
+fig12.suptitle('abselute error in relation to SLAM')
+ax26 = fig12.add_subplot(1,1,1)
 
 isfolder = os.path.isdir(output_path)
 
