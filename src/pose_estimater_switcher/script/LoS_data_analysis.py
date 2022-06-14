@@ -92,7 +92,7 @@ def main():
     true_x = [22653, 22673]
     true_y = [1039, 3822]
 
-    a11, a12, a21, a22, b1, b2 = symbols('a11, a12, a21, a22, b1, b2')
+    #a11, a12, a21, a22, b1, b2 = symbols('a11, a12, a21, a22, b1, b2')
 
     while os.path.exists(path % number_of_files):
         print(number_of_files)
