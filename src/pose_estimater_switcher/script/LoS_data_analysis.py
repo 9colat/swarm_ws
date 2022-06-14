@@ -844,6 +844,10 @@ def main():
             ax18.plot(time_slam, lidar_kalman_slam_y_time, c='g',label='Lidar aug')
             ax19.plot(time_slam_l, lidar_delta_l,c='g',label='lidar')
             ax20.plot(time_slam_l, kalman_delta_l,c='b',label='kalman')
+            print("kalman data std: ", np.std(kalman_delta_l))
+            print("lidar data std: ", np.std(lidar_delta_l))
+            ax19.set_ylim(-1000,500)
+            ax20.set_ylim(-1000,500)
             ax21.scatter(lidar_kalman_slam_x_time, lidar_kalman_slam_y_time)
             ax21.plot(Xsg_x, Xsg_y, '-o', c='r', label='SLAM path')
             ax22.scatter(kalman_slam_x_time, kalman_slam_y_time)
@@ -853,6 +857,9 @@ def main():
             ax24.scatter(kalman_x_bank_slam, kalman_y_bank_slam)
             ax24.plot(Xsg_x, Xsg_y, '-o', c='r', label='SLAM path')
             ax25.hist(kalman_delta_l)
+
+            props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+            ax25.text(0.95, 0.95, ("%.2f$" % (np.std(kalman_delta_l), )), transform=ax25.transAxes, fontsize=14,verticalalignment='top', bbox=props)
 
 
             ax17.legend()
