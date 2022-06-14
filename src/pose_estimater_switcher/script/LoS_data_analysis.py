@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
-from sympy import symbols, Eq, solve
+#from sympy import symbols, Eq, solve
 
 ##### setting up the path for the data file and folder #####
 path = str(Path.home().joinpath("test_data", "LoS_dyn_log%s.csv"))
