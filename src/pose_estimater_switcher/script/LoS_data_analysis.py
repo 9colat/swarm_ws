@@ -69,6 +69,14 @@ ax25 = fig11.add_subplot(1,1,1)
 fig12 = plt.figure(figsize=(20,10))
 fig12.suptitle('abselute error in relation to SLAM')
 ax26 = fig12.add_subplot(1,1,1)
+fig13 = plt.figure(figsize=(20,10))
+fig13.suptitle('X and Y over time')
+ax27 = fig13.add_subplot(1,2,1)
+ax28 = fig13.add_subplot(1,2,2)
+fig14 = plt.figure(figsize=(20,10))
+fig14.suptitle('SLAM coordinate frame X and Y over time')
+ax29 = fig14.add_subplot(1,2,1)
+ax30 = fig14.add_subplot(1,2,2)
 
 isfolder = os.path.isdir(output_path)
 
@@ -122,8 +130,16 @@ def main():
         simple_y_data = [0] * len(data["lidar0"])
         slam_x_time = [0] * (len(data["lidar0"])-101)
         slam_y_time = [0] * (len(data["lidar0"])-101)
+        slam_x_time_new = [0] * (len(data["lidar0"])-101)
+        slam_y_time_new = [0] * (len(data["lidar0"])-101)
         Xsg_x = [0] * (len(data["lidar0"])-101)
         Xsg_y = [0] * (len(data["lidar0"])-101)
+        error_slam_kalman_x = [0] * (len(data["lidar0"])-101)
+        error_slam_kalman_y = [0] * (len(data["lidar0"])-101)
+        error_slam_lidar_x = [0] * (len(data["lidar0"])-101)
+        error_slam_lidar_y = [0] * (len(data["lidar0"])-101)
+        error_slam_kalman = [0] * (len(data["lidar0"])-101)
+        error_slam_lidar = [0] * (len(data["lidar0"])-101)
         slam_x_time_tans = [0] * (len(data["lidar0"])-101)
         slam_y_time_tans = [0] * (len(data["lidar0"])-101)
         time_slam = np.linspace(1, len(data["lidar0"]-101/10), num=(len(data["lidar0"])-101))
@@ -680,6 +696,9 @@ def main():
                     lidar_kalman_slam_y_time[i-101] = with_y[i]
                     kalman_slam_x_time[i-101] = without_x[i]
                     kalman_slam_y_time[i-101] = without_y[i]
+                    slam_x_time_new[i-101] =  -slam_x[i] * 1000 #* 1000# + kalman_mean_y
+                    slam_y_time_new[i-101] =  -slam_y[i] * 1000 #* 1000# + kalman_mean_x
+
 
                     kalman_x_bank_slam[i-101] = multi_x[i]
                     kalman_y_bank_slam[i-101] = multi_y[i]
@@ -711,10 +730,10 @@ def main():
         #for d in range(len(slam_x_time)):
             #slam_x_time_tans[d] = a_11 * slam_x_time[d] + a_12 * slam_y_time[d] + b_1
             #slam_y_time_tans[d] = a_21 * slam_x_time[d] + a_22 * slam_y_time[d] + b_2
-            sx = np.array([slam_x_time]).T
-            sy = np.array([slam_y_time]).T
-            gx = np.array([kalman_slam_x_time]).T
-            gy = np.array([kalman_slam_y_time]).T
+        sx = np.array([slam_x_time]).T
+        sy = np.array([slam_y_time]).T
+        gx = np.array([kalman_slam_x_time]).T
+        gy = np.array([kalman_slam_y_time]).T
 
 
 
@@ -735,13 +754,22 @@ def main():
             Xsg = np.dot(AT,[[float(sx[h][0])],[float(sy[h][0])]])+BT
             Xsg_x[h] = Xsg[0][0]
             Xsg_y[h] = Xsg[1][0]
+            error_slam_kalman_x[h] = kalman_slam_x_time[h] - Xsg_x[h]
+            error_slam_kalman_y[h] = kalman_slam_y_time[h] - Xsg_y[h]
+            error_slam_lidar_x[h] = lidar_kalman_slam_x_time[h] - Xsg_x[h]
+            error_slam_lidar_y[h] = lidar_kalman_slam_y_time[h] - Xsg_y[h]
+
+            error_slam_kalman[h] = math.sqrt(pow(error_slam_kalman_x[h],2)+pow(error_slam_kalman_y[h],2))
+            error_slam_lidar[h] = math.sqrt(pow(error_slam_lidar_x[h],2)+pow(error_slam_lidar_y[h],2))
+            #print(error_slam_lidar_x[h],error_slam_lidar_y[h])
+
 
 
         #print(Xsg[1][0])
 
 
         for k in range(len(slam_x_time)-1):
-            slam_delta = math.sqrt(pow(Xsg_x[k+1]-Xsg_x[k],2)+pow(Xsg_y[k+1]-Xsg_y[k],2))
+            slam_delta = math.sqrt(pow(slam_x_time[k+1]-slam_x_time[k],2)+pow(slam_y_time[k+1]-slam_y_time[k],2))
             lidar_delta = math.sqrt(pow(lidar_kalman_slam_x_time[k+1]-lidar_kalman_slam_x_time[k],2)+pow(lidar_kalman_slam_y_time[k+1]-lidar_kalman_slam_y_time[k],2))
             kalman_delta = math.sqrt(pow(kalman_slam_x_time[k+1]-kalman_slam_x_time[k],2)+pow(kalman_slam_y_time[k+1]-kalman_slam_y_time[k],2))
 
@@ -839,6 +867,11 @@ def main():
             ax22.clear()
             ax23.clear()
             ax24.clear()
+            ax26.clear()
+            ax27.clear()
+            ax28.clear()
+            ax29.clear()
+            ax30.clear()
             ax17.plot(time_slam, Xsg_x,c='r',label='slam_y')
             ax17.plot(time_slam, kalman_slam_x_time,c='b',label='Kalman')
             ax17.plot(time_slam, lidar_kalman_slam_x_time,c='g',label='Lidar aug')
@@ -860,9 +893,16 @@ def main():
             ax24.scatter(kalman_x_bank_slam, kalman_y_bank_slam)
             ax24.plot(Xsg_x, Xsg_y, '-o', c='r', label='SLAM path')
             ax25.hist(kalman_delta_l)
-
             props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
             ax25.text(0.95, 0.95, ("%.2f$" % (np.std(kalman_delta_l), )), transform=ax25.transAxes, fontsize=14,verticalalignment='top', bbox=props)
+            ax26.plot(time_slam, error_slam_kalman, c='b', label='kalman')
+            ax26.plot(time_slam, error_slam_lidar, c='g', label='lidar aug')
+            ax27.plot(time_slam, error_slam_kalman_x, c='b', label='kalman')
+            ax27.plot(time_slam, error_slam_lidar_x, c='g', label='lidar aug')
+            ax28.plot(time_slam, error_slam_kalman_y, c='b', label='kalman')
+            ax28.plot(time_slam, error_slam_lidar_x, c='g', label='lidar aug')
+            ax29.plot(time_slam, slam_x_time_new, c='r')
+            ax30.plot(time_slam, slam_y_time_new, c='r')
 
 
             ax17.legend()
@@ -873,15 +913,25 @@ def main():
             ax22.legend()
             ax23.legend()
             ax24.legend()
-            name_of_file_8 = '1_new_data/LoS_slam_time%s.png'
+            ax26.legend()
+            ax27.legend()
+            ax28.legend()
+
+            name_of_file_8 = '1_new_data/LoS_slam_GOT_frame_time%s.png'
             name_of_file_9 = '1_new_data/LoS_error_time%s.png'
             name_of_file_10 = '1_new_data/LoS_pose_with_slam_added%s.png'
             name_of_file_11 = '1_new_data/LoS_hist%s.png'
+            name_of_file_12 = '1_new_data/LoS_difference_to_slam%s.png'
+            name_of_file_13 = '1_new_data/LoS_difference_to_slam_x_y%s.png'
+            name_of_file_14 = '1_new_data/LoS_slam_frame_time%s.png'
 
             fig8.savefig(output_path + name_of_file_8 % number_of_files)
             fig9.savefig(output_path + name_of_file_9 % number_of_files)
             fig10.savefig(output_path + name_of_file_10 % number_of_files)
             fig11.savefig(output_path + name_of_file_11 % number_of_files)
+            fig12.savefig(output_path + name_of_file_12 % number_of_files)
+            fig13.savefig(output_path + name_of_file_13 % number_of_files)
+            fig14.savefig(output_path + name_of_file_14 % number_of_files)
         if number_of_files == 1:
             writergif = animation.PillowWriter(fps=10)
             #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
@@ -953,7 +1003,7 @@ def main():
             csv_writer.writerow(info)
 
         number_of_files = number_of_files + 1
-    print("im done baby ;)")
+    print("im done Ola ;P")
 
 
 
