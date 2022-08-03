@@ -154,7 +154,7 @@ def main():
         slam_delta_l = [0] * (len(data["lidar0"])-102)
         kalman_delta_l = [0] * (len(data["lidar0"])-102)
         lidar_delta_l = [0] * (len(data["lidar0"])-102)
-        time_slam_l = np.linspace(1, len(data["lidar0"]-101/10), num=(len(data["lidar0"])-102))
+        time_slam_l = np.linspace(1, (len(data["lidar0"]-101)/10), num=(len(data["lidar0"])-102))
         lidar_mean_x_array = [0]*100
         lidar_mean_y_array = [0]*100
         time_array = np.linspace(1, len(data["lidar0"]/10), num=len(data["lidar0"]))
@@ -785,9 +785,9 @@ def main():
         ax9.plot(time_array,delta_y_kalman_bank)
         ax12.plot(time_array,delta_x_kalman_bank)
         ax13.plot(time_array,delta_y_kalman_bank)
-        ax4.plot(kalman_slam_x_time, kalman_slam_y_time,'-o',c='g',label='Kalman w. Lidar')
+        ax4.plot(kalman_slam_x_time, kalman_slam_y_time,'-o',c='g',label='Kalman w. Lidar',linewidth=2)
         #ax4.scatter(without_x, without_y, c='b',label='Kalman')
-        ax4.plot(Xsg_x, Xsg_y, '-o', c='r', label='True path')
+        ax4.plot(Xsg_x, Xsg_y, '-o', c='r', label='True path',linewidth=2)
         #ax14.plot(time_array,vel_input,c='b')
         ax14.plot(time_array, vel_with, c='g',label='Kalman w. Lidar')
         ax14.plot(time_array, vel_without, c='r',label='Kalman')
@@ -825,28 +825,28 @@ def main():
         ax1.set_ylim(0,12000)
         ax2.set_xlim(0,45000)
         ax2.set_ylim(0,12000)
-        ax4.set_xlim(0,45000)
-        ax4.set_ylim(0,12000)
+        ax4.set_xlim(20000,25000)
+        ax4.set_ylim(0,7000)
         ax10.set_xlim(0,45000)
         ax10.set_ylim(0,12000)
         ax11.set_xlim(0,45000)
         ax11.set_ylim(0,12000)
         if number_of_files >= 0 or number_of_files <= 19:
-            name_of_file_1 = 'NLoS_dyn_position_plot%s.png'
-            name_of_file_2 = 'NLoS_dyn_position_delta%s.png'
-            name_of_file_3 = 'NLoS_dyn_position_in_the_same_plot%s.png'
-            name_of_file_4 = 'NLoS_dyn_lidar%s.gif'
-            name_of_file_5 = 'NLoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
-            name_of_file_6 = 'NLoS_dyn_vel_over%s.png'
-            name_of_file_7 = 'NLoS_dyn_coordinate_over_time%s.png'
+            name_of_file_1 = 'LoS_dyn_position_plot%s.png'
+            name_of_file_2 = 'LoS_dyn_position_delta%s.png'
+            name_of_file_3 = 'LoS_dyn_position_in_the_same_plot%s.png'
+            name_of_file_4 = 'LoS_dyn_lidar%s.gif'
+            name_of_file_5 = 'LoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
+            name_of_file_6 = 'LoS_dyn_vel_over%s.png'
+            name_of_file_7 = 'LoS_dyn_coordinate_over_time%s.png'
         if number_of_files > 19:
-            name_of_file_1 = '1_new_data/NLoS_dyn_position_plot%s.png'
-            name_of_file_2 = '1_new_data/NLoS_dyn_position_delta%s.png'
-            name_of_file_3 = '1_new_data/NLoS_dyn_position_in_the_same_plot%s.png'
-            name_of_file_4 = '1_new_data/NLoS_dyn_lidar%s.gif'
-            name_of_file_5 = '1_new_data/NLoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
-            name_of_file_6 = '1_new_data/NLoS_dyn_vel_over%s.png'
-            name_of_file_7 = '1_new_data/NLoS_dyn_coordinate_over_time%s.png'
+            name_of_file_1 = '1_new_data/LoS_dyn_position_plot%s.png'
+            name_of_file_2 = '1_new_data/LoS_dyn_position_delta%s.png'
+            name_of_file_3 = '1_new_data/LoS_dyn_position_in_the_same_plot%s.png'
+            name_of_file_4 = '1_new_data/LoS_dyn_lidar%s.gif'
+            name_of_file_5 = '1_new_data/LoS_dyn_delta_coordinate_w_respect_to_with_lidar%s.png'
+            name_of_file_6 = '1_new_data/LoS_dyn_vel_over%s.png'
+            name_of_file_7 = '1_new_data/LoS_dyn_coordinate_over_time%s.png'
 
 
 
@@ -924,7 +924,10 @@ def main():
             ax18.plot(time_slam, Xsg_y, c='r',label='slam_y')
             ax18.plot(time_slam, kalman_slam_y_time, c='b',label='Kalman')
             ax18.plot(time_slam, lidar_kalman_slam_y_time, c='g',label='Lidar aug')
+            props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+            ax19.text(0.75, 0.9, ("maximum: %.2f$" % (max(lidar_delta_l), )), transform=ax19.transAxes, fontsize=14,verticalalignment='top', bbox=props)
             ax19.plot(time_slam_l, lidar_delta_l,c='g',label='lidar')
+            ax20.text(0.75, 0.9, ("maximum: %.2f$" % (max(kalman_delta_l), )), transform=ax20.transAxes, fontsize=14,verticalalignment='top', bbox=props)
             ax20.plot(time_slam_l, kalman_delta_l,c='b',label='kalman')
             print("kalman data std: ", np.std(kalman_delta_l))
             print("lidar data std: ", np.std(lidar_delta_l))
@@ -939,7 +942,7 @@ def main():
             ax24.scatter(kalman_x_bank_slam, kalman_y_bank_slam)
             ax24.plot(Xsg_x, Xsg_y, '-o', c='r', label='SLAM path')
             ax25.hist(kalman_delta_l)
-            props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+            #props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
             ax25.text(0.95, 0.95, ("%.2f$" % (np.std(kalman_delta_l), )), transform=ax25.transAxes, fontsize=14,verticalalignment='top', bbox=props)
             ax26.plot(time_slam, error_slam_kalman, c='b', label='kalman')
             ax26.plot(time_slam, error_slam_lidar, c='g', label='lidar aug')
@@ -983,26 +986,26 @@ def main():
             #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
 
-        w_x_variance = np.var(with_x)
-        w_x_std = np.std(with_x)
-        w_x_mean = np.mean(with_x)
-        w_y_variance = np.var(with_y)
-        w_y_std = np.std(with_y)
-        w_y_mean = np.mean(with_y)
+        w_x_variance = np.var(kalman_delta_l)
+        w_x_std = np.std(kalman_delta_l)
+        w_x_mean = np.mean(kalman_delta_l)
+        w_y_variance = np.var(lidar_delta_l)
+        w_y_std = np.std(lidar_delta_l)
+        w_y_mean = np.mean(lidar_delta_l)
 
-        wo_x_variance = np.var(without_x)
-        wo_x_std = np.std(without_x)
-        wo_x_mean = np.mean(without_x)
-        wo_y_variance = np.var(without_y)
-        wo_y_std = np.std(without_y)
-        wo_y_mean = np.mean(without_y)
+        wo_x_variance = np.var(error_slam_kalman_x)
+        wo_x_std = np.std(error_slam_kalman_x)
+        wo_x_mean = np.mean(error_slam_kalman_x)
+        wo_y_variance = np.var(error_slam_kalman_y)
+        wo_y_std = np.std(error_slam_kalman_y)
+        wo_y_mean = np.mean(error_slam_kalman_y)
 
-        simple_x_variance = np.var(simple_x)
-        simple_x_std = np.std(simple_x)
-        simple_x_mean = np.mean(simple_x)
-        simple_y_variance = np.var(simple_y)
-        simple_y_std = np.std(simple_y)
-        simple_y_mean = np.mean(simple_y)
+        simple_x_variance = np.var(error_slam_lidar_x)
+        simple_x_std = np.std(error_slam_lidar_x)
+        simple_x_mean = np.mean(error_slam_lidar_x)
+        simple_y_variance = np.var(error_slam_lidar_y)
+        simple_y_std = np.std(error_slam_lidar_y)
+        simple_y_mean = np.mean(error_slam_lidar_y)
 
         multi_x_variance = np.var(multi_x)
         multi_x_std = np.std(multi_x)

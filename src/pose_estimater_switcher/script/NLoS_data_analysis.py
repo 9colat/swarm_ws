@@ -92,6 +92,8 @@ def main():
     beacon_z =    [5577,  5577,   4286,   3530,   5578,   5577,   5577,   5578,   5578,   5578,   3767,   3767,   3767]
     global path, folder_path
     number_of_files = 21
+    number = number_of_files
+    tal = 1
     output_file_name = 'NLoS_dyn_log_outputdata.csv'
     path_out = str(Path.home().joinpath("test_data", output_file_name))
 
@@ -103,8 +105,12 @@ def main():
     true_x = [22653, 22673]
     true_y = [1039, 3822]
 
-    #a11, a12, a21, a22, b1, b2 = symbols('a11, a12, a21, a22, b1, b2')
+    while os.path.exists(path % number):
+        tal += 1
+        number += 1
 
+    #a11, a12, a21, a22, b1, b2 = symbols('a11, a12, a21, a22, b1, b2')
+    tal
     while os.path.exists(path % number_of_files):
         print(number_of_files)
         local_path = path %  number_of_files
@@ -142,7 +148,7 @@ def main():
         error_slam_lidar = [0] * (len(data["lidar0"])-101)
         slam_x_time_tans = [0] * (len(data["lidar0"])-101)
         slam_y_time_tans = [0] * (len(data["lidar0"])-101)
-        time_slam = np.linspace(1, len(data["lidar0"]-101/10), num=(len(data["lidar0"])-101))
+        time_slam = np.linspace(1, (len(data["lidar0"]-101)/10), num=(len(data["lidar0"])-101))
         lidar_kalman_slam_x_time = [0] * (len(data["lidar0"])-101)
         lidar_kalman_slam_y_time = [0] * (len(data["lidar0"])-101)
         kalman_slam_x_time = [0] * (len(data["lidar0"])-101)
@@ -154,7 +160,7 @@ def main():
         slam_delta_l = [0] * (len(data["lidar0"])-102)
         kalman_delta_l = [0] * (len(data["lidar0"])-102)
         lidar_delta_l = [0] * (len(data["lidar0"])-102)
-        time_slam_l = np.linspace(1, len(data["lidar0"]-101/10), num=(len(data["lidar0"])-102))
+        time_slam_l = np.linspace(1, (len(data["lidar0"]-101)/10), num=(len(data["lidar0"])-102))
         lidar_mean_x_array = [0]*100
         lidar_mean_y_array = [0]*100
         time_array = np.linspace(1, len(data["lidar0"]/10), num=len(data["lidar0"]))
@@ -785,9 +791,9 @@ def main():
         ax9.plot(time_array,delta_y_kalman_bank)
         ax12.plot(time_array,delta_x_kalman_bank)
         ax13.plot(time_array,delta_y_kalman_bank)
-        ax4.plot(kalman_slam_x_time, kalman_slam_y_time,'-o',c='g',label='Kalman w. Lidar')
+        ax4.plot(kalman_slam_x_time, kalman_slam_y_time,'-o',c='g',label='Kalman w. Lidar',linewidth=2)
         #ax4.scatter(without_x, without_y, c='b',label='Kalman')
-        ax4.plot(Xsg_x, Xsg_y, '-o', c='r', label='True path')
+        ax4.plot(Xsg_x, Xsg_y, '-o', c='r', label='True path',linewidth=2)
         #ax14.plot(time_array,vel_input,c='b')
         ax14.plot(time_array, vel_with, c='g',label='Kalman w. Lidar')
         ax14.plot(time_array, vel_without, c='r',label='Kalman')
@@ -825,8 +831,8 @@ def main():
         ax1.set_ylim(0,12000)
         ax2.set_xlim(0,45000)
         ax2.set_ylim(0,12000)
-        ax4.set_xlim(0,45000)
-        ax4.set_ylim(0,12000)
+        ax4.set_xlim(20000,25000)
+        ax4.set_ylim(0,7000)
         ax10.set_xlim(0,45000)
         ax10.set_ylim(0,12000)
         ax11.set_xlim(0,45000)
@@ -924,7 +930,10 @@ def main():
             ax18.plot(time_slam, Xsg_y, c='r',label='slam_y')
             ax18.plot(time_slam, kalman_slam_y_time, c='b',label='Kalman')
             ax18.plot(time_slam, lidar_kalman_slam_y_time, c='g',label='Lidar aug')
+            props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+            ax19.text(0.75, 0.9, ("maximum: %.2f$" % (max(lidar_delta_l), )), transform=ax19.transAxes, fontsize=14,verticalalignment='top', bbox=props)
             ax19.plot(time_slam_l, lidar_delta_l,c='g',label='lidar')
+            ax20.text(0.75, 0.9, ("maximum: %.2f$" % (max(kalman_delta_l), )), transform=ax20.transAxes, fontsize=14,verticalalignment='top', bbox=props)
             ax20.plot(time_slam_l, kalman_delta_l,c='b',label='kalman')
             print("kalman data std: ", np.std(kalman_delta_l))
             print("lidar data std: ", np.std(lidar_delta_l))
@@ -939,7 +948,7 @@ def main():
             ax24.scatter(kalman_x_bank_slam, kalman_y_bank_slam)
             ax24.plot(Xsg_x, Xsg_y, '-o', c='r', label='SLAM path')
             ax25.hist(kalman_delta_l)
-            props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+            #props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
             ax25.text(0.95, 0.95, ("%.2f$" % (np.std(kalman_delta_l), )), transform=ax25.transAxes, fontsize=14,verticalalignment='top', bbox=props)
             ax26.plot(time_slam, error_slam_kalman, c='b', label='kalman')
             ax26.plot(time_slam, error_slam_lidar, c='g', label='lidar aug')
@@ -982,27 +991,27 @@ def main():
             writergif = animation.PillowWriter(fps=10)
             #ani.save(output_path + name_of_file_4 % number_of_files, writer=writergif)
         #plt.show()
+        #print(np.std(kalman_delta_l))
+        w_x_variance = np.var(kalman_delta_l)
+        w_x_std = np.std(kalman_delta_l)
+        w_x_mean = np.mean(kalman_delta_l)
+        w_y_variance = np.var(lidar_delta_l)
+        w_y_std = np.std(lidar_delta_l)
+        w_y_mean = np.mean(lidar_delta_l)
 
-        w_x_variance = np.var(with_x)
-        w_x_std = np.std(with_x)
-        w_x_mean = np.mean(with_x)
-        w_y_variance = np.var(with_y)
-        w_y_std = np.std(with_y)
-        w_y_mean = np.mean(with_y)
+        wo_x_variance = np.var(error_slam_kalman_x)
+        wo_x_std = np.std(error_slam_kalman_x)
+        wo_x_mean = np.mean(error_slam_kalman_x)
+        wo_y_variance = np.var(error_slam_kalman_y)
+        wo_y_std = np.std(error_slam_kalman_y)
+        wo_y_mean = np.mean(error_slam_kalman_y)
 
-        wo_x_variance = np.var(without_x)
-        wo_x_std = np.std(without_x)
-        wo_x_mean = np.mean(without_x)
-        wo_y_variance = np.var(without_y)
-        wo_y_std = np.std(without_y)
-        wo_y_mean = np.mean(without_y)
-
-        simple_x_variance = np.var(simple_x)
-        simple_x_std = np.std(simple_x)
-        simple_x_mean = np.mean(simple_x)
-        simple_y_variance = np.var(simple_y)
-        simple_y_std = np.std(simple_y)
-        simple_y_mean = np.mean(simple_y)
+        simple_x_variance = np.var(error_slam_lidar_x)
+        simple_x_std = np.std(error_slam_lidar_x)
+        simple_x_mean = np.mean(error_slam_lidar_x)
+        simple_y_variance = np.var(error_slam_lidar_y)
+        simple_y_std = np.std(error_slam_lidar_y)
+        simple_y_mean = np.mean(error_slam_lidar_y)
 
         multi_x_variance = np.var(multi_x)
         multi_x_std = np.std(multi_x)
